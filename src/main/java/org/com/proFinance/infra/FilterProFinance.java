@@ -23,6 +23,7 @@ public class FilterProFinance implements Filter, Serializable{
 	 */
 	private static final long serialVersionUID = -4866683945454659329L;
 
+	UserAgentInfo agent;
 	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
@@ -32,16 +33,13 @@ public class FilterProFinance implements Filter, Serializable{
 	        HttpServletResponse res = (HttpServletResponse) response;
 	        HttpSession ses = req.getSession(false);
 	        String reqURI = req.getRequestURI();
-	        if (reqURI.startsWith(req.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER)
-	        		|| reqURI.indexOf("/login.jsf") >= 0 ||(ses != null && ses.getAttribute("usuarioLogado") != null)) {
+	        boolean isMobile = isMobile(req);
+	        
+	        if (isDoFilter(reqURI, ses, req, isMobile)) {
 	            filterChain.doFilter(request, response);
-//	            return;
-	        }
-//	        if ( reqURI.indexOf("/login.jsf") >= 0 ||reqURI.contains("/img/") ||(ses != null && ses.getAttribute("usuarioLogado") != null)
-//	                                   || reqURI.indexOf("/public/") >= 0 || reqURI.contains("javax.faces.resource") ){
-//	        	filterChain.doFilter(request, response);
-//	        }
-	        else{
+	        }else if(isMobile){
+	        	res.sendRedirect(req.getContextPath() + "/loginMobile.jsf"); 
+	        }else{
 	        	res.sendRedirect(req.getContextPath() + "/login.jsf"); 
 	        }
 		}catch(Throwable t) {
@@ -57,6 +55,29 @@ public class FilterProFinance implements Filter, Serializable{
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
 		
+	}
+	
+	public boolean isDoFilter(String reqURI, HttpSession ses, HttpServletRequest req, boolean isMobile){
+		if((reqURI.startsWith(req.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER) || reqURI.startsWith(req.getContextPath() + "/img")
+	        		|| (reqURI.startsWith(req.getContextPath() + "/login.jsf") && isMobile == false) || 
+	        			(reqURI.startsWith(req.getContextPath() + "/loginMobile.jsf") && isMobile)) ||
+	        			(ses != null && ses.getAttribute("usuarioLogado") != null)){
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isMobile(HttpServletRequest req){
+		String userAgent = req.getHeader("user-agent");
+		String accept = req.getHeader("Accept");
+		
+		if (userAgent != null && accept != null) {
+		    agent = new UserAgentInfo(userAgent, accept);
+		    if (agent.isMobileDevice()) {
+		        return true;
+		    }
+		}
+		return false;
 	}
 
 }

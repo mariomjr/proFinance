@@ -9,8 +9,34 @@
 
 	<ui:composition template="/templates/template.xhtml">
 		<ui:define name="content">
+		<style type="text/css">
+			.ui-state-hover{
+				background-color: #5FD4AF !important;
+			}
+		</style>
+		
 			<h:body>
-
+				<h:panelGrid columns="1" width="100%" style="text-align:center">
+					<p:panel>
+						<div class="ui-grid-row">
+							<div class="ui-grid-col-12" style="text-align:center">
+								<h:graphicImage value="/img/proFinance2.png" />
+							</div>
+						</div>
+						<div class="ui-grid-row">
+							<div class="ui-grid-col-4">
+								<p:commandButton styleClass="btnSocios" value="" action="/pages/SocioEmpresa.jsf"></p:commandButton>
+							</div>
+							<div class="ui-grid-col-4">
+								<p:commandButton styleClass="btnProjetos" value=""></p:commandButton>
+							</div>
+							<div class="ui-grid-col-4">
+								<p:commandButton styleClass="btnHistoricos" value=""></p:commandButton>
+							</div>
+						</div>
+						
+					</p:panel>
+				</h:panelGrid>
 			</h:body>
 		</ui:define>
 	</ui:composition>

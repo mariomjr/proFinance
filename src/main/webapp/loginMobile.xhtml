@@ -1,0 +1,36 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pm="http://primefaces.org/mobile">
+<f:view renderKitId="PRIMEFACES_MOBILE" />
+<h:head>
+</h:head>
+<h:body>
+    <pm:page>
+        <pm:header>
+        	<div style="text-align:center">
+            	<p:graphicImage url="/img/proFinance2.png"/>
+            </div>
+        </pm:header>
+        <pm:content>
+            <pm:field>
+                <p:outputLabel value="Login: "></p:outputLabel>
+                <p:inputText vaue="#{autenticator.login.login}"></p:inputText>
+            </pm:field>
+            <pm:field>
+                <p:outputLabel value="Senha: "></p:outputLabel>
+                <p:password vaue="#{autenticator.login.password}"></p:password>
+            </pm:field>
+            <pm:field>
+                <p:commandButton value="Login" type="submit" action="#{autenticator.loginProject}"
+                	ajax="true"/>
+            </pm:field>
+        </pm:content>
+        <pm:footer>
+            <p:outputLabel value="All copyrights @ reserved Saga 2016"></p:outputLabel>
+        </pm:footer>
+    </pm:page>
+</h:body>
+</html>

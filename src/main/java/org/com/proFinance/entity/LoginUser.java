@@ -2,15 +2,13 @@ package org.com.proFinance.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@XmlRootElement
 public class LoginUser implements Serializable {
 
 	/**
@@ -25,7 +23,7 @@ public class LoginUser implements Serializable {
 	
 	private String password;
 	
-	@NotNull
+	@Column(nullable=false, unique = true)
 	private String login;
 	
 	@Transient

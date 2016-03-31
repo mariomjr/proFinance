@@ -6,24 +6,22 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
+	
     <h:head>
-    	<link rel="shortcut icon" href="#{request.contextPath}/img/sysHotelico.ico"/>
+    	<link rel="shortcut icon" href="#{request.contextPath}/img/dinheiro32.png"  type="image/png"/>
         <title>proFinance</title>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
         <h:outputScript library="primefaces" name="jquery/jquery.js"/>
-        <style type="text/css"> 
-	   		.ui-widget, .ui-widget .ui-widget {    
-	    		font-size: 90% !important;
-	   		}
-   		</style>
+        <h:outputStylesheet library="css" name="proFinance.css" />
     </h:head>
     
    	<body>
 		<h:panelGrid bodyrows="2" cellspacing="4" style="width: 100%;">
-			<h:form id="frmMenus" prependId="false">
+			<h:form id="formGeral" prependId="false">
+				<p:growl id="messages" showDetail="true" globalOnly="true"/>
 				<ui:include src="menu.xhtml"></ui:include>
+				<ui:insert name="content"/>
 			</h:form>
-			<ui:insert name="content"/>
 		</h:panelGrid>
     </body>
 </html>

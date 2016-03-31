@@ -9,7 +9,10 @@ import org.com.proFinance.entity.LoginUser;
 public class UtilUser {
 	
 	public static final String loginPage = "login.jsf";
+	public static final String loginMobilePage = "login.jsf";
 	public static final String homePage = "home.jsf";
+	public static final String homeMobilePage = "mHome.jsf";
+	public static final String renderKitPrimefaces = "PRIMEFACES_MOBILE";
 	
 	public static HttpSession getSession() {
 		return (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);

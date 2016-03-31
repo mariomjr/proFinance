@@ -12,27 +12,7 @@
    	<p:growl id="messages"/>
 	
 		<p:menubar rendered="#{autenticator.logado}">
-	        <p:submenu label="Cadastro" icon="ui-icon-folder-open">
-	            <p:menuitem value="Quarto" url="/pages/quartos/quarto.xhtml" action="#{quartoBean}" icon="ui-icon-home" />
-	            <p:separator />
-	            <p:menuitem value="Hóspede" url="/pages/hospede/hospede.xhtml" action="#{hospedeBean}" icon="ui-icon-person" />
-	            <p:separator/>
-	            <p:menuitem value="Reserva" url="#" icon="ui-icon-suitcase"/>
-	            <p:separator/>
-	            <p:menuitem value="Serviço de quarto" url="#" icon="ui-icon-tag"/>
-	        </p:submenu>
-	        
-	        <p:submenu label="Gerência de pessoal" icon="ui-icon-person">
-	            <p:menuitem value="Usuário" url="/pages/usuario/usuario.xhtml" action="#{usuarioBean}" icon="ui-icon-wrench"/>
-	            <p:separator/>
-	            <p:menuitem value="Perfil de acesso" url="/pages/perfilAcesso/perfilAcesso.xhtml" icon="ui-icon-tag"/>
-	        </p:submenu>
-	 
-	        <p:submenu label="Relatórios" icon="ui-icon-image">
-	            <p:menuitem value="Reservas" url="#" icon="ui-icon-flag" />
-	            <p:separator/>
-	            <p:menuitem value="Receitas" url="#" icon="ui-icon-cart" />
-	        </p:submenu>
+	        <p:menuitem value="Início" icon="ui-icon-home" url="home.jsf"/>
 	 		
 	 		<f:facet name="options">
 	            <p:commandButton type="submit" value="Sair" icon="ui-icon-extlink"
