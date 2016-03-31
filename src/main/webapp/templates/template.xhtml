@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+    <h:head>
+    	<link rel="shortcut icon" href="#{request.contextPath}/img/sysHotelico.ico"/>
+        <title>proFinance</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+        <h:outputScript library="primefaces" name="jquery/jquery.js"/>
+        <style type="text/css"> 
+	   		.ui-widget, .ui-widget .ui-widget {    
+	    		font-size: 90% !important;
+	   		}
+   		</style>
+    </h:head>
+    
+   	<body>
+		<h:panelGrid bodyrows="2" cellspacing="4" style="width: 100%;">
+			<h:form id="frmMenus" prependId="false">
+				<ui:include src="menu.xhtml"></ui:include>
+			</h:form>
+			<ui:insert name="content"/>
+		</h:panelGrid>
+    </body>
+</html>

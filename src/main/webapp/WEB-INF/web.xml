@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" version="3.1">
+  <display-name>proFinance</display-name>
+  <servlet>
+    <servlet-name>Faces Servlet</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <filter>
+	  <filter-name>PrimeFaces FileUpload Filter</filter-name>
+	  <filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+  </filter>
+  <filter-mapping>
+	  <filter-name>PrimeFaces FileUpload Filter</filter-name>
+	  <servlet-name>Faces Servlet</servlet-name>
+  </filter-mapping>
+  
+  <filter>    
+	  <filter-name>proFinanceFilter</filter-name>    
+	  <filter-class>org.com.proFinance.infra.FilterProFinance</filter-class>    
+  </filter>    
+  <filter-mapping>    
+	  <filter-name>proFinanceFilter</filter-name>    
+	  <url-pattern>/*</url-pattern>    
+  </filter-mapping>	
+  
+  <servlet-mapping>
+    <servlet-name>Faces Servlet</servlet-name>
+    <url-pattern>*.jsf</url-pattern>
+  </servlet-mapping>
+  <context-param>
+	  <param-name>primefaces.THEME</param-name>
+	  <param-value>south-street</param-value>
+  </context-param>
+  <context-param>
+	  <param-name>org.jboss.jbossfaces.JSF_CONFIG_NAME</param-name>
+	  <param-value>Mojarra-2.2.8</param-value>
+  </context-param>
+  <context-param>
+	  <description>State saving method: 'client' or 'server' (=default). See JSF Specification 2.5.2</description>
+	  <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+	  <param-value>client</param-value>
+  </context-param>
+  <context-param>
+	  <param-name>javax.faces.PROJECT_STAGE</param-name>
+	  <param-value>Development</param-value>
+  </context-param>
+  <welcome-file-list>
+  	  <welcome-file>login.jsf</welcome-file>
+  </welcome-file-list>
+  
+</web-app>

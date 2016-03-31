@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+   <h:body>   
+   
+   	<p:growl id="messages"/>
+	
+		<p:menubar rendered="#{autenticator.logado}">
+	        <p:submenu label="Cadastro" icon="ui-icon-folder-open">
+	            <p:menuitem value="Quarto" url="/pages/quartos/quarto.xhtml" action="#{quartoBean}" icon="ui-icon-home" />
+	            <p:separator />
+	            <p:menuitem value="Hóspede" url="/pages/hospede/hospede.xhtml" action="#{hospedeBean}" icon="ui-icon-person" />
+	            <p:separator/>
+	            <p:menuitem value="Reserva" url="#" icon="ui-icon-suitcase"/>
+	            <p:separator/>
+	            <p:menuitem value="Serviço de quarto" url="#" icon="ui-icon-tag"/>
+	        </p:submenu>
+	        
+	        <p:submenu label="Gerência de pessoal" icon="ui-icon-person">
+	            <p:menuitem value="Usuário" url="/pages/usuario/usuario.xhtml" action="#{usuarioBean}" icon="ui-icon-wrench"/>
+	            <p:separator/>
+	            <p:menuitem value="Perfil de acesso" url="/pages/perfilAcesso/perfilAcesso.xhtml" icon="ui-icon-tag"/>
+	        </p:submenu>
+	 
+	        <p:submenu label="Relatórios" icon="ui-icon-image">
+	            <p:menuitem value="Reservas" url="#" icon="ui-icon-flag" />
+	            <p:separator/>
+	            <p:menuitem value="Receitas" url="#" icon="ui-icon-cart" />
+	        </p:submenu>
+	 		
+	 		<f:facet name="options">
+	            <p:commandButton type="submit" value="Sair" icon="ui-icon-extlink"
+	            	action="#{autenticator.logout}" oncomplete="document.location='#{request.contextPath}/login.jsf'"/>
+       		 </f:facet>
+	    </p:menubar>
+ 
+    </h:body>
+ 
+</html>

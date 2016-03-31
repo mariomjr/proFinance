@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" >
+<h:head>
+<title>proFinance</title>
+
+<style type="text/css">
+   	.ui-widget, .ui-widget .ui-widget {    
+    	font-size: 90% !important;
+	}
+    </style>   
+</h:head>
+<h:body>
+
+	<h:form>
+    <p:panel id="panel" header="Login" style="width: 400px; margin-left:35%;margin-top:10%">
+ 
+        <p:messages id="msgs" />
+ 
+        <h:panelGrid columns="2" cellpadding="5" width="130px">
+
+		       	   <h:outputLabel for="loginAutenticator" value="&nbsp;&nbsp;Login"/>
+		           <h:inputText value="#{autenticator.login.login}" id="loginAutenticator"
+		           		required="true" styleClass="lgn" requiredMessage="Informe o identificador"
+		           		style="width: 144px;"/>
+		           <h:outputLabel for="#{loginBean.login.password}" value="&nbsp;&nbsp;Senha"/>
+		           <h:inputSecret value="#{autenticator.login.password}" id="passAutenticator"
+		           		required="true" requiredMessage="Informe a senha"
+		           		style="width: 144px"/>
+		           <p:commandButton type="submit" value="Login" action="#{autenticator.loginProject}" 
+		           		style="width: 158px;margin-left:50%"/>	           
+ 
+        </h:panelGrid>
+ 
+    </p:panel>
+</h:form>
+	<script type="text/javascript">
+	$().ready(function(){
+		$(".lgn").focus();
+	});
+	</script>
+</h:body>
+</html>
