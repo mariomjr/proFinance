@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.com.proFinance.entity.SocioEmpresa;
+import org.com.proFinance.entity.Projeto;
 import org.com.proFinance.infra.GenericHibernateDao;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -15,21 +15,21 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-public class SocioEmpresaDao {
+public class ProjetoDao {
 
 	@Inject
-	GenericHibernateDao<SocioEmpresa> dao;
+	GenericHibernateDao<Projeto> dao;
 	
 	@SuppressWarnings("unchecked")
-	public List<SocioEmpresa> listar(Map<String, Object> filter, String sortField, String sortOrder, int firstResult, int maxResult) {
+	public List<Projeto> listar(Map<String, Object> filter, String sortField, String sortOrder, int firstResult, int maxResult) {
 
 		Criteria criteria = criarCriteriaListagem(filter, sortField, sortOrder);
 		criteria.setMaxResults(maxResult);
 		criteria.setFirstResult(firstResult);
 
-		List<SocioEmpresa> listSocioEmpresa = (List<SocioEmpresa>) criteria.list();
+		List<Projeto> listProjeto = (List<Projeto>) criteria.list();
 
-		return listSocioEmpresa;
+		return listProjeto;
 	}
 	
 	public int count(Map<String, Object> filter) {
@@ -41,7 +41,7 @@ public class SocioEmpresaDao {
 	private Criteria criarCriteriaListagem(Map<String, Object> filter, String sortField, String sortOrder) {
 
 		Session s = (Session) dao.getEntityManager().getDelegate();
-		Criteria criteria = s.createCriteria(SocioEmpresa.class);
+		Criteria criteria = s.createCriteria(Projeto.class);
 		
 		for (String atributo : filter.keySet()) {
 			Object filtro = filter.get(atributo);
@@ -59,28 +59,27 @@ public class SocioEmpresaDao {
 			}
 		}
 		
-//		criteria.add(Restrictions.eq("ativo", SimNao.SIM));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
 		return criteria;
 	}
 
-	public SocioEmpresa loadSocioEmpresaById(Long id) {
+	public Projeto loadProjetoById(Long id) {
 		
 		Session s = (Session) dao.getEntityManager().getDelegate();
-		SocioEmpresa socioEmpresa = (SocioEmpresa)s.load(SocioEmpresa.class, id);
-		Hibernate.initialize(socioEmpresa);
-		s.evict(socioEmpresa);
-		return socioEmpresa;
+		Projeto projeto = (Projeto)s.load(Projeto.class, id);
+		Hibernate.initialize(projeto);
+		s.evict(projeto);
+		return projeto;
 		
 	}
 
-	public void salvarSocioEmpresa(SocioEmpresa socioEmpresa) {
+	public void salvarProjeto(Projeto projeto) {
 		Session s = (Session) dao.getEntityManager().getDelegate();
-		if(socioEmpresa.getId()== null){
-			s.save(socioEmpresa);
+		if(projeto.getId()== null){
+			s.save(projeto);
 		}else{
-			s.update(socioEmpresa);
+			s.update(projeto);
 		}
 		s.flush();
 	}

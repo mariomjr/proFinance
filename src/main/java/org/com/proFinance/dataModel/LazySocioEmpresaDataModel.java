@@ -1,4 +1,4 @@
-package org.com.proFinance.beans;
+package org.com.proFinance.dataModel;
 
 
 import java.util.List;
@@ -69,7 +69,7 @@ public class LazySocioEmpresaDataModel extends LazyDataModel<SocioEmpresa> {
 		
 	}
 
-	public void atualizarLista(Boolean isPendente) {
+	public void atualizarLista() {
 		load(first, pageSize, sortField, sortOrder, filters);
 	}
 

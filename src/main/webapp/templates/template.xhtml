@@ -18,7 +18,20 @@
    	<body>
 		<h:panelGrid bodyrows="2" cellspacing="4" style="width: 100%;">
 			<h:form id="formGeral" prependId="false">
+			
+				<p:dialog widgetVar="load" modal="true" draggable="false" closable="false" resizable="false" showHeader="false" >
+				    <p:graphicImage url="../img/loading.gif" />
+				</p:dialog>
+				
 				<p:growl id="messages" showDetail="true" globalOnly="true"/>
+				
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+				
 				<ui:include src="menu.xhtml"></ui:include>
 				<ui:insert name="content"/>
 			</h:form>

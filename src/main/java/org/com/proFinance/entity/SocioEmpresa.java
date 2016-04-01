@@ -3,9 +3,13 @@ package org.com.proFinance.entity;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import org.com.proFinance.enuns.SimNao;
 
 @Entity
 public class SocioEmpresa implements Serializable{
@@ -24,6 +28,9 @@ public class SocioEmpresa implements Serializable{
 	private String sigla;
 	
 	private String cpfCnpj;
+	
+	@Enumerated(EnumType.STRING)
+	private SimNao ativo;
 
 	public Long getId() {
 		return id;
@@ -55,5 +62,13 @@ public class SocioEmpresa implements Serializable{
 
 	public void setCpfCnpj(String cpfCnpj) {
 		this.cpfCnpj = cpfCnpj;
+	}
+
+	public SimNao getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(SimNao ativo) {
+		this.ativo = ativo;
 	}
 }

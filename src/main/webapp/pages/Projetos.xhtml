@@ -15,14 +15,14 @@
 					<p:spacer width="10px"/>
 					<p:graphicImage value="/img/socios64.png"/>
 					<p:spacer width="10px"/>
-					<p:outputLabel value="Sócios/Empresas" />
+					<p:outputLabel value="Projetos" />
 				</h:panelGrid>
 			</f:facet>
 		</p:toolbar>
 			
 		<p:panel id="listagemSocioEmpresas">
 			
-			<p:commandButton value="Adicionar Sócio/Empresa" icon="ui-icon-plus" update="mdlSocioEmpresa" resetValues="true"
+			<p:commandButton value="Adicionar Projeto" icon="ui-icon-plus" update="mdlProjeto" resetValues="true"
 					actionListener="#{socioEmpresaBean.limparSocioEmpresa}" id="btnAdicionarSocioEmpresa" 
 					oncomplete="PF('socioEmpresaDialog').show()"/>
 			
