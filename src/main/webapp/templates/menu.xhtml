@@ -10,6 +10,11 @@
    <h:body>   	
 		<p:menubar rendered="#{autenticator.logado}">
 	        <p:menuitem value="Início" icon="ui-icon-home" actionListener="#{homeBean.redirectHome()}" />
+	        <p:menuitem  containerStyle="margin-left:40%">
+			    <h:link style="cursor:initial">
+			        <p:graphicImage value="/img/ProFinanceTitle.png"/>
+			    </h:link>
+			</p:menuitem>
 	 		
 	 		<f:facet name="options">
 	            <p:commandButton type="submit" value="Sair" icon="ui-icon-extlink"

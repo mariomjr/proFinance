@@ -31,6 +31,8 @@ public class OcorrenciaProjeto implements Serializable{
 	@Temporal(TemporalType.DATE)
 	private Calendar data;
 	
+	private Calendar dataInclusao;
+	
 	private Double valor;
 	
 	@Enumerated(EnumType.STRING)
@@ -43,6 +45,10 @@ public class OcorrenciaProjeto implements Serializable{
 	@ManyToOne
 	@JoinColumn(name = "socioEmpresa_id") 
 	private SocioEmpresa socioEmpresa;
+	
+	@ManyToOne
+	@JoinColumn(name = "loginUser_id") 
+	private LoginUser loginUser;
 
 	public Long getId() {
 		return id;
@@ -58,6 +64,14 @@ public class OcorrenciaProjeto implements Serializable{
 
 	public void setData(Calendar data) {
 		this.data = data;
+	}
+	
+	public Calendar getDataInclusao() {
+		return dataInclusao;
+	}
+
+	public void setDataInclusao(Calendar dataInclusao) {
+		this.dataInclusao = dataInclusao;
 	}
 
 	public Double getValor() {
@@ -90,5 +104,13 @@ public class OcorrenciaProjeto implements Serializable{
 
 	public void setSocioEmpresa(SocioEmpresa socioEmpresa) {
 		this.socioEmpresa = socioEmpresa;
+	}
+
+	public LoginUser getLoginUser() {
+		return loginUser;
+	}
+
+	public void setLoginUser(LoginUser loginUser) {
+		this.loginUser = loginUser;
 	}
 }

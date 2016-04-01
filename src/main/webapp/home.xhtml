@@ -19,19 +19,21 @@
 				<h:panelGrid columns="1" width="100%" style="text-align:center">
 					<p:panel>
 						<div class="ui-grid-row">
-							<div class="ui-grid-col-12" style="text-align:center">
-								<h:graphicImage value="/img/proFinance2.png" />
+							<div class="ui-grid-col-6">
+								<p:commandButton styleClass="btnSocios btnHomeInicio" value="" 
+									onclick="PF('load').show()" actionListener="#{homeBean.redirectSocios}"></p:commandButton>
+							</div>
+							<div class="ui-grid-col-6">
+								<p:commandButton styleClass="btnProjetos btnHomeInicio" value="" 
+								onclick="PF('load').show()"  actionListener="#{homeBean.redirectProjetos}"></p:commandButton>
 							</div>
 						</div>
 						<div class="ui-grid-row">
-							<div class="ui-grid-col-4">
-								<p:commandButton styleClass="btnSocios" value="" actionListener="#{homeBean.redirectSocios}"></p:commandButton>
-							</div>
-							<div class="ui-grid-col-4">
-								<p:commandButton styleClass="btnProjetos" value=""></p:commandButton>
-							</div>
-							<div class="ui-grid-col-4">
-								<p:commandButton styleClass="btnHistoricos" value=""></p:commandButton>
+							<div class="ui-grid-col-6">
+								<p:commandButton styleClass="btnHistoricos btnHomeInicio" value=""></p:commandButton>
+							</div>	
+							<div class="ui-grid-col-6">
+								<p:commandButton styleClass="btnPlanilhas btnHomeInicio" value="" ></p:commandButton>
 							</div>
 						</div>
 						

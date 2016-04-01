@@ -13,6 +13,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
         <h:outputScript library="primefaces" name="jquery/jquery.js"/>
         <h:outputStylesheet library="css" name="proFinance.css" />
+        <h:outputScript library="js/libs" name="jquery.mask.js" />
     </h:head>
     
    	<body>
@@ -20,7 +21,7 @@
 			<h:form id="formGeral" prependId="false">
 			
 				<p:dialog widgetVar="load" modal="true" draggable="false" closable="false" resizable="false" showHeader="false" >
-				    <p:graphicImage url="../img/loading.gif" />
+				    <p:graphicImage url="/img/loading.gif" />
 				</p:dialog>
 				
 				<p:growl id="messages" showDetail="true" globalOnly="true"/>

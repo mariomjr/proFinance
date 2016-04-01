@@ -28,7 +28,7 @@
 			
 			<p:spacer height="30px"/>
 					
-			<p:dataTable var="socioEmpresa" value="#{socioEmpresaBean.lazySocioEmpresa}" paginator="true" rows="10" rowKey="#{fornecedorNf.id}"
+			<p:dataTable var="socioEmpresa" value="#{socioEmpresaBean.lazySocioEmpresa}" paginator="true" rows="10" rowKey="#{socioEmpresa.id}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 				rowsPerPageTemplate="5,10,15" selectionMode="single" id="dtSocioEmpresa" lazy="true"
 				paginatorPosition="bottom" widgetVar="socioEmpresaTable">
@@ -52,6 +52,7 @@
 			</p:dataTable>
 			
 			<p:blockUI block="dtSocioEmpresa" trigger="dtSocioEmpresa">
+				<p:graphicImage value="/img/loading.gif"/>
 		    </p:blockUI>
 		</p:panel>
 		

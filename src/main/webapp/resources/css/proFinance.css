@@ -6,8 +6,7 @@ body{
 	background: #E0FFFF !important;
 }
 
-.btnSocios {
-	background-image: url(#{request.contextPath}/img/socios200.png) !important;
+.btnHomeInicio{
 	width: 200px;
 	height: 200px;
 	background-color: transparent !important;
@@ -17,30 +16,26 @@ body{
     border-top-right-radius: 30%;
     border-bottom-right-radius: 30%;
     border-bottom-left-radius: 30%;
+}
+
+.btnSocios {
+	background-image: url(#{request.contextPath}/img/socios200.png) !important;
 }
 
 .btnHistoricos {
 	background-image: url(#{request.contextPath}/img/Historicos200.png) !important;
-	width: 200px;
-	height: 200px;
-	background-color: transparent !important;
-	border:0 !important;
-	border-radius: 30%;
-    border-top-left-radius: 30%;
-    border-top-right-radius: 30%;
-    border-bottom-right-radius: 30%;
-    border-bottom-left-radius: 30%;
 }
 
 .btnProjetos {
 	background-image: url(#{request.contextPath}/img/projetos200.png) !important;
-	width: 200px;
-	height: 200px;
-	background-color: transparent !important;
-	border:0 !important;
-	border-radius: 30%;
-    border-top-left-radius: 30%;
-    border-top-right-radius: 30%;
-    border-bottom-right-radius: 30%;
-    border-bottom-left-radius: 30%;
+}
+.btnPlanilhas {
+	background-image: url(#{request.contextPath}/img/planilhas200.png) !important;
+}
+
+.redTexto{
+	color:red !important;
+}
+.greenTexto{
+	color:green !important;
 }

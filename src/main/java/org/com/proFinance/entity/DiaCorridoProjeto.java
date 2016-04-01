@@ -1,6 +1,7 @@
 package org.com.proFinance.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -8,9 +9,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 public class DiaCorridoProjeto implements Serializable{
@@ -39,10 +43,20 @@ public class DiaCorridoProjeto implements Serializable{
 	
 	private Double fatorDiario;
 	
-	private Projeto projeto;
-	
 	@OneToMany(mappedBy = "diaCorridoProjeto", targetEntity= OcorrenciaProjeto.class)
 	private List<OcorrenciaProjeto> listOcorrenciasProjeto;
+	
+	@ManyToOne
+	@JoinColumn(name = "investimentoProjeto_id") 
+	private Projeto projeto;
+	
+	private Integer ordem;
+	
+	@Transient
+	private boolean valorSaldoNegativo;
+	
+	@Transient
+	private Double valorSaldoTotal;
 
 	public Long getId() {
 		return id;
@@ -117,6 +131,9 @@ public class DiaCorridoProjeto implements Serializable{
 	}
 
 	public List<OcorrenciaProjeto> getListOcorrenciasProjeto() {
+		if(listOcorrenciasProjeto == null){
+			listOcorrenciasProjeto = new ArrayList<OcorrenciaProjeto>();
+		}
 		return listOcorrenciasProjeto;
 	}
 
@@ -124,5 +141,43 @@ public class DiaCorridoProjeto implements Serializable{
 			List<OcorrenciaProjeto> listOcorrenciasProjeto) {
 		this.listOcorrenciasProjeto = listOcorrenciasProjeto;
 	}
+
+	public Integer getOrdem() {
+		return ordem;
+	}
+
+	public void setOrdem(Integer ordem) {
+		this.ordem = ordem;
+	}
+
+	public boolean isValorSaldoNegativo() {
+		if(getValorSaldoTotal()<0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public void setValorSaldoNegativo(boolean valorSaldoNegativo) {
+		this.valorSaldoNegativo = valorSaldoNegativo;
+	}
+
+	public Double getValorSaldoTotal() {
+		valorSaldoTotal = 0.0;
+		if(getValorCredito()!= null){
+			valorSaldoTotal += getValorCredito();
+		}if(getValorDebito()!= null){
+			valorSaldoTotal += getValorDebito();
+		}if(getValorSaldo()!= null){
+			valorSaldoTotal += getValorSaldo();
+		}
+		return valorSaldoTotal;
+	}
+
+	public void setValorSaldoTotal(Double valorSaldoTotal) {
+		this.valorSaldoTotal = valorSaldoTotal;
+	}
+	
+	
 	
 }

@@ -34,6 +34,6 @@ public class HomeBean implements Serializable{
 	}
 	
 	public void redirectProjetos() throws IOException{
-		exContext.redirect(exContext.getApplicationContextPath()+"/pages/SocioEmpresa.jsf");
+		exContext.redirect(exContext.getApplicationContextPath()+"/pages/Projetos.jsf");
 	}
 }
