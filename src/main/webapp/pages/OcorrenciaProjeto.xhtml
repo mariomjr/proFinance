@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+<ui:composition template="/templates/template.xhtml">
+
+	<ui:define name="content">
+		
+		<p:toolbar>
+			<f:facet name="left">
+				<h:panelGrid columns="4">
+					<p:spacer width="10px"/>
+					<p:graphicImage value="/img/ocorrencias64.png"/>
+					<p:spacer width="10px"/>
+					<p:outputLabel value="Ocorrências dos Projetos" />
+				</h:panelGrid>
+			</f:facet>
+		</p:toolbar>
+			
+		<p:panel id="listagemOcorrenciaProjeto">
+			
+			<p:commandButton value="Adicionar Ocorrência" icon="ui-icon-plus" update="mdlOcorrenciaProjeto" resetValues="true"
+					actionListener="#{ocorrenciaProjetoBean.limparOcorrenciaProjeto}" id="btnAdicionarOcorrenciaProjeto" 
+					oncomplete="PF('ocorrenciaProjetoDialog').show()"/>
+			
+			<p:spacer height="30px"/>
+					
+			<p:dataTable var="ocorrenciaProjeto" value="#{ocorrenciaProjetoBean.lazyOcorrenciaProjeto}" paginator="true" rows="10" rowKey="#{ocorrenciaProjeto.id}"
+				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+				rowsPerPageTemplate="5,10,15" selectionMode="single" id="dtOcorrenciaProjeto" lazy="true"
+				paginatorPosition="bottom" widgetVar="ocorrenciaProjetoTable">
+
+				<p:ajax event="rowSelect" listener="#{ocorrenciaProjetoBean.onRowSelect}" onstart="PF('load').show()"  global="false" 
+					update="mdlOcorrenciaProjeto" oncomplete="PF('ocorrenciaProjetoDialog').show();PF('load').hide()" process="@this" />
+
+				<p:column headerText="Projeto">
+					<h:outputText value="#{ocorrenciaProjeto.diaCorridoProjeto.projeto.nome}" />
+				</p:column>
+				<p:column headerText="Dia" >
+					<h:outputText value="#{calendarToString.obterData(ocorrenciaProjeto.data)}" />
+				</p:column>
+				<p:column headerText="Crédito/Débito" >
+					<h:outputText value="#{ocorrenciaProjeto.creditoDebito}" />
+				</p:column>
+				<p:column headerText="Valor" >
+					<h:outputText value="#{ocorrenciaProjeto.valor}" />
+				</p:column>
+			</p:dataTable>
+			
+			<p:blockUI block="dtOcorrenciaProjeto" trigger="dtOcorrenciaProjeto">
+				<p:graphicImage value="/img/loading.gif"/>
+		    </p:blockUI>
+		</p:panel>
+		
+		<p:dialog header="Ocorrência" widgetVar="ocorrenciaProjetoDialog" id="mdlOcorrenciaProjeto" modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+			width="60%" closable="false">
+			
+			<p:messages id="messagesMdlOcorrenciaProjeto" showDetail="true" autoUpdate="false" closable="true" />
+			
+			<p:panel id="pnOcorrenciaProjetoMdl">
+			
+				<div class="ui-grid-row">
+					<div class="ui-grid-col-2">
+						<h:outputLabel value="Projeto:" for="srmProjeto"/>
+					</div>
+			
+					<div class="ui-grid-col-6">
+						<p:selectOneMenu id="srmProjeto" value="#{ocorrenciaProjetoBean.projetoSelect}" 
+							style="width:80%" converter="#{projetoConverter}">
+				            <f:selectItems value="#{ocorrenciaProjetoBean.listProjetoSelectItem}" />
+				        </p:selectOneMenu>
+			        </div>
+		        </div>
+				
+				<div class="ui-grid-row">
+					<div class="ui-grid-col-2">
+						<h:outputLabel value="Data:" for="dataOcorrencia"/>
+					</div>
+			
+					<div class="ui-grid-col-6">
+						<p:calendar id="dataOcorrencia"  value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.data}"
+		         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"
+		         			disabled="#{projetoBean.projetoSelect.id != null}"/>
+			        </div>
+		        </div>
+		        
+		        <div class="ui-grid-row">
+			        <div class="ui-grid-col-2">
+						<h:outputLabel value="Tipo" for="srmTipoOcorrencia"/>
+					</div>
+			
+					<div class="ui-grid-col-6">
+						<p:selectOneMenu id="srmTipoOcorrencia" value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.creditoDebito}" 
+							style="width:80%">
+				            <f:selectItems value="#{projetoBean.tipoItem}" />
+				        </p:selectOneMenu>
+			        </div>
+		        </div>
+		        
+		        <div class="ui-grid-row">
+			        <div class="ui-grid-col-2">
+						<h:outputLabel value="Valor: " for="vlrOcorrencia"/>
+					</div>
+			
+					<div class="ui-grid-col-6">
+						<p:inputText value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.valor}" style="width:80%" 
+							id="vlrOcorrencia" converter="#{doubleConverterDinheiro}"/>
+			        </div>
+		        </div>
+    	 	</p:panel>
+			
+			<f:facet name="footer">
+				<div class="ui-grid-row">
+      					<div class="ui-grid-col-6" style="text-align:center">
+						<p:commandButton actionListener="#{ocorrenciaProjetoBean.salvarOcorrenciaProjeto}" 
+							value="Salvar" icon="ui-icon-disk" id="btnSalvarOcorrencia" update="dtOcorrenciaProjeto"
+							onclick="PF('load').show()" oncomplete="PF('load').hide()" >
+							<p:confirm header="Confirmação" message="Deseja realmente salvar essa ocorrência?" icon="ui-icon-alert"/>	
+						</p:commandButton>
+					</div>
+				    <div class="ui-grid-col-6" style="text-align:center">
+						<p:commandButton value="Cancelar" onclick="PF('ocorrenciaProjetoDialog').hide()"
+							id="btnCancelar" icon="ui-icon-close">
+						</p:commandButton>
+					</div>
+				</div>
+			</f:facet>
+		</p:dialog>
+		
+		<script>
+			$("[id*='vlrOcorrencia']").mask('#.##0,00', {reverse: true});
+		</script>
+		
+	</ui:define>
+
+</ui:composition>
+
+</html>

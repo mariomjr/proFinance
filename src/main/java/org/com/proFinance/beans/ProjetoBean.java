@@ -9,7 +9,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
@@ -29,7 +29,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class ProjetoBean implements Serializable{
 	
 	/**
@@ -58,6 +58,7 @@ public class ProjetoBean implements Serializable{
 	
 	public void onRowSelect(SelectEvent event) throws IOException {
 		projetoSelect = projetoDao.loadProjetoById(((Projeto)event.getObject()).getId());
+		projetoService.ordenarListaProjeto(projetoSelect.getListDiasCorridosProjeto());
 		redirecionarTelaEdit();
 	}
 	
@@ -65,26 +66,16 @@ public class ProjetoBean implements Serializable{
 		if(validarDados()){
 			projetoDao.salvarProjeto(getProjetoSelect());
 			
-			RequestContext.getCurrentInstance().execute("PF('socioEmpresaDialog').hide();");
 			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Sócio/Empresa foi salvo!"));
-			RequestContext.getCurrentInstance().update("messages");
-		}else{
-			RequestContext.getCurrentInstance().update("messagesMdlSocioEmpresa");
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Projeto foi salvo!"));
 		}
+		RequestContext.getCurrentInstance().update("messages");
 	}
 	
 	private boolean validarDados() {
 		if(Uteis.validaNullVazio(getProjetoSelect().getNome())){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Nome é obrigatório!"));
 			return false;
-//		}else if(Uteis.validaNullVazio(getSocioEmpresaSelect().getSigla())){
-//			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Sigla é obrigatório!"));
-//			return false;
-//		}else if(Uteis.validaNullVazio(getSocioEmpresaSelect().getCpfCnpj())){
-//			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo CPF/CNPJ é obrigatório!"));
-//			return false;
-//		}
 		}
 		return true;
 	}
@@ -154,7 +145,8 @@ public class ProjetoBean implements Serializable{
 				getDiaCorridoSelect().setValorCredito(getOcorrenciaSelect().getValor());
 			}
 		}
-//		recalcularProjeto()
+		projetoService.recalcularProjeto(getProjetoSelect(), getDiaCorridoSelect());
+		
 		getDiaCorridoSelect().getListOcorrenciasProjeto().add(getOcorrenciaSelect());
 	}
 	

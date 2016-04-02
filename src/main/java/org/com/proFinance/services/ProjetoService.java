@@ -2,6 +2,8 @@ package org.com.proFinance.services;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -18,6 +20,7 @@ public class ProjetoService {
 		DiaCorridoProjeto diaCorridoProjeto = null;
 
 		diaCorridoProjeto = new DiaCorridoProjeto();
+		diaCorridoProjeto.setProjeto(projeto);
 		diaCorridoProjeto.setData(projeto.getDataInicial());
 		diaCorridoProjeto.setJuroMes(projeto.getJuroMes());
 		diaCorridoProjeto.setTaxaJuro((projeto.getJuroMes() / 100) + 1);
@@ -38,6 +41,7 @@ public class ProjetoService {
 		for (Calendar data : listDataDiaCorrido(projeto.getDataInicial(),
 				projeto.getDataFinalPrevista())) {
 			diaCorridoProjeto = new DiaCorridoProjeto();
+			diaCorridoProjeto.setProjeto(projeto);
 			diaCorridoProjeto.setData(data);
 			diaCorridoProjeto.setJuroMes(projeto.getJuroMes());
 			diaCorridoProjeto.setTaxaJuro((projeto.getJuroMes() / 100) + 1);
@@ -91,6 +95,36 @@ public class ProjetoService {
 
 	private double calculaFatorDiario(Double taxaJuro, Calendar data) {
 		return Math.pow(taxaJuro, valorElevado(data));
+	}
+
+	public void recalcularProjeto(Projeto projeto, DiaCorridoProjeto diaCorridoProjeto) {
+		
+		ordenarListaProjeto(projeto.getListDiasCorridosProjeto());
+		
+		double valor = diaCorridoProjeto.getValorSaldoTotal();
+		double valorFator = diaCorridoProjeto.getFatorDiario();
+		
+		for(DiaCorridoProjeto diaCorrido : projeto.getListDiasCorridosProjeto()){
+			if(diaCorrido.getOrdem()>diaCorridoProjeto.getOrdem()){
+				diaCorrido.setValorSaldo(valor*valorFator);
+				valorFator = diaCorrido.getFatorDiario();
+				valor = diaCorrido.getValorSaldoTotal();
+			}
+			
+		}
+		
+	}
+
+	public void ordenarListaProjeto(List<DiaCorridoProjeto> listDiasCorridosProjeto) {
+		Collections.sort(listDiasCorridosProjeto,new Comparator<DiaCorridoProjeto>(){
+			
+			public int compare(DiaCorridoProjeto  o1, DiaCorridoProjeto  o2) {
+				Comparable c1 = (Comparable) o1.getOrdem();
+				Comparable c2 = (Comparable) o2.getOrdem();
+				return c1.compareTo(c2);
+			}
+			
+		});
 	}
 
 }

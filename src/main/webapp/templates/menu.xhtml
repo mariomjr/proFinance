@@ -8,7 +8,8 @@
 	xmlns:p="http://primefaces.org/ui">
 
    <h:body>   	
-		<p:menubar rendered="#{autenticator.logado}">
+   
+		<p:menubar rendered="#{autenticator.logado}" style="z-index: 1000; position: fixed; left: 0; top: 0; width: 99.3%;">
 	        <p:menuitem value="Início" icon="ui-icon-home" actionListener="#{homeBean.redirectHome()}" />
 	        <p:menuitem  containerStyle="margin-left:40%">
 			    <h:link style="cursor:initial">
@@ -17,8 +18,8 @@
 			</p:menuitem>
 	 		
 	 		<f:facet name="options">
-	            <p:commandButton type="submit" value="Sair" icon="ui-icon-extlink"
-	            	action="#{autenticator.logout}" oncomplete="document.location='#{request.contextPath}/login.jsf'"/>
+	            <p:commandButton type="submit" value="Sair" icon="ui-icon-extlink" onclick="PF('load').show()"
+	            	actionListener="#{autenticator.logout}"/>
        		 </f:facet>
 	    </p:menubar>
  

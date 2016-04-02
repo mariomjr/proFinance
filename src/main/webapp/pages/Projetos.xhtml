@@ -27,7 +27,7 @@
 			
 			<p:spacer height="30px"/>
 					
-			<p:dataTable var="projeto" value="#{projetoBean.lazyProjeto}" paginator="true" rows="10" rowKey="#{fornecedorNf.id}"
+			<p:dataTable var="projeto" value="#{projetoBean.lazyProjeto}" paginator="true" rows="10" rowKey="#{projeto.id}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 				rowsPerPageTemplate="5,10,15" selectionMode="single" id="dtProjeto" lazy="true"
 				paginatorPosition="bottom" widgetVar="projetoTable">
@@ -36,13 +36,13 @@
 				oncomplete="PF('load').hide()" process="@this" />
 
 				<p:column headerText="Nome" sortBy="#{projeto.nome}" filterBy="#{projeto.nome}">
-					<h:outputText value="#{socioEmpresa.nome}" />
+					<h:outputText value="#{projeto.nome}" />
 				</p:column>
 				<p:column headerText="Data Inicial" >
-					<h:outputText value="#{projeto.dataInicial}" />
+					<h:outputText value="#{calendarToString.obterData(projeto.dataInicial)}" />
 				</p:column>
 				<p:column headerText="Data Final">
-					<h:outputText value="#{projeto.dataFinalPrevista}" />
+					<h:outputText value="#{calendarToString.obterData(projeto.dataFinalPrevista)}" />
 				</p:column>
 			</p:dataTable>
 			

@@ -1,11 +1,13 @@
 package org.com.proFinance.dao;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.com.proFinance.entity.DiaCorridoProjeto;
+import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
 import org.com.proFinance.infra.GenericHibernateDao;
 import org.hibernate.Criteria;
@@ -16,21 +18,21 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-public class ProjetoDao {
+public class OcorrenciaProjetoDao {
 
 	@Inject
-	GenericHibernateDao<Projeto> dao;
+	GenericHibernateDao<OcorrenciaProjeto> dao;
 	
 	@SuppressWarnings("unchecked")
-	public List<Projeto> listar(Map<String, Object> filter, String sortField, String sortOrder, int firstResult, int maxResult) {
+	public List<OcorrenciaProjeto> listar(Map<String, Object> filter, String sortField, String sortOrder, int firstResult, int maxResult) {
 
 		Criteria criteria = criarCriteriaListagem(filter, sortField, sortOrder);
 		criteria.setMaxResults(maxResult);
 		criteria.setFirstResult(firstResult);
 
-		List<Projeto> listProjeto = (List<Projeto>) criteria.list();
+		List<OcorrenciaProjeto> listOcorrenciaProjeto = (List<OcorrenciaProjeto>) criteria.list();
 
-		return listProjeto;
+		return listOcorrenciaProjeto;
 	}
 	
 	public int count(Map<String, Object> filter) {
@@ -42,7 +44,7 @@ public class ProjetoDao {
 	private Criteria criarCriteriaListagem(Map<String, Object> filter, String sortField, String sortOrder) {
 
 		Session s = (Session) dao.getEntityManager().getDelegate();
-		Criteria criteria = s.createCriteria(Projeto.class);
+		Criteria criteria = s.createCriteria(OcorrenciaProjeto.class);
 		
 		for (String atributo : filter.keySet()) {
 			Object filtro = filter.get(atributo);
@@ -60,41 +62,44 @@ public class ProjetoDao {
 			}
 		}
 		
+//		criteria.add(Restrictions.eq("ativo", SimNao.SIM));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
 		return criteria;
 	}
 	
-	public List<Projeto> getListTodosProjetos(){
+	public DiaCorridoProjeto buscarDiaCorridoByProjetoAndData(Projeto projeto, Calendar data){
 		
 		Session s = (Session) dao.getEntityManager().getDelegate();
-		Criteria c = s.createCriteria(Projeto.class);
+		Criteria c = s.createCriteria(DiaCorridoProjeto.class);
 		c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		return c.list();
+		c.add(Restrictions.eq("projeto", projeto));
+		c.add(Restrictions.eq("data", data));
+		Object result = c.uniqueResult();
 		
-	}
-
-	public Projeto loadProjetoById(Long id) {
-		
-		Session s = (Session) dao.getEntityManager().getDelegate();
-		Projeto projeto = (Projeto)s.load(Projeto.class, id);
-		Hibernate.initialize(projeto);
-		Hibernate.initialize(projeto.getListDiasCorridosProjeto());
-		for(DiaCorridoProjeto diaCorrido : projeto.getListDiasCorridosProjeto()){
-			Hibernate.initialize(diaCorrido.getListOcorrenciasProjeto());
+		if(result != null){
+			return(DiaCorridoProjeto)result;
 		}
-		
-		s.evict(projeto);
-		return projeto;
+		return null;
 		
 	}
 
-	public void salvarProjeto(Projeto projeto) {
+	public OcorrenciaProjeto loadOcorrenciaProjetoById(Long id) {
+		
 		Session s = (Session) dao.getEntityManager().getDelegate();
-		if(projeto.getId()== null){
-			s.save(projeto);
+		OcorrenciaProjeto ocorrenciaProjeto = (OcorrenciaProjeto)s.load(OcorrenciaProjeto.class, id);
+		Hibernate.initialize(ocorrenciaProjeto);
+		s.evict(ocorrenciaProjeto);
+		return ocorrenciaProjeto;
+		
+	}
+
+	public void salvarOcorrenciaEmpresa(OcorrenciaProjeto ocorrenciaEmpresa) {
+		Session s = (Session) dao.getEntityManager().getDelegate();
+		if(ocorrenciaEmpresa.getId()== null){
+			s.save(ocorrenciaEmpresa);
 		}else{
-			s.update(projeto);
+			s.update(ocorrenciaEmpresa);
 		}
 		s.flush();
 	}

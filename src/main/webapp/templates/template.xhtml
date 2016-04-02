@@ -17,10 +17,18 @@
     </h:head>
     
    	<body>
+   		<div class="nav-container">
+			<div class="nav">
+		   		<h:form id="formMenu" prependId="false">
+		   			<ui:include src="menu.xhtml"></ui:include>
+				</h:form>
+			</div>
+		</div>
+		
 		<h:panelGrid bodyrows="2" cellspacing="4" style="width: 100%;">
 			<h:form id="formGeral" prependId="false">
 			
-				<p:dialog widgetVar="load" modal="true" draggable="false" closable="false" resizable="false" showHeader="false" >
+				<p:dialog widgetVar="load" modal="true" draggable="false" closable="false" resizable="false" showHeader="false" style="z-index:9999" >
 				    <p:graphicImage url="/img/loading.gif" />
 				</p:dialog>
 				
@@ -33,7 +41,7 @@
 						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 				</p:confirmDialog>
 				
-				<ui:include src="menu.xhtml"></ui:include>
+				
 				<ui:insert name="content"/>
 			</h:form>
 		</h:panelGrid>

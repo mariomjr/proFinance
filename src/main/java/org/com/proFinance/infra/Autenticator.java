@@ -10,6 +10,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
+import org.com.proFinance.beans.HomeBean;
 import org.com.proFinance.dao.LoginUserDao;
 import org.com.proFinance.entity.LoginUser;
 import org.primefaces.context.RequestContext;
@@ -25,6 +26,9 @@ public class Autenticator implements Serializable{
 	
 	@Inject
 	LoginUserDao loginUserDao;
+	
+	@Inject
+	HomeBean homeBean;
 	
 	public void loginProject() throws IOException {
 		
@@ -47,9 +51,9 @@ public class Autenticator implements Serializable{
 	}
 
 	
-    public String logout() {
+    public void logout() throws IOException {
         UtilUser.getSession().invalidate();
-        return UtilUser.loginPage;
+        homeBean.redirectLogin();
     }
     
 	public boolean isLogado() {

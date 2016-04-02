@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -43,7 +44,7 @@ public class DiaCorridoProjeto implements Serializable{
 	
 	private Double fatorDiario;
 	
-	@OneToMany(mappedBy = "diaCorridoProjeto", targetEntity= OcorrenciaProjeto.class)
+	@OneToMany(mappedBy = "diaCorridoProjeto", targetEntity= OcorrenciaProjeto.class, cascade=CascadeType.ALL)
 	private List<OcorrenciaProjeto> listOcorrenciasProjeto;
 	
 	@ManyToOne
@@ -165,11 +166,11 @@ public class DiaCorridoProjeto implements Serializable{
 	public Double getValorSaldoTotal() {
 		valorSaldoTotal = 0.0;
 		if(getValorCredito()!= null){
-			valorSaldoTotal += getValorCredito();
+			valorSaldoTotal = valorSaldoTotal + getValorCredito();
 		}if(getValorDebito()!= null){
-			valorSaldoTotal += getValorDebito();
+			valorSaldoTotal = valorSaldoTotal + getValorDebito();
 		}if(getValorSaldo()!= null){
-			valorSaldoTotal += getValorSaldo();
+			valorSaldoTotal = valorSaldoTotal + getValorSaldo();
 		}
 		return valorSaldoTotal;
 	}
