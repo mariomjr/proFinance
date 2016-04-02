@@ -22,7 +22,8 @@
 					<p:graphicImage value="/img/projetos64.png"/>
 					<p:spacer width="10px"/>
 					<p:outputLabel value="Projetos" />
-					<p:commandButton value="Voltar" action="Projetos.jsf" icon="ui-icon-circle-arrow-w"/>
+					<p:commandButton value="Voltar" actionListener="#{projetoBean.redirecionarTela}"
+						icon="ui-icon-circle-arrow-w" onclick="PF('load').show()"/>
 				</h:panelGrid>
 			</f:facet>
 		</p:toolbar>

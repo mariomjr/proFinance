@@ -97,6 +97,9 @@ public class ProjetoBean implements Serializable{
 	public void redirecionarTelaEdit() throws IOException{
 		FacesContext.getCurrentInstance().getExternalContext().redirect("ProjetosEdit.jsf");
 	}
+	public void redirecionarTela() throws IOException{
+		FacesContext.getCurrentInstance().getExternalContext().redirect("Projetos.jsf");
+	}
 	
 	public void gerarPlanilha(){
 		
