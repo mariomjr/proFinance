@@ -24,8 +24,7 @@
                 <p:password vaue="#{autenticator.login.password}"></p:password>
             </pm:field>
             <pm:field>
-                <p:commandButton value="Login" type="submit" action="#{autenticator.loginProject}"
-                	ajax="true"/>
+                <p:commandButton type="submit" value="Login" action="#{autenticator.loginProject}" update="@form" />
             </pm:field>
         </pm:content>
         <pm:footer>
