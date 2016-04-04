@@ -1,0 +1,56 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pm="http://primefaces.org/mobile">
+<f:view renderKitId="PRIMEFACES_MOBILE" />
+	<ui:composition template="/templates/templateMobile.xhtml">
+		<ui:define name="content">
+		
+			<div data-role="header">
+				<span class="ui-title cemPorcento">
+					<h:panelGrid columns="2">
+						<p:graphicImage value="/img/socios24.png"/>
+						Sócios/Empresas
+					</h:panelGrid>
+				</span>
+			</div>
+			
+			<p:commandButton value="Adicionar" icon="ui-icon-plus" actionListener="#{socioEmpresaBean.limparSocioEmpresa}"/>
+			<p:button value="Ir segunda" id="irSegundabtn"  outcome="pm:second" />
+			
+			<p:dataTable var="socioEmpresa" value="#{socioEmpresaMobileBean.listSocioEmpresa}" tableStyleClass="ui-table-columntoggle"
+				selectionMode="single"  rowKey="#{socioEmpresa.id}">
+				
+				<p:ajax event="swipeleft" listener="#{socioEmpresaMobileBean.onRowSwipeLeft}" oncomplete="PrimeFaces.Mobile.navigate('#second',{})" />
+				
+				<p:column headerText="Nome" priority="1">
+					<h:outputText value="#{socioEmpresa.nome}" />
+				</p:column>
+				<p:column headerText="Sigla"  priority="1">
+					<h:outputText value="#{socioEmpresa.sigla}" />
+				</p:column>
+				<p:column headerText="CPF/CNPJ"  priority="2">
+					<h:outputText value="#{socioEmpresa.cpfCnpj}" />
+				</p:column>
+				<p:column headerText="Ativo" priority="2">
+					<h:outputText value="#{socioEmpresa.ativo.label}" />
+				</p:column>
+			</p:dataTable>
+			
+		</ui:define>
+		
+		<ui:define name="content2">
+			<pm:page data-theme="a" id="second">
+				<h:form>
+			        <div data-role="header" data-theme="a">
+			        	<p:button outcome="pm:first" value="Back" icon="ui-icon-arrow-l" 
+			        			styleClass="ui-btn-left ui-btn-inline"/>
+			        </div>
+		        </h:form>
+	        </pm:page>
+		
+		</ui:define>
+	</ui:composition>
+</html>

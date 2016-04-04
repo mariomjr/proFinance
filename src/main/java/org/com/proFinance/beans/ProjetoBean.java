@@ -15,6 +15,7 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 
 import org.com.proFinance.dao.ProjetoDao;
+import org.com.proFinance.dao.SocioEmpresaDao;
 import org.com.proFinance.dataModel.LazyProjetoDataModel;
 import org.com.proFinance.entity.DiaCorridoProjeto;
 import org.com.proFinance.entity.OcorrenciaProjeto;
@@ -43,6 +44,9 @@ public class ProjetoBean implements Serializable{
 	@Inject
 	ProjetoService projetoService;
 	
+	@Inject
+	SocioEmpresaDao socioEmpresaDao;
+	
 	private Projeto projetoSelect;
 	
 	private OcorrenciaProjeto ocorrenciaSelect;
@@ -58,7 +62,7 @@ public class ProjetoBean implements Serializable{
 	
 	public void onRowSelect(SelectEvent event) throws IOException {
 		projetoSelect = projetoDao.loadProjetoById(((Projeto)event.getObject()).getId());
-		projetoService.ordenarListaProjeto(projetoSelect.getListDiasCorridosProjeto());
+		projetoService.recalcularProjeto(getProjetoSelect());
 		redirecionarTelaEdit();
 	}
 	

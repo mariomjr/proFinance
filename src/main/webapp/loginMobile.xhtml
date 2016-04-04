@@ -6,31 +6,38 @@
     xmlns:pm="http://primefaces.org/mobile">
 <f:view renderKitId="PRIMEFACES_MOBILE" />
 <h:head>
+	<title>ProFinance</title>
+    <meta charset="utf-8" />
+
+	<h:outputStylesheet library="css/themes" name="mobileTheme.css" />
+	<h:outputStylesheet library="css/themes" name="jquery.mobile.icons.min.css" />
 </h:head>
+
 <h:body>
-    <pm:page>
-        <pm:header>
-        	<div style="text-align:center">
-            	<p:graphicImage url="/img/proFinance2.png"/>
-            </div>
-        </pm:header>
-        <pm:content>
-            <pm:field>
-                <p:outputLabel value="Login: "></p:outputLabel>
-                <p:inputText vaue="#{autenticator.login.login}"></p:inputText>
-            </pm:field>
-            <pm:field>
-                <p:outputLabel value="Senha: "></p:outputLabel>
-                <p:password vaue="#{autenticator.login.password}"></p:password>
-            </pm:field>
-            <pm:field>
-                <p:commandButton value="Login" type="submit" action="#{autenticator.loginProject}"
-                	ajax="true"/>
-            </pm:field>
-        </pm:content>
-        <pm:footer>
-            <p:outputLabel value="All copyrights @ reserved Saga 2016"></p:outputLabel>
-        </pm:footer>
-    </pm:page>
+	<h:form>
+	    <pm:page data-theme="a">
+	        <pm:header>
+	        	<div style="text-align:center">
+	            	<p:graphicImage url="/img/proFinance2.png"/>
+	            </div>
+	        </pm:header>
+	        <pm:content>
+	        	<p:growl id="messages" showDetail="true" />
+	            <pm:field>
+	                <p:outputLabel value="Login: " for="itLogin"></p:outputLabel>
+	                <p:inputText value="#{autenticator.login.login}" id="itLogin"></p:inputText>
+	            </pm:field>
+	            <pm:field>
+	                <p:outputLabel value="Senha: " for="itPassword"></p:outputLabel>
+	                <p:password value="#{autenticator.login.password}" id="itPassword"></p:password>
+	            </pm:field>
+	            <pm:field>
+	                <p:commandButton value="Login" action="#{autenticator.loginProject}" update="messages"/>
+	            </pm:field>
+	            
+	        </pm:content>
+
+	    </pm:page>
+    </h:form>
 </h:body>
 </html>

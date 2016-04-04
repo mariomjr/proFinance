@@ -1,12 +1,15 @@
 package org.com.proFinance.beans;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 
 import org.com.proFinance.dao.SocioEmpresaDao;
@@ -33,6 +36,8 @@ public class SocioEmpresaBean implements Serializable{
 	private SocioEmpresa socioEmpresaSelect;
 	
 	private LazyDataModel<SocioEmpresa> lazySocioEmpresa;
+	
+	private List<SelectItem> listSocioEmpresaItens;
 
 	@PostConstruct
 	public void init(){
@@ -81,6 +86,15 @@ public class SocioEmpresaBean implements Serializable{
 
 	public void limparSocioEmpresa(){
 		setSocioEmpresaSelect(new SocioEmpresa());
+	}
+
+	public List<SelectItem> getListSocioEmpresaItens() {
+		listSocioEmpresaItens = new ArrayList<SelectItem>();
+		for(SocioEmpresa socioEmpresa : socioEmpresaDao.getListSocioEmpresaAtivo()){
+			listSocioEmpresaItens.add(new SelectItem(socioEmpresa, socioEmpresa.getNome()));
+		}
+		
+		return listSocioEmpresaItens;
 	}
 
 	public SocioEmpresa getSocioEmpresaSelect() {

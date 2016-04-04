@@ -48,6 +48,9 @@
 				<p:column headerText="Valor" >
 					<h:outputText value="#{ocorrenciaProjeto.valor}" />
 				</p:column>
+				<p:column headerText="Sócio/Empresa" >
+					<h:outputText value="#{ocorrenciaProjeto.socioEmpresa.nome}" />
+				</p:column>
 			</p:dataTable>
 			
 			<p:blockUI block="dtOcorrenciaProjeto" trigger="dtOcorrenciaProjeto">
@@ -65,6 +68,7 @@
 				<div class="ui-grid-row">
 					<div class="ui-grid-col-2">
 						<h:outputLabel value="Projeto:" for="srmProjeto"/>
+						<h:outputLabel value="*" style="color:red" />
 					</div>
 			
 					<div class="ui-grid-col-6">
@@ -78,18 +82,19 @@
 				<div class="ui-grid-row">
 					<div class="ui-grid-col-2">
 						<h:outputLabel value="Data:" for="dataOcorrencia"/>
+						<h:outputLabel value="*" style="color:red" />
 					</div>
 			
 					<div class="ui-grid-col-6">
 						<p:calendar id="dataOcorrencia"  value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.data}"
-		         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"
-		         			disabled="#{projetoBean.projetoSelect.id != null}"/>
+		         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"/>
 			        </div>
 		        </div>
 		        
 		        <div class="ui-grid-row">
 			        <div class="ui-grid-col-2">
 						<h:outputLabel value="Tipo" for="srmTipoOcorrencia"/>
+						<h:outputLabel value="*" style="color:red" />
 					</div>
 			
 					<div class="ui-grid-col-6">
@@ -103,6 +108,7 @@
 		        <div class="ui-grid-row">
 			        <div class="ui-grid-col-2">
 						<h:outputLabel value="Valor: " for="vlrOcorrencia"/>
+						<h:outputLabel value="*" style="color:red" />
 					</div>
 			
 					<div class="ui-grid-col-6">
@@ -110,6 +116,18 @@
 							id="vlrOcorrencia" converter="#{doubleConverterDinheiro}"/>
 			        </div>
 		        </div>
+		        <div class="ui-grid-row">
+				 	<div class="ui-grid-col-2">
+				 		<h:outputLabel value="Sócio/Empresa: " for="srmSocioEmpresa"/>
+				 		<h:outputLabel value="*" style="color:red" />
+				 	</div>
+				 	<div class="ui-grid-col-6">
+				 		<p:selectOneMenu id="srmSocioEmpresa" value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.socioEmpresa}" 
+							style="width:80%" converter="#{socioEmpresaConverter}">
+				            <f:selectItems value="#{socioEmpresaBean.listSocioEmpresaItens}" />
+				        </p:selectOneMenu>
+				 	</div>
+			 	</div>
     	 	</p:panel>
 			
 			<f:facet name="footer">

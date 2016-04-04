@@ -13,7 +13,6 @@ import javax.servlet.http.HttpSession;
 import org.com.proFinance.beans.HomeBean;
 import org.com.proFinance.dao.LoginUserDao;
 import org.com.proFinance.entity.LoginUser;
-import org.primefaces.context.RequestContext;
 
 @ManagedBean(name="autenticator")
 @SessionScoped
@@ -40,20 +39,19 @@ public class Autenticator implements Serializable{
 	        String renderKitId = FacesContext.getCurrentInstance().getViewRoot().getRenderKitId();       
 	        if(renderKitId.equalsIgnoreCase(UtilUser.renderKitPrimefaces)){
 	        	FacesContext.getCurrentInstance().getExternalContext().redirect(UtilUser.homeMobilePage);	            
+	        }else{
+	        	FacesContext.getCurrentInstance().getExternalContext().redirect(UtilUser.homePage);
 	        }
-	        FacesContext.getCurrentInstance().getExternalContext().redirect(UtilUser.homePage);
 		}else{
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_WARN, "Atenção", "Usuário não encontrado!"));
-			RequestContext.getCurrentInstance().update("messages");
 		}
-		RequestContext.getCurrentInstance().execute("PF('load').hide()");
 	}
 
 	
     public void logout() throws IOException {
         UtilUser.getSession().invalidate();
-        homeBean.redirectLogin();
+    	homeBean.redirectLogin();
     }
     
 	public boolean isLogado() {

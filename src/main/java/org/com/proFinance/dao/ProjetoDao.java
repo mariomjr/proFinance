@@ -98,4 +98,14 @@ public class ProjetoDao {
 		}
 		s.flush();
 	}
+	
+	public void salvarDiaCorrrido(DiaCorridoProjeto diaCorridoProjeto) {
+		Session s = (Session) dao.getEntityManager().getDelegate();
+		if(diaCorridoProjeto.getId()== null){
+			s.save(diaCorridoProjeto);
+		}else{
+			s.update(diaCorridoProjeto);
+		}
+		s.flush();
+	}
 }

@@ -1,11 +1,13 @@
 package org.com.proFinance.dao;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.com.proFinance.entity.SocioEmpresa;
+import org.com.proFinance.enuns.SimNao;
 import org.com.proFinance.infra.GenericHibernateDao;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -83,5 +85,19 @@ public class SocioEmpresaDao {
 			s.update(socioEmpresa);
 		}
 		s.flush();
+	}
+	
+	public List<SocioEmpresa> getListSocioEmpresaMobile(){
+		return listar(new HashMap<String, Object>(), null, "ASCENDING", 0, 1000);
+	}
+	
+	public List<SocioEmpresa> getListSocioEmpresaAtivo(){
+		
+		Session s = (Session) dao.getEntityManager().getDelegate();
+		Criteria c = s.createCriteria(SocioEmpresa.class);
+		c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		c.add(Restrictions.eq("ativo",SimNao.SIM));
+		return c.list();
+		
 	}
 }

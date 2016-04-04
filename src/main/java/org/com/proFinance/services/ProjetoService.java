@@ -114,6 +114,26 @@ public class ProjetoService {
 		}
 		
 	}
+	
+	public void recalcularProjeto(Projeto projeto) {
+		
+		ordenarListaProjeto(projeto.getListDiasCorridosProjeto());
+		
+		double valor = 0.0;
+		double valorFator = 0.0;
+		
+		for(DiaCorridoProjeto diaCorrido : projeto.getListDiasCorridosProjeto()){
+			if(diaCorrido.getOrdem()>0){
+				diaCorrido.setValorSaldo(valor*valorFator);
+				valorFator = diaCorrido.getFatorDiario();
+				valor = diaCorrido.getValorSaldoTotal();
+			}else{
+				valorFator = diaCorrido.getFatorDiario();
+				valor = diaCorrido.getValorSaldoTotal();
+			}
+		}
+		
+	}
 
 	public void ordenarListaProjeto(List<DiaCorridoProjeto> listDiasCorridosProjeto) {
 		Collections.sort(listDiasCorridosProjeto,new Comparator<DiaCorridoProjeto>(){

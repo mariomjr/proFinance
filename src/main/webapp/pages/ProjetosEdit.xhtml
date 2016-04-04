@@ -112,14 +112,14 @@
 		        <p:column headerText="Taxa juro" style="text-align:right">
 		            <h:outputText value="#{diaCorrido.taxaJuro}" converter="#{doubleConverter}"/>
 		        </p:column>
+		        <p:column headerText="Fator diário" style="text-align:right">
+		            <h:outputText value="#{diaCorrido.fatorDiario}" converter="#{doubleConverter}"/>
+		        </p:column>
 		        <p:column headerText="Crédito" style="text-align:right">
 		            <h:outputText value="#{diaCorrido.valorCredito}" converter="#{doubleConverterDinheiro}" styleClass="greenTexto"/>
 		        </p:column>
 		        <p:column headerText="Débito" style="text-align:right">
 		            <h:outputText value="#{diaCorrido.valorDebito}" converter="#{doubleConverterDinheiro}" styleClass="redTexto"/>
-		        </p:column>
-		        <p:column headerText="Fator diário" style="text-align:right">
-		            <h:outputText value="#{diaCorrido.fatorDiario}" converter="#{doubleConverter}"/>
 		        </p:column>
 		        <p:column headerText="Saldo" style="text-align:right" >
 		            <h:outputText value="#{diaCorrido.valorSaldoTotal}" converter="#{doubleConverterDinheiro}" styleClass="#{diaCorrido.valorSaldoNegativo ?'redTexto':'greenTexto'}"/>
@@ -144,6 +144,9 @@
 					        <p:column headerText="Valor" style="text-align:right">
 					            <h:outputText value="#{ocorrenciaProjeto.valor}" converter="#{doubleConverterDinheiro}"/>
 					        </p:column>
+					        <p:column headerText="Sócio/Empresa" style="text-align:right">
+					            <h:outputText value="#{ocorrenciaProjeto.socioEmpresa.nome}"/>
+					        </p:column>
 					        <p:column headerText="Data inclusão" style="text-align:center">
 					            <h:outputText value="#{calendarToString.obterDataEHora(ocorrenciaProjeto.dataInclusao)}"/>
 					        </p:column>
@@ -161,6 +164,19 @@
 		
 		<p:dialog header="Ocorrência" widgetVar="ocorrenciaDialog" id="mdlOcorrencia" modal="true" showEffect="fade" hideEffect="fade" resizable="true"
 			width="50%" closable="false">
+			
+			<div class="ui-grid-row">
+			 	<div class="ui-grid-col-2">
+			 		<h:outputLabel value="Sócio/Empresa: " for="srmSocioEmpresa"/>
+			 	</div>
+			 	<div class="ui-grid-col-6">
+			 		<p:selectOneMenu id="srmSocioEmpresa" value="#{projetoBean.ocorrenciaSelect.socioEmpresa}" 
+						style="width:80%" converter="#{socioEmpresaConverter}">
+			            <f:selectItems value="#{socioEmpresaBean.listSocioEmpresaItens}" />
+			        </p:selectOneMenu>
+			 	</div>
+		 	</div>
+			
 			 <div class="ui-grid-row">
 			 	<div class="ui-grid-col-2">
 					<h:outputLabel value="Valor: " for="vlrOcorrencia"/>

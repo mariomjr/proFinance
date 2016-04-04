@@ -19,6 +19,7 @@ import org.com.proFinance.dataModel.LazyOcorrenciaProjetoDataModel;
 import org.com.proFinance.entity.DiaCorridoProjeto;
 import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
+import org.com.proFinance.enuns.EnumCreditoDebito;
 import org.com.proFinance.infra.UtilUser;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -64,12 +65,12 @@ public class OcorrenciaProjetoBean  implements Serializable{
 			
 			ocorrenciaProjetoDao.salvarOcorrenciaEmpresa(getOcorrenciaProjetoSelect());
 			
-			RequestContext.getCurrentInstance().execute("PF('socioEmpresaDialog').hide();");
+			RequestContext.getCurrentInstance().execute("PF('ocorrenciaProjetoDialog').hide();");
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Ocorrência salva!"));
 			RequestContext.getCurrentInstance().update("messages");
 		}else{
-			RequestContext.getCurrentInstance().update("messagesMdlSocioEmpresa");
+			RequestContext.getCurrentInstance().update("messagesMdlOcorrenciaProjeto");
 		}
 	}
 	
@@ -77,16 +78,37 @@ public class OcorrenciaProjetoBean  implements Serializable{
 		if(getProjetoSelect()== null || (getProjetoSelect()!= null && getProjetoSelect().getId()== null)){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Projeto é obrigatório!"));
 			return false;
-		}else if(getOcorrenciaProjetoSelect().getData()!= null){
+		}else if(getOcorrenciaProjetoSelect().getData()== null){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Data é obrigatório!"));
+			return false;
+		}else if(getOcorrenciaProjetoSelect().getValor()== null ||(getOcorrenciaProjetoSelect().getValor()!= null && getOcorrenciaProjetoSelect().getValor()==0)){
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo valor é obrigatório!"));
+			return false;
+		}else if(getOcorrenciaProjetoSelect().getSocioEmpresa() == null){
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo sócio/empresa é obrigatório!"));
 			return false;
 		}else{
 			DiaCorridoProjeto diaCorridoBusca = ocorrenciaProjetoDao.buscarDiaCorridoByProjetoAndData(getProjetoSelect(), getOcorrenciaProjetoSelect().getData());
 			if(diaCorridoBusca == null){
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo CPF/CNPJ é obrigatório!"));
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "A data não existe para o projeto selecionado!"));
 				return false;
 			}else{
+				
+				if(getOcorrenciaProjetoSelect().getCreditoDebito().equals(EnumCreditoDebito.DEBITO)){
+					if(diaCorridoBusca.getValorDebito()!= null){
+						diaCorridoBusca.setValorDebito(diaCorridoBusca.getValorDebito()+(getOcorrenciaProjetoSelect().getValor()*(-1)));
+					}else{
+						diaCorridoBusca.setValorDebito(getOcorrenciaProjetoSelect().getValor()*(-1));
+					}
+				}else{
+					if(diaCorridoBusca.getValorCredito()!= null){
+						diaCorridoBusca.setValorCredito(diaCorridoBusca.getValorCredito()+getOcorrenciaProjetoSelect().getValor());
+					}else{
+						diaCorridoBusca.setValorCredito(getOcorrenciaProjetoSelect().getValor());
+					}
+				}
 				getOcorrenciaProjetoSelect().setDiaCorridoProjeto(diaCorridoBusca);
+				projetoDao.salvarDiaCorrrido(diaCorridoBusca);
 			}
 		}
 		return true;

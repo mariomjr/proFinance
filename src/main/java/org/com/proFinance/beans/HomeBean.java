@@ -9,6 +9,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
+import org.com.proFinance.infra.UtilUser;
+
 @ManagedBean
 @ViewScoped
 public class HomeBean implements Serializable{
@@ -26,11 +28,19 @@ public class HomeBean implements Serializable{
 	}
 	
 	public void redirectHome() throws IOException{
-		exContext.redirect(exContext.getApplicationContextPath()+"/home.jsf");
+		if(UtilUser.getRenderKitBrowser().equals(UtilUser.renderKitPrimefaces)){
+			exContext.redirect(exContext.getApplicationContextPath()+"/homeMobile.jsf");
+		}else{
+			exContext.redirect(exContext.getApplicationContextPath()+"/home.jsf");
+		}
 	}
 
 	public void redirectSocios() throws IOException{
-		exContext.redirect(exContext.getApplicationContextPath()+"/pages/SocioEmpresa.jsf");
+		if(UtilUser.getRenderKitBrowser().equals(UtilUser.renderKitPrimefaces)){
+			exContext.redirect(exContext.getApplicationContextPath()+"/mobile/SocioEmpresa.jsf");
+		}else{
+			exContext.redirect(exContext.getApplicationContextPath()+"/pages/SocioEmpresa.jsf");
+		}
 	}
 	
 	public void redirectProjetos() throws IOException{
@@ -42,7 +52,11 @@ public class HomeBean implements Serializable{
 	}
 	
 	public void redirectLogin() throws IOException{
-		exContext.redirect(exContext.getApplicationContextPath()+"/home.jsf");
+		if(UtilUser.getRenderKitBrowser().equals(UtilUser.renderKitPrimefaces)){
+			exContext.redirect(exContext.getApplicationContextPath()+"/loginMobile.jsf");
+		}else{			
+			exContext.redirect(exContext.getApplicationContextPath()+"/login.jsf");
+		}
 	}
 
 }

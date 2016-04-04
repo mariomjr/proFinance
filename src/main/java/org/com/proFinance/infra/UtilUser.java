@@ -11,7 +11,7 @@ public class UtilUser {
 	public static final String loginPage = "login.jsf";
 	public static final String loginMobilePage = "login.jsf";
 	public static final String homePage = "home.jsf";
-	public static final String homeMobilePage = "mHome.jsf";
+	public static final String homeMobilePage = "homeMobile.jsf";
 	public static final String renderKitPrimefaces = "PRIMEFACES_MOBILE";
 	
 	public static HttpSession getSession() {
@@ -25,5 +25,9 @@ public class UtilUser {
 	public static LoginUser getUserLogado() {
 		HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 		return (LoginUser)session.getAttribute("usuarioLogado");
+	}
+	
+	public static String getRenderKitBrowser(){
+		return FacesContext.getCurrentInstance().getViewRoot().getRenderKitId();
 	}
 }
