@@ -3,7 +3,8 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:p="http://primefaces.org/ui"
-    xmlns:pm="http://primefaces.org/mobile">
+    xmlns:pm="http://primefaces.org/mobile"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 <f:view renderKitId="PRIMEFACES_MOBILE" />
 	<ui:composition template="/templates/templateMobile.xhtml">
 		<ui:define name="content">
@@ -19,7 +20,8 @@
 				oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" update="second:frmContent2"/>
 			
 			<p:dataTable var="socioEmpresa" value="#{socioEmpresaBean.listSocioEmpresa}" tableStyleClass="ui-table-columntoggle"
-				selectionMode="single"  rowKey="#{socioEmpresa.id}" paginator="true" rows="10" id="dtSocioEmpresa">
+				rowKey="#{socioEmpresa.id}" paginator="true" rows="5" id="dtSocioEmpresa"
+					selection="#{socioEmpresaBean.socioEmpresaSelect}" selectionMode="single">
 				
 				<p:ajax event="swipeleft" listener="#{socioEmpresaBean.onRowSwipeLeft}" 
 					oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" update="second:frmContent2"/>
