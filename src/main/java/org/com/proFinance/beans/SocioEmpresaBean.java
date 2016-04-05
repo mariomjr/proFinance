@@ -19,6 +19,7 @@ import org.com.proFinance.enuns.SimNao;
 import org.com.proFinance.util.Uteis;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.mobile.event.SwipeEvent;
 import org.primefaces.model.LazyDataModel;
 
 @ViewScoped
@@ -39,6 +40,8 @@ public class SocioEmpresaBean implements Serializable{
 	
 	private List<SelectItem> listSocioEmpresaItens;
 
+	private List<SocioEmpresa> listSocioEmpresa;
+
 	@PostConstruct
 	public void init(){
 		lazySocioEmpresa = new LazySocioEmpresaDataModel(socioEmpresaDao);
@@ -46,6 +49,10 @@ public class SocioEmpresaBean implements Serializable{
 	
 	public void onRowSelect(SelectEvent event) {
 		socioEmpresaSelect = socioEmpresaDao.loadSocioEmpresaById(((SocioEmpresa)event.getObject()).getId());
+	}
+	
+	public void onRowSwipeLeft(SwipeEvent event) {
+		socioEmpresaSelect = socioEmpresaDao.loadSocioEmpresaById(((SocioEmpresa)event.getData()).getId());
 	}
 	
 	public void salvarSocioEmpresa(){
@@ -114,6 +121,14 @@ public class SocioEmpresaBean implements Serializable{
 
 	public void setLazySocioEmpresa(LazyDataModel<SocioEmpresa> lazySocioEmpresa) {
 		this.lazySocioEmpresa = lazySocioEmpresa;
+	}
+
+	public List<SocioEmpresa> getListSocioEmpresa() {
+		return listSocioEmpresa;
+	}
+
+	public void setListSocioEmpresa(List<SocioEmpresa> listSocioEmpresa) {
+		this.listSocioEmpresa = listSocioEmpresa;
 	}
 	
 }

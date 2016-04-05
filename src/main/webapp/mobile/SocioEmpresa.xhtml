@@ -23,7 +23,7 @@
 			<p:dataTable var="socioEmpresa" value="#{socioEmpresaMobileBean.listSocioEmpresa}" tableStyleClass="ui-table-columntoggle"
 				selectionMode="single"  rowKey="#{socioEmpresa.id}">
 				
-				<p:ajax event="swipeleft" listener="#{socioEmpresaMobileBean.onRowSwipeLeft}" oncomplete="PrimeFaces.Mobile.navigate('#second',{})" />
+				<p:ajax event="swipeleft" listener="#{socioEmpresaBean.onRowSwipeLeft}" oncomplete="PrimeFaces.Mobile.navigate('#second',{})" />
 				
 				<p:column headerText="Nome" priority="1">
 					<h:outputText value="#{socioEmpresa.nome}" />
@@ -45,8 +45,38 @@
 			<pm:page data-theme="a" id="second">
 				<h:form>
 			        <div data-role="header" data-theme="a">
-			        	<p:button outcome="pm:first" value="Back" icon="ui-icon-arrow-l" 
+			        	<h:body>
+			        		<p:button outcome="pm:first" icon="ui-icon-arrow-l" 
 			        			styleClass="ui-btn-left ui-btn-inline"/>
+							
+							<span class="ui-title">
+								<p:graphicImage value="/img/ProFinanceTitle.png"/>
+							</span>
+						        
+							<p:commandButton styleClass="ui-btn-right ui-btn-icon-right" value="Sair" icon="ui-icon-forward"
+								actionListener="#{autenticator.logout}"/>
+					
+						</h:body>
+			        </div>
+			        
+			        <div role="main" class="ui-content jqm-content">
+			        	<pm:field>
+			                <p:outputLabel value="Nome: " for="itNome"></p:outputLabel>
+			                <p:inputText value="#{socioEmpresaBean.socioEmpresaSelect.nome}" id="itNome">
+			                </p:inputText>
+			            </pm:field>
+			            <pm:field>
+			                <p:outputLabel value="Sigla: " for="itSigla"></p:outputLabel>
+			                <p:inputText value="#{socioEmpresaBean.socioEmpresaSelect.sigla}" id="itSigla">
+			                </p:inputText>
+			            </pm:field>	
+			            <pm:field>
+			                <p:outputLabel value="CPF/CNPJ: " for="itCpfCnpj"></p:outputLabel>
+			                <p:inputText value="#{socioEmpresaBean.socioEmpresaSelect.cpfCnpj}" id="itCpfCnpj">
+			                </p:inputText>
+			            </pm:field>	
+			            <p:commandButton value="Salvar" actionListener="#{socioEmpresaBean.salvarSocioEmpresa}"/>
+			            
 			        </div>
 		        </h:form>
 	        </pm:page>
