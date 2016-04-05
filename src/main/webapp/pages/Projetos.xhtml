@@ -32,8 +32,7 @@
 				rowsPerPageTemplate="5,10,15" selectionMode="single" id="dtProjeto" lazy="true"
 				paginatorPosition="bottom" widgetVar="projetoTable">
 
-				<p:ajax event="rowSelect" listener="#{projetoBean.onRowSelect}" onstart="PF('load').show()"  global="false" 
-				oncomplete="PF('load').hide()" process="@this" />
+				<p:ajax event="rowSelect" listener="#{projetoBean.onRowSelect}"/>
 
 				<p:column headerText="Nome" sortBy="#{projeto.nome}" filterBy="#{projeto.nome}">
 					<h:outputText value="#{projeto.nome}" />

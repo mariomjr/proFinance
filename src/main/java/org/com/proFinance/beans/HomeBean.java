@@ -28,7 +28,7 @@ public class HomeBean implements Serializable{
 	}
 	
 	public void redirectHome() throws IOException{
-		if(UtilUser.getRenderKitBrowser().equals(UtilUser.renderKitPrimefaces)){
+		if(UtilUser.isMobile()){
 			exContext.redirect(exContext.getApplicationContextPath()+"/homeMobile.jsf");
 		}else{
 			exContext.redirect(exContext.getApplicationContextPath()+"/home.jsf");
@@ -36,7 +36,7 @@ public class HomeBean implements Serializable{
 	}
 
 	public void redirectSocios() throws IOException{
-		if(UtilUser.getRenderKitBrowser().equals(UtilUser.renderKitPrimefaces)){
+		if(UtilUser.isMobile()){
 			exContext.redirect(exContext.getApplicationContextPath()+"/mobile/SocioEmpresa.jsf");
 		}else{
 			exContext.redirect(exContext.getApplicationContextPath()+"/pages/SocioEmpresa.jsf");
@@ -48,11 +48,15 @@ public class HomeBean implements Serializable{
 	}
 	
 	public void redirectOcorrenciaProjeto() throws IOException{
-		exContext.redirect(exContext.getApplicationContextPath()+"/pages/OcorrenciaProjeto.jsf");
+		if(UtilUser.isMobile()){
+			exContext.redirect(exContext.getApplicationContextPath()+"/mobile/OcorrenciaProjeto.jsf");
+		}else{
+			exContext.redirect(exContext.getApplicationContextPath()+"/pages/OcorrenciaProjeto.jsf");
+		}
 	}
 	
 	public void redirectLogin() throws IOException{
-		if(UtilUser.getRenderKitBrowser().equals(UtilUser.renderKitPrimefaces)){
+		if(UtilUser.isMobile()){
 			exContext.redirect(exContext.getApplicationContextPath()+"/loginMobile.jsf");
 		}else{			
 			exContext.redirect(exContext.getApplicationContextPath()+"/login.jsf");

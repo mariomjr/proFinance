@@ -88,7 +88,7 @@
 				<div class="ui-grid-row">
       					<div class="ui-grid-col-4" style="text-align:right">
 						<p:commandButton actionListener="#{socioEmpresaBean.salvarSocioEmpresa}" 
-							value="Salvar" icon="ui-icon-disk" id="btnSalvarSocioEmpresa" update="dtSocioEmpresa"
+							value="Salvar" icon="ui-icon-disk" id="btnSalvarSocioEmpresa" update="dtSocioEmpresa, messages"
 							onclick="PF('load').show()" oncomplete="PF('load').hide()" >
 							<p:confirm header="Confirmação" message="Deseja realmente salvar esse Sócio/Empresa?" icon="ui-icon-alert"/>	
 						</p:commandButton>

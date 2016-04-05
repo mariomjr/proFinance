@@ -15,31 +15,57 @@
 </h:head>
 
 <h:body>
-
-	    <pm:page data-theme="a" id="first">
-	    	<h:form>
-		        <p:growl id="messages" showDetail="true" />
-		        <div data-role="header" data-theme="a">
-		        	<ui:include src="menuMobile.xhtml"/>
-		        </div>
-		        
-		        <div role="main" class="ui-content jqm-content">
-		        	<p:overlayPanel for="pnGroupItens"  widgetVar="pnlMenuVar" at="left" showEffect="overlay" >
-					     <h2>ProFinance</h2>
-					     <p:menu>
-					         <p:menuitem value="Início" actionListener="#{homeBean.redirectHome}" icon="ui-icon-home"/>
-					         <p:menuitem value="Sócio/Empresa" actionListener="#{homeBean.redirectSocios}" />
-					         <p:menuitem value="Projetos" url="#" />
-					         <p:menuitem value="Ocorrências" url="#" />
-					         <p:menuitem value="Planilhas" url="#" />
-					     </p:menu>
+	<pm:page data-theme="a" id="first">
+			<pm:header data-theme="a">
+				<h:form id="frmMenu" style="margin-bottom:0 !important">
+					<ui:include src="menuMobile.xhtml"/>
+				</h:form>
+			</pm:header>
+     
+    		<pm:content>
+				<h:form id="frmContent" >
+			     	<p:growl id="messages" showDetail="true" />
+			     	<p:overlayPanel for="first:frmMenu:pnGroupItens"  widgetVar="pnlMenuVar" at="left" showEffect="overlay" >
+						<h2>ProFinance</h2>
+						<p:menu>
+						    <p:menuitem value="Início" actionListener="#{homeBean.redirectHome}" icon="ui-icon-home"/>
+						    <p:menuitem value="Sócio/Empresa" actionListener="#{homeBean.redirectSocios}"  icon="ui-icon-user"/>
+						    <p:menuitem value="Projetos" url="#" icon="ui-icon-shop"/>
+						    <p:menuitem value="Ocorrências" actionListener="#{homeBean.redirectOcorrenciaProjeto}" icon="ui-icon-bullets"/>
+						    <p:menuitem value="Planilhas" url="#" />
+						</p:menu>
 					</p:overlayPanel>
-					
-		            <ui:insert name="content"/>
-		        </div>
-	        </h:form>
-	    </pm:page>
-	    
-	    <ui:insert name="content2"/>
+	
+	        		<ui:insert name="content"/>
+    			</h:form>
+        	</pm:content>
+	</pm:page>
+	
+	<pm:page data-theme="a" id="second">
+	        <div data-role="header" data-theme="a" data-position="fixed">
+				<h:form id="frmHeader" style="margin-bottom:0 !important">
+		        	<h:body>
+		        		<p:button outcome="pm:first" icon="ui-icon-arrow-l" 
+		        			styleClass="ui-btn-left ui-btn-inline"/>
+						
+						<span class="ui-title">
+							<p:graphicImage value="/img/ProFinanceTitle.png"/>
+						</span>
+					        
+						<p:commandButton styleClass="ui-btn-right ui-btn-icon-right" value="Sair" icon="ui-icon-forward"
+							actionListener="#{autenticator.logout}"/>
+				
+					</h:body>
+				</h:form>
+	        </div>
+	        
+	        <pm:content id="contentItens2">
+	        	<h:form id="frmContent2">
+	        		<p:growl id="messages" showDetail="true" />	
+					<ui:insert name="content2"/>
+				</h:form>
+			</pm:content>
+	</pm:page>
+	
 </h:body>
 </html>

@@ -1,6 +1,7 @@
 package org.com.proFinance.dao;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +67,10 @@ public class OcorrenciaProjetoDao {
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
 		return criteria;
+	}
+	
+	public List<OcorrenciaProjeto> getListOcorrenciaProjetoMobile(){
+		return listar(new HashMap<String, Object>(), null, "ASCENDING", 0, 1000);
 	}
 	
 	public DiaCorridoProjeto buscarDiaCorridoByProjetoAndData(Projeto projeto, Calendar data){

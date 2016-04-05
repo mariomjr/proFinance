@@ -14,6 +14,9 @@
         <h:outputScript library="primefaces" name="jquery/jquery.js"/>
         <h:outputStylesheet library="css" name="proFinance.css" />
         <h:outputScript library="js/libs" name="jquery.mask.js" />
+        <h:outputScript library="js" name="proFinance.js" />
+        <h:outputScript library="js/libs" name="jquery.blockUi-2.70.js" />
+        
     </h:head>
     
    	<body>
@@ -41,9 +44,9 @@
 						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 				</p:confirmDialog>
 				
-				
 				<ui:insert name="content"/>
 			</h:form>
 		</h:panelGrid>
+		
     </body>
 </html>

@@ -16,6 +16,7 @@ import org.com.proFinance.dao.SocioEmpresaDao;
 import org.com.proFinance.dataModel.LazySocioEmpresaDataModel;
 import org.com.proFinance.entity.SocioEmpresa;
 import org.com.proFinance.enuns.SimNao;
+import org.com.proFinance.infra.UtilUser;
 import org.com.proFinance.util.Uteis;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -23,7 +24,7 @@ import org.primefaces.mobile.event.SwipeEvent;
 import org.primefaces.model.LazyDataModel;
 
 @ViewScoped
-@ManagedBean
+@ManagedBean(name="socioEmpresaBean")
 public class SocioEmpresaBean implements Serializable{
 
 	/**
@@ -44,7 +45,11 @@ public class SocioEmpresaBean implements Serializable{
 
 	@PostConstruct
 	public void init(){
-		lazySocioEmpresa = new LazySocioEmpresaDataModel(socioEmpresaDao);
+		if(UtilUser.isMobile()){
+			listSocioEmpresa = socioEmpresaDao.getListSocioEmpresaMobile();
+		}else{
+			lazySocioEmpresa = new LazySocioEmpresaDataModel(socioEmpresaDao);
+		}
 	}
 	
 	public void onRowSelect(SelectEvent event) {
@@ -60,12 +65,23 @@ public class SocioEmpresaBean implements Serializable{
 			getSocioEmpresaSelect().setAtivo(SimNao.SIM);
 			socioEmpresaDao.salvarSocioEmpresa(getSocioEmpresaSelect());
 			
-			RequestContext.getCurrentInstance().execute("PF('socioEmpresaDialog').hide();");
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Sócio/Empresa foi salvo!"));
-			RequestContext.getCurrentInstance().update("messages");
+			RequestContext.getCurrentInstance().execute("PF('socioEmpresaDialog').hide();");
+			
 		}else{
 			RequestContext.getCurrentInstance().update("messagesMdlSocioEmpresa");
+		}
+	}
+	
+	public void salvarSocioEmpresaMobile(){
+		if(validarDados()){
+			getSocioEmpresaSelect().setAtivo(SimNao.SIM);
+			socioEmpresaDao.salvarSocioEmpresa(getSocioEmpresaSelect());
+			
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Sócio/Empresa foi salvo!"));
+			listSocioEmpresa = socioEmpresaDao.getListSocioEmpresaMobile();
 		}
 	}
 	

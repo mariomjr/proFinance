@@ -1,0 +1,86 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pm="http://primefaces.org/mobile">
+<f:view renderKitId="PRIMEFACES_MOBILE" />
+	<ui:composition template="/templates/templateMobile.xhtml">
+		<ui:define name="content">
+		
+			<div data-role="header">
+				<span class="ui-title headerTitleTopo">
+						<p:graphicImage value="/img/ocorrencias24.png"/>
+						Ocorrências dos projetos
+				</span>
+			</div>
+			
+			<p:commandButton value="Adicionar" icon="ui-icon-plus" actionListener="#{ocorrenciaProjetoBean.limparOcorrenciaProjeto}"
+				oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" update="second:frmContent2"/>
+			
+			<p:dataTable var="ocorrenciaProjeto" value="#{ocorrenciaProjetoBean.listOcorrenciaProjeto}" tableStyleClass="ui-table-columntoggle"
+				selectionMode="single"  rowKey="#{ocorrenciaProjeto.id}" paginator="true" rows="10" id="dtOcorrenciaProjeto">
+				
+				<p:ajax event="swipeleft" listener="#{ocorrenciaProjetoBean.onRowSwipeLeft}" 
+					oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" update="second:frmContent2"/>
+				
+				<p:column headerText="Projeto" priority="1">
+					<h:outputText value="#{ocorrenciaProjeto.diaCorridoProjeto.projeto.nome}" />
+				</p:column>
+				<p:column headerText="Dia"  priority="1">
+					<h:outputText value="#{calendarToString.obterData(ocorrenciaProjeto.data)}" />
+				</p:column>
+				<p:column headerText="Crédito/Débito"  priority="2">
+					<h:outputText value="#{ocorrenciaProjeto.creditoDebito.label}" />
+				</p:column>
+				<p:column headerText="Valor" priority="2">
+					<h:outputText value="#{ocorrenciaProjeto.valor}" converter="#{doubleConverterDinheiro}" />
+				</p:column>
+				<p:column headerText="Sócio/Empresa" priority="2">
+					<h:outputText value="#{ocorrenciaProjeto.socioEmpresa.nome}"/>
+				</p:column>
+			</p:dataTable>
+			
+		</ui:define>
+		
+		<ui:define name="content2">
+    
+        	<pm:field>
+                <p:outputLabel value="Projeto: " for="srmProjeto"></p:outputLabel>
+                <p:selectOneMenu id="srmProjeto" value="#{ocorrenciaProjetoBean.projetoSelect}" 
+					style="width:80%" converter="#{projetoConverter}">
+		            <f:selectItems value="#{ocorrenciaProjetoBean.listProjetoSelectItem}" />
+		        </p:selectOneMenu>
+            </pm:field>
+            <pm:field>
+                <p:outputLabel value="Data: " for="dataOcorrencia"></p:outputLabel>
+                <p:calendar id="dataOcorrencia"  value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.data}"
+         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"/>
+            </pm:field>	
+            <pm:field>
+                <p:outputLabel value="Tipo: " for="srmTipoOcorrencia"></p:outputLabel>
+                <p:selectOneMenu id="srmTipoOcorrencia" value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.creditoDebito}" 
+					style="width:80%">
+		            <f:selectItems value="#{projetoBean.tipoItem}" />
+		        </p:selectOneMenu>
+            </pm:field>	
+            <pm:field>
+                <p:outputLabel value="Valor: " for="vlrOcorrencia"></p:outputLabel>
+                <p:inputText value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.valor}" style="width:80%" 
+							id="vlrOcorrencia" converter="#{doubleConverterDinheiro}"/>
+            </pm:field>	
+            <pm:field>
+                <p:outputLabel value="Sócio/Empresa: " for="srmSocioEmpresa"></p:outputLabel>
+                <p:selectOneMenu id="srmSocioEmpresa" value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.socioEmpresa}" 
+						style="width:80%" converter="#{socioEmpresaConverter}">
+			            <f:selectItems value="#{socioEmpresaBean.listSocioEmpresaItens}" />
+			        </p:selectOneMenu>
+            </pm:field>	
+            
+            <p:commandButton value="Salvar" actionListener="#{socioEmpresaBean.salvarSocioEmpresaMobile}" 
+            	update="@parent:messages" />
+		
+		</ui:define>
+		
+	</ui:composition>
+</html>

@@ -30,4 +30,12 @@ public class UtilUser {
 	public static String getRenderKitBrowser(){
 		return FacesContext.getCurrentInstance().getViewRoot().getRenderKitId();
 	}
+	
+	public static boolean isMobile(){
+		if(getRenderKitBrowser().equals(renderKitPrimefaces)){
+			return true;
+		}else{
+			return false;
+		}
+	}
 }

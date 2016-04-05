@@ -23,6 +23,7 @@ import org.com.proFinance.enuns.EnumCreditoDebito;
 import org.com.proFinance.infra.UtilUser;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.mobile.event.SwipeEvent;
 import org.primefaces.model.LazyDataModel;
 
 @ViewScoped
@@ -47,14 +48,24 @@ public class OcorrenciaProjetoBean  implements Serializable{
 	private Projeto projetoSelect;
 	
 	private List<SelectItem> listProjetoSelectItem;
+	
+	private List<OcorrenciaProjeto> listOcorrenciaProjeto;
 
 	@PostConstruct
 	public void init(){
-		lazyOcorrenciaProjeto = new LazyOcorrenciaProjetoDataModel(ocorrenciaProjetoDao);
+		if(UtilUser.isMobile()){
+			listOcorrenciaProjeto = ocorrenciaProjetoDao.getListOcorrenciaProjetoMobile();
+		}else{
+			lazyOcorrenciaProjeto = new LazyOcorrenciaProjetoDataModel(ocorrenciaProjetoDao);
+		}
 	}
 	
 	public void onRowSelect(SelectEvent event) {
 		ocorrenciaProjetoSelect = ocorrenciaProjetoDao.loadOcorrenciaProjetoById(((OcorrenciaProjeto)event.getObject()).getId());
+	}
+	
+	public void onRowSwipeLeft(SwipeEvent event) {
+		ocorrenciaProjetoSelect = ocorrenciaProjetoDao.loadOcorrenciaProjetoById(((OcorrenciaProjeto)event.getData()).getId());
 	}
 	
 	public void salvarOcorrenciaProjeto(){
@@ -152,5 +163,9 @@ public class OcorrenciaProjetoBean  implements Serializable{
 	public void setProjetoSelect(Projeto projetoSelect) {
 		this.projetoSelect = projetoSelect;
 	}
-	
+
+	public List<OcorrenciaProjeto> getListOcorrenciaProjeto() {
+		return listOcorrenciaProjeto;
+	}
+
 }

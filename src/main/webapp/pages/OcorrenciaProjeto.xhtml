@@ -46,7 +46,7 @@
 					<h:outputText value="#{ocorrenciaProjeto.creditoDebito}" />
 				</p:column>
 				<p:column headerText="Valor" >
-					<h:outputText value="#{ocorrenciaProjeto.valor}" />
+					<h:outputText value="#{ocorrenciaProjeto.valor}" converter="#{doubleConverterDinheiro}"/>
 				</p:column>
 				<p:column headerText="Sócio/Empresa" >
 					<h:outputText value="#{ocorrenciaProjeto.socioEmpresa.nome}" />
