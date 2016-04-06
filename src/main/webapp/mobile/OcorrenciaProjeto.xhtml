@@ -3,7 +3,8 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:p="http://primefaces.org/ui"
-    xmlns:pm="http://primefaces.org/mobile">
+    xmlns:pm="http://primefaces.org/mobile"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 <f:view renderKitId="PRIMEFACES_MOBILE" />
 	<ui:composition template="/templates/templateMobile.xhtml">
 		<ui:define name="content">
@@ -19,7 +20,7 @@
 				oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" update="second:frmContent2"/>
 			
 			<p:dataTable var="ocorrenciaProjeto" value="#{ocorrenciaProjetoBean.listOcorrenciaProjeto}" tableStyleClass="ui-table-columntoggle"
-				selectionMode="single"  rowKey="#{ocorrenciaProjeto.id}" paginator="true" rows="10" id="dtOcorrenciaProjeto">
+				selectionMode="single"  rowKey="#{ocorrenciaProjeto.id}" paginator="true" rows="10" id="dtOcorrenciaProjeto" rendered="false">
 				
 				<p:ajax event="swipeleft" listener="#{ocorrenciaProjetoBean.onRowSwipeLeft}" 
 					oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" update="second:frmContent2"/>
@@ -40,6 +41,18 @@
 					<h:outputText value="#{ocorrenciaProjeto.socioEmpresa.nome}"/>
 				</p:column>
 			</p:dataTable>
+			
+			<p:dataList var="ocorrenciaProjeto" value="#{ocorrenciaProjetoBean.listOcorrenciaProjeto}" paginator="true" rows="5" id="dtListOcorrenciaProjeto" 
+					pt:data-inset="true" pt:data-role="listview">
+				
+			    <p:commandLink oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" 
+			    	update="second:frmContent2" style="background:#EFEFEF !important;color:black">
+			    	<h2>#{ocorrenciaProjeto.diaCorridoProjeto.projeto.nome} - #{calendarToString.obterData(ocorrenciaProjeto.data)}</h2>
+				    <p><strong>#{ocorrenciaProjeto.creditoDebito.label} - #{uteis.formatDoubleDinheiro(ocorrenciaProjeto.valor)}</strong></p>
+				    <p>#{ocorrenciaProjeto.socioEmpresa.nome}</p>
+		            <f:setPropertyActionListener value="#{ocorrenciaProjeto}"  target="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect}" />
+		        </p:commandLink>
+			</p:dataList>
 			
 		</ui:define>
 		
@@ -77,8 +90,8 @@
 			        </p:selectOneMenu>
             </pm:field>	
             
-            <p:commandButton value="Salvar" actionListener="#{socioEmpresaBean.salvarSocioEmpresaMobile}" 
-            	update="@parent:messages" />
+            <p:commandButton value="Salvar" actionListener="#{ocorrenciaProjetoBean.salvarOcorrenciaProjeto}" 
+            	update="@parent:messages, first:frmContent:dtListOcorrenciaProjeto" />
 		
 		</ui:define>
 		

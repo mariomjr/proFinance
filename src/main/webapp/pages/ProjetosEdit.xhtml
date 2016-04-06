@@ -43,10 +43,10 @@
 					<h:outputLabel value="Nome do Projeto:" for="nomeProjeto"/>
 				</div>
 		
-				<div class="ui-grid-col-4">
+				<div class="ui-grid-col-2">
 					<p:inputText value="#{projetoBean.projetoSelect.nome}" style="width:87%" id="nomeProjeto"/>
 		        </div>
-				<div class="ui-grid-col-1">
+				<div class="ui-grid-col-2">
 					<h:outputLabel value="Data Inicial:" for="dataInicial"/>
 				</div>
 		
@@ -56,15 +56,16 @@
 	         			disabled="#{projetoBean.projetoSelect.id != null}"/>
 		        </div>
 		        
-				<div class="ui-grid-col-1">
-					<h:outputLabel value="Data Final:" for="dataFinal"/>
+		        <div class="ui-grid-col-2">
+					<h:outputLabel value="Tipo inicial:" for="srmTipo"/>
 				</div>
 		
 				<div class="ui-grid-col-2">
-					<p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevista}"
-	         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"
-	         			disabled="#{projetoBean.projetoSelect.id != null}"/>
+					<p:selectOneMenu id="srmTipo" value="#{projetoBean.projetoSelect.creditoDebito}" style="width:80%" disabled="#{projetoBean.projetoSelect.id != null}">
+			            <f:selectItems value="#{projetoBean.tipoItem}" />
+			        </p:selectOneMenu>
 		        </div>
+		        
 	        </div>
 	        
 	        <div class="ui-grid-row">
@@ -76,23 +77,26 @@
 					<p:inputText value="#{projetoBean.projetoSelect.juroMes}" style="width:87%" id="juroMes" converter="#{doubleConverter}"
 						disabled="#{projetoBean.projetoSelect.id != null}"/>
 		        </div>
+		        
 		        <div class="ui-grid-col-2">
-					<h:outputLabel value="Valor Inicial" for="vlrInicial"/>
+					<h:outputLabel value="Data Final:" for="dataFinal"/>
 				</div>
 		
 				<div class="ui-grid-col-2">
-					<p:inputText value="#{projetoBean.projetoSelect.valorInicial}" style="width:80%" id="vlrInicial" converter="#{doubleConverterDinheiro}"
+					<p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevista}"
+	         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"
+	         			disabled="#{projetoBean.projetoSelect.id != null}"/>
+		        </div>
+		        
+		        <div class="ui-grid-col-2">
+					<h:outputLabel value="Valor Inicial:" for="vlrInicial"/>
+				</div>
+		
+				<div class="ui-grid-col-2">
+					<p:inputText value="#{projetoBean.projetoSelect.valorInicial}" style="width:88%" id="vlrInicial" converter="#{doubleConverterDinheiro}"
 						disabled="#{projetoBean.projetoSelect.id != null}"/>
 		        </div>
-		        <div class="ui-grid-col-2">
-					<h:outputLabel value="Tipo" for="srmTipo"/>
-				</div>
-		
-				<div class="ui-grid-col-2">
-					<p:selectOneMenu id="srmTipo" value="#{projetoBean.projetoSelect.creditoDebito}" style="width:80%" disabled="#{projetoBean.projetoSelect.id != null}">
-			            <f:selectItems value="#{projetoBean.tipoItem}" />
-			        </p:selectOneMenu>
-		        </div>
+		        
 			</div>
 	        
 	        <div class="ui-grid-row">
@@ -108,7 +112,7 @@
 				onclick="PF('load').show()" oncomplete="PF('load').hide()" update="formGeral"/>
 			
 			 <p:dataTable var="diaCorrido" value="#{projetoBean.projetoSelect.listDiasCorridosProjeto}"
-			 	id="dtDiaCorrido">
+			 	id="dtDiaCorrido" rowIndexVar="rowIndex">
 		        <p:column style="width:16px">
 		            <p:rowToggler rendered="#{diaCorrido.listOcorrenciasProjeto.size() > 0}" />
 		        </p:column>
@@ -116,22 +120,25 @@
 		            <h:outputText value="#{calendarToString.obterData(diaCorrido.data)}" />
 		        </p:column>
 		        <p:column headerText="Juro/Mês" style="text-align:right" width="85">
-		            <h:outputText value="#{diaCorrido.juroMes}" converter="#{doubleConverter}"/>
+		            <h:outputText value="#{diaCorrido.juroMes}" converter="#{doubleConverter}" id="juroMes#{rowIndex}"/>
 		        </p:column>
 		        <p:column headerText="Taxa juro" style="text-align:right">
-		            <h:outputText value="#{diaCorrido.taxaJuro}" converter="#{doubleConverter}"/>
+		            <h:outputText value="#{diaCorrido.taxaJuro}" converter="#{doubleConverter}" id="taxaJuro#{rowIndex}" />
 		        </p:column>
 		        <p:column headerText="Fator diário" style="text-align:right">
-		            <h:outputText value="#{diaCorrido.fatorDiario}" converter="#{doubleConverter}"/>
+		            <h:outputText value="#{diaCorrido.fatorDiario}" converter="#{doubleConverter}" id="fatorDiario#{rowIndex}" />
 		        </p:column>
 		        <p:column headerText="Crédito" style="text-align:right">
-		            <h:outputText value="#{diaCorrido.valorCredito}" converter="#{doubleConverterDinheiro}" styleClass="greenTexto"/>
+		            <h:outputText value="#{diaCorrido.valorCredito}" converter="#{doubleConverterDinheiro}" styleClass="greenTexto"
+		            	id="valorCredito#{rowIndex}"/>
 		        </p:column>
 		        <p:column headerText="Débito" style="text-align:right">
-		            <h:outputText value="#{diaCorrido.valorDebito}" converter="#{doubleConverterDinheiro}" styleClass="redTexto"/>
+		            <h:outputText value="#{diaCorrido.valorDebito}" converter="#{doubleConverterDinheiro}" styleClass="redTexto"
+		            	id="valorDebito#{rowIndex}"/>
 		        </p:column>
 		        <p:column headerText="Saldo" style="text-align:right" >
-		            <h:outputText value="#{diaCorrido.valorSaldoTotal}" converter="#{doubleConverterDinheiro}" styleClass="#{diaCorrido.valorSaldoNegativo ?'redTexto':'greenTexto'}"/>
+		            <h:outputText value="#{diaCorrido.valorSaldoTotal}" converter="#{doubleConverterDinheiro}" styleClass="#{diaCorrido.valorSaldoNegativo ?'redTexto':'greenTexto'}"
+		            	id="valorSaldo#{rowIndex}"/>
 		        </p:column>
 		        <p:column style="width:26px">
 		        	<p:commandButton icon="ui-icon-plusthick" id="btnAdicionarOcorrencia" onclick="PF('load').show()" update="mdlOcorrencia"

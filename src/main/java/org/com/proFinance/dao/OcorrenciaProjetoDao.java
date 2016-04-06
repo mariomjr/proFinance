@@ -45,7 +45,9 @@ public class OcorrenciaProjetoDao {
 	private Criteria criarCriteriaListagem(Map<String, Object> filter, String sortField, String sortOrder) {
 
 		Session s = (Session) dao.getEntityManager().getDelegate();
-		Criteria criteria = s.createCriteria(OcorrenciaProjeto.class);
+		Criteria criteria = s.createCriteria(OcorrenciaProjeto.class, "ocorrenciaProjeto");
+//		criteria.createAlias("ocorrenciaProjeto.diaCorridoProjeto", "diaCorridoProjeto");
+//		criteria.createAlias("diaCorridoProjeto.projeto", "projeto");
 		
 		for (String atributo : filter.keySet()) {
 			Object filtro = filter.get(atributo);
@@ -63,14 +65,14 @@ public class OcorrenciaProjetoDao {
 			}
 		}
 		
-//		criteria.add(Restrictions.eq("ativo", SimNao.SIM));
+//		criteria.addOrder(Order.asc("ocorrenciaProjeto.data"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
 		return criteria;
 	}
 	
 	public List<OcorrenciaProjeto> getListOcorrenciaProjetoMobile(){
-		return listar(new HashMap<String, Object>(), null, "ASCENDING", 0, 1000);
+		return listar(new HashMap<String, Object>(), "data", "ASCENDING", 0, 1000);
 	}
 	
 	public DiaCorridoProjeto buscarDiaCorridoByProjetoAndData(Projeto projeto, Calendar data){

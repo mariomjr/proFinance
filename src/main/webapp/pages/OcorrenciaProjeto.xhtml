@@ -59,7 +59,7 @@
 		</p:panel>
 		
 		<p:dialog header="Ocorrência" widgetVar="ocorrenciaProjetoDialog" id="mdlOcorrenciaProjeto" modal="true" showEffect="fade" hideEffect="fade" resizable="true"
-			width="60%" closable="false">
+			width="50%" closable="false">
 			
 			<p:messages id="messagesMdlOcorrenciaProjeto" showDetail="true" autoUpdate="false" closable="true" />
 			
@@ -71,7 +71,7 @@
 						<h:outputLabel value="*" style="color:red" />
 					</div>
 			
-					<div class="ui-grid-col-6">
+					<div class="ui-grid-col-9">
 						<p:selectOneMenu id="srmProjeto" value="#{ocorrenciaProjetoBean.projetoSelect}" 
 							style="width:80%" converter="#{projetoConverter}">
 				            <f:selectItems value="#{ocorrenciaProjetoBean.listProjetoSelectItem}" />
@@ -85,7 +85,7 @@
 						<h:outputLabel value="*" style="color:red" />
 					</div>
 			
-					<div class="ui-grid-col-6">
+					<div class="ui-grid-col-9">
 						<p:calendar id="dataOcorrencia"  value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.data}"
 		         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"/>
 			        </div>
@@ -97,7 +97,7 @@
 						<h:outputLabel value="*" style="color:red" />
 					</div>
 			
-					<div class="ui-grid-col-6">
+					<div class="ui-grid-col-9">
 						<p:selectOneMenu id="srmTipoOcorrencia" value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.creditoDebito}" 
 							style="width:80%">
 				            <f:selectItems value="#{projetoBean.tipoItem}" />
@@ -111,8 +111,8 @@
 						<h:outputLabel value="*" style="color:red" />
 					</div>
 			
-					<div class="ui-grid-col-6">
-						<p:inputText value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.valor}" style="width:80%" 
+					<div class="ui-grid-col-9">
+						<p:inputText value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.valor}" style="width:83%" 
 							id="vlrOcorrencia" converter="#{doubleConverterDinheiro}"/>
 			        </div>
 		        </div>
@@ -121,7 +121,7 @@
 				 		<h:outputLabel value="Sócio/Empresa: " for="srmSocioEmpresa"/>
 				 		<h:outputLabel value="*" style="color:red" />
 				 	</div>
-				 	<div class="ui-grid-col-6">
+				 	<div class="ui-grid-col-9">
 				 		<p:selectOneMenu id="srmSocioEmpresa" value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.socioEmpresa}" 
 							style="width:80%" converter="#{socioEmpresaConverter}">
 				            <f:selectItems value="#{socioEmpresaBean.listSocioEmpresaItens}" />

@@ -20,7 +20,7 @@
 				oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" update="second:frmContent2"/>
 			
 			<p:dataTable var="socioEmpresa" value="#{socioEmpresaBean.listSocioEmpresa}" tableStyleClass="ui-table-columntoggle"
-				rowKey="#{socioEmpresa.id}" paginator="true" rows="5" id="dtSocioEmpresa"
+				rowKey="#{socioEmpresa.id}" paginator="true" rows="5" id="dtSocioEmpresa" rendered="false"
 					selection="#{socioEmpresaBean.socioEmpresaSelect}" selectionMode="single">
 				
 				<p:ajax event="swipeleft" listener="#{socioEmpresaBean.onRowSwipeLeft}" 
@@ -39,6 +39,18 @@
 					<h:outputText value="#{socioEmpresa.ativo.label}" />
 				</p:column>
 			</p:dataTable>
+			
+			<p:dataList var="socioEmpresa" value="#{socioEmpresaBean.listSocioEmpresa}" paginator="true" rows="5" id="dtListSocioEmpresa" pt:data-inset="true"
+					pt:data-role="listview">
+				
+			    <p:commandLink oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" 
+			    	update="second:frmContent2" style="background:#EFEFEF !important;color:black">
+			    	<h2>#{socioEmpresa.nome}</h2>
+				    <p>#{socioEmpresa.sigla}</p>
+				    <p>#{socioEmpresa.cpfCnpj}</p>
+		            <f:setPropertyActionListener value="#{socioEmpresa}"  target="#{socioEmpresaBean.socioEmpresaSelect}" />
+		        </p:commandLink>
+			</p:dataList>
 			
 		</ui:define>
 		
@@ -59,7 +71,7 @@
                 </p:inputText>
             </pm:field>	
             <p:commandButton value="Salvar" actionListener="#{socioEmpresaBean.salvarSocioEmpresaMobile}" 
-            	update="@parent:messages, first:frmContent:dtSocioEmpresa" />
+            	update="@parent:messages, first:frmContent:dtListSocioEmpresa" />
 		
 		</ui:define>
 		
