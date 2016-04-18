@@ -169,6 +169,25 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.3</version>
 		</dependency>
+		
+		<dependency>
+		   <groupId>org.apache.axis</groupId>
+		   <artifactId>axis</artifactId>
+		   <version>1.4</version>
+		   <scope>compile</scope>
+		</dependency>
+		<dependency>
+		   <groupId>org.apache.axis</groupId>
+		   <artifactId>axis-jaxrpc</artifactId>
+		   <version>1.4</version>
+		   <scope>compile</scope>
+		</dependency>
+		<dependency>
+		   <groupId>wsdl4j</groupId>
+		   <artifactId>wsdl4j</artifactId>
+		   <version>1.6.2</version>
+		   <scope>compile</scope>
+		</dependency>
 
     </dependencies>
     
@@ -199,6 +218,24 @@
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <version>${version.wildfly.maven.plugin}</version>
             </plugin>
+            
+            <plugin>
+			   <groupId>org.codehaus.mojo</groupId>
+			   <artifactId>axistools-maven-plugin</artifactId>
+			   <version>1.4</version>
+			   <executions>
+			       <execution>
+			           <goals>
+			               <goal>wsdl2java</goal>
+			           </goals>
+			       </execution>
+			   </executions>
+			   <configuration>
+			       <packageSpace>org.com.proFinance.wsBancoCentral</packageSpace>
+			       <sourceDirectory>src/main/resources/wsdl</sourceDirectory>
+			       <outputDirectory>target/generated-sources/wsdl2java</outputDirectory>
+			   </configuration>
+			</plugin>
             
         </plugins>
     </build>
