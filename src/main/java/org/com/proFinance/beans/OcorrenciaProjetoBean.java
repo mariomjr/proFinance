@@ -105,19 +105,19 @@ public class OcorrenciaProjetoBean  implements Serializable{
 				return false;
 			}else{
 				
-				if(getOcorrenciaProjetoSelect().getCreditoDebito().equals(EnumCreditoDebito.DEBITO)){
-					if(diaCorridoBusca.getValorDebito()!= null){
-						diaCorridoBusca.setValorDebito(diaCorridoBusca.getValorDebito()+(getOcorrenciaProjetoSelect().getValor()*(-1)));
-					}else{
-						diaCorridoBusca.setValorDebito(getOcorrenciaProjetoSelect().getValor()*(-1));
-					}
-				}else{
-					if(diaCorridoBusca.getValorCredito()!= null){
-						diaCorridoBusca.setValorCredito(diaCorridoBusca.getValorCredito()+getOcorrenciaProjetoSelect().getValor());
-					}else{
-						diaCorridoBusca.setValorCredito(getOcorrenciaProjetoSelect().getValor());
-					}
-				}
+//				if(getOcorrenciaProjetoSelect().getCreditoDebito().equals(EnumCreditoDebito.DEBITO)){
+//					if(diaCorridoBusca.getValorDebito()!= null){
+//						diaCorridoBusca.setValorDebito(diaCorridoBusca.getValorDebito()+(getOcorrenciaProjetoSelect().getValor()*(-1)));
+//					}else{
+//						diaCorridoBusca.setValorDebito(getOcorrenciaProjetoSelect().getValor()*(-1));
+//					}
+//				}else{
+//					if(diaCorridoBusca.getValorCredito()!= null){
+//						diaCorridoBusca.setValorCredito(diaCorridoBusca.getValorCredito()+getOcorrenciaProjetoSelect().getValor());
+//					}else{
+//						diaCorridoBusca.setValorCredito(getOcorrenciaProjetoSelect().getValor());
+//					}
+//				}
 				getOcorrenciaProjetoSelect().setDiaCorridoProjeto(diaCorridoBusca);
 				projetoDao.salvarDiaCorrrido(diaCorridoBusca);
 			}

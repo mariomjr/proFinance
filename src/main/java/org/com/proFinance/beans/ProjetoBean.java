@@ -136,19 +136,19 @@ public class ProjetoBean implements Serializable{
 		getOcorrenciaSelect().setDataInclusao(Calendar.getInstance());
 		getOcorrenciaSelect().setLoginUser(UtilUser.getUserLogado());
 		
-		if(getOcorrenciaSelect().getCreditoDebito().equals(EnumCreditoDebito.DEBITO)){
-			if(getDiaCorridoSelect().getValorDebito()!= null){
-				getDiaCorridoSelect().setValorDebito(getDiaCorridoSelect().getValorDebito()+(getOcorrenciaSelect().getValor()*(-1)));
-			}else{
-				getDiaCorridoSelect().setValorDebito(getOcorrenciaSelect().getValor()*(-1));
-			}
-		}else{
-			if(getDiaCorridoSelect().getValorCredito()!= null){
-				getDiaCorridoSelect().setValorCredito(getDiaCorridoSelect().getValorCredito()+getOcorrenciaSelect().getValor());
-			}else{
-				getDiaCorridoSelect().setValorCredito(getOcorrenciaSelect().getValor());
-			}
-		}
+//		if(getOcorrenciaSelect().getCreditoDebito().equals(EnumCreditoDebito.DEBITO)){
+//			if(getDiaCorridoSelect().getValorDebito()!= null){
+//				getDiaCorridoSelect().setValorDebito(getDiaCorridoSelect().getValorDebito()+(getOcorrenciaSelect().getValor()*(-1)));
+//			}else{
+//				getDiaCorridoSelect().setValorDebito(getOcorrenciaSelect().getValor()*(-1));
+//			}
+//		}else{
+//			if(getDiaCorridoSelect().getValorCredito()!= null){
+//				getDiaCorridoSelect().setValorCredito(getDiaCorridoSelect().getValorCredito()+getOcorrenciaSelect().getValor());
+//			}else{
+//				getDiaCorridoSelect().setValorCredito(getOcorrenciaSelect().getValor());
+//			}
+//		}
 		projetoService.recalcularProjeto(getProjetoSelect(), getDiaCorridoSelect());
 		
 		getDiaCorridoSelect().getListOcorrenciasProjeto().add(getOcorrenciaSelect());

@@ -7,12 +7,18 @@ import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.com.proFinance.entity.DiaCorridoProjeto;
 import org.com.proFinance.entity.Projeto;
 import org.com.proFinance.enuns.EnumCreditoDebito;
+import org.hibernate.validator.internal.engine.messageinterpolation.parser.EscapedState;
 
 public class ProjetoService {
 
+	@Inject
+	WsBancoCentroService wsBancoCentroService;
+	
 	public void gerarNovoInvestimento(Projeto projeto) {
 
 		double valor = projeto.getValorInicial();
@@ -26,14 +32,14 @@ public class ProjetoService {
 		diaCorridoProjeto.setTaxaJuro((projeto.getJuroMes() / 100) + 1);
 		diaCorridoProjeto.setFatorDiario(calculaFatorDiario(
 				diaCorridoProjeto.getTaxaJuro(), projeto.getDataInicial()));
-
-		if (projeto.getCreditoDebito() != null
-				&& projeto.getCreditoDebito().equals(EnumCreditoDebito.DEBITO)) {
-			valor = valor * (-1);
-			diaCorridoProjeto.setValorDebito(valor);
-		} else {
-			diaCorridoProjeto.setValorCredito(valor);
-		}
+		diaCorridoProjeto.setValorIndexador(wsBancoCentroService.getValorByCodigoAndData(139l, diaCorridoProjeto.getData()));
+//		if (projeto.getCreditoDebito() != null
+//				&& projeto.getCreditoDebito().equals(EnumCreditoDebito.DEBITO)) {
+//			valor = valor * (-1);
+//			diaCorridoProjeto.setValorDebito(valor);
+//		} else {
+//			diaCorridoProjeto.setValorCredito(valor);
+//		}
 
 		diaCorridoProjeto.setOrdem(ordem++);
 		projeto.getListDiasCorridosProjeto().add(diaCorridoProjeto);

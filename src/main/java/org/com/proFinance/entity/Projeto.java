@@ -12,6 +12,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
@@ -40,8 +42,9 @@ public class Projeto implements Serializable{
 	
 	private Double juroMes;
 	
-	@Transient
-	private Double indexador;
+	@ManyToOne
+	@JoinColumn(name = "indexador_id") 
+	private Indexador indexador;
 	
 	private Double valorInicial;
 	
@@ -100,11 +103,11 @@ public class Projeto implements Serializable{
 		this.juroMes = juroMes;
 	}
 
-	public Double getIndexador() {
+	public Indexador getIndexador() {
 		return indexador;
 	}
 
-	public void setIndexador(Double indexador) {
+	public void setIndexador(Indexador indexador) {
 		this.indexador = indexador;
 	}
 
