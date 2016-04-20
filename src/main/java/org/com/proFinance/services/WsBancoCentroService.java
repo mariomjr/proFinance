@@ -5,19 +5,19 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.apache.axis.AxisFault;
-import org.com.proFinance.wsBancoCentral.FachadaWSSGSSoapBindingStub;
-import org.com.proFinance.wsBancoCentral.FachadaWSSGS_PortType;
+import org.com.proFinance.wsBancoCentral.FachadaWSSGSService;
+import org.com.proFinance.wsBancoCentral.FachadaWSSGSServiceLocator;
 
 public class WsBancoCentroService {
 
 	
-	FachadaWSSGS_PortType wsBancoCentroService;
+	FachadaWSSGSService wsBancoCentroService;
 	
 	SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 			
 	public double getValorByCodigoAndData(Long idValor, Calendar data){
 		try{
-			BigDecimal vo = getWsBancoCentroService().getValor(idValor, formato.format(data.getTime()));
+			BigDecimal vo = getWsBancoCentroService().getFachadaWSSGS().getValor(idValor, formato.format(data.getTime()));
 			return vo.doubleValue();
 		}catch(Exception e){
 			e.printStackTrace();
@@ -26,9 +26,9 @@ public class WsBancoCentroService {
 		
 	}
 	
-	public FachadaWSSGS_PortType getWsBancoCentroService() throws AxisFault{
+	public FachadaWSSGSService getWsBancoCentroService() throws AxisFault{
 		if(wsBancoCentroService == null){
-			wsBancoCentroService = new FachadaWSSGSSoapBindingStub();
+			wsBancoCentroService = new FachadaWSSGSServiceLocator();
 		}
 		return wsBancoCentroService;
 	}

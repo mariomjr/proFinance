@@ -3,9 +3,13 @@ package org.com.proFinance.entity;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import org.com.proFinance.enuns.SimNao;
 
 @Entity
 public class Indexador implements Serializable{
@@ -21,7 +25,10 @@ public class Indexador implements Serializable{
 	
 	private String descricao;
 	
-	private String codigo;
+	private Long codigo;
+	
+	@Enumerated(EnumType.STRING)
+	private SimNao ativo;
 
 	public Long getId() {
 		return id;
@@ -39,12 +46,20 @@ public class Indexador implements Serializable{
 		this.descricao = descricao;
 	}
 
-	public String getCodigo() {
+	public Long getCodigo() {
 		return codigo;
 	}
 
-	public void setCodigo(String codigo) {
+	public void setCodigo(Long codigo) {
 		this.codigo = codigo;
+	}
+
+	public SimNao getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(SimNao ativo) {
+		this.ativo = ativo;
 	}
 
 	@Override

@@ -62,5 +62,13 @@ public class HomeBean implements Serializable{
 			exContext.redirect(exContext.getApplicationContextPath()+"/login.jsf");
 		}
 	}
+	
+	public void redirectIndexador() throws IOException{
+		if(UtilUser.isMobile()){
+			exContext.redirect(exContext.getApplicationContextPath()+"/mobile/Indexador.jsf");
+		}else{			
+			exContext.redirect(exContext.getApplicationContextPath()+"/pages/Indexador.jsf");
+		}
+	}
 
 }

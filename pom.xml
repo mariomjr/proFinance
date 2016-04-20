@@ -188,6 +188,12 @@
 		   <version>1.6.2</version>
 		   <scope>compile</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>commons-discovery</groupId>
+			<artifactId>commons-discovery</artifactId>
+			<version>0.5</version>
+		</dependency>
 
     </dependencies>
     

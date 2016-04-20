@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+<ui:composition template="/templates/template.xhtml">
+
+	<ui:define name="content">
+		
+		<p:toolbar>
+			<f:facet name="left">
+				<h:panelGrid columns="4">
+					<p:spacer width="10px"/>
+					<p:graphicImage value="/img/socios64.png"/>
+					<p:spacer width="10px"/>
+					<p:outputLabel value="Indexador" />
+				</h:panelGrid>
+			</f:facet>
+		</p:toolbar>
+			
+		<p:panel id="listagemIndexador">
+			
+			<p:commandButton value="Adicionar Indexador" icon="ui-icon-plus" update="mdlIndexador" resetValues="true"
+					actionListener="#{indexadorBean.limparIndexador}" id="btnAdicionarSocioEmpresa" 
+					oncomplete="PF('indexadorDialog').show()"/>
+			
+			<p:spacer height="30px"/>
+					
+			<p:dataTable var="indexador" value="#{indexadorBean.lazyIndexador}" paginator="true" rows="10" rowKey="#{indexador.id}"
+				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+				rowsPerPageTemplate="5,10,15" selectionMode="single" id="dtIndexador" lazy="true"
+				paginatorPosition="bottom" widgetVar="indexadorTable">
+
+				<p:ajax event="rowSelect" listener="#{indexadorBean.onRowSelect}" onstart="PF('load').show()"  global="false" 
+					update="mdlIndexador" oncomplete="PF('indexadorDialog').show();PF('load').hide()" process="@this" />
+
+				<p:column headerText="Descrição" sortBy="#{indexador.descricao}" filterBy="#{indexador.descricao}">
+					<h:outputText value="#{indexador.descricao}" />
+				</p:column>
+				<p:column headerText="Código" sortBy="#{indexador.codigo}" filterBy="#{indexador.codigo}">
+					<h:outputText value="#{indexador.codigo}" />
+				</p:column>
+				<p:column headerText="Ativo" >
+					<h:outputText value="#{indexador.ativo.label}" />
+				</p:column>
+			</p:dataTable>
+			
+			<p:blockUI block="dtIndexador" trigger="dtIndexador">
+				<p:graphicImage value="/img/loading.gif"/>
+		    </p:blockUI>
+		</p:panel>
+		
+		<p:dialog header="Indexador" widgetVar="indexadorDialog" id="mdlIndexador" modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+			width="50%">
+			
+			<p:messages id="messagesMdlIndexador" showDetail="true" autoUpdate="false" closable="true" />
+			
+			<p:panel id="pnIndexadorMdl">
+	    	 	<div class="ui-grid-row">
+	    	    	<div class="ui-grid-col-2">
+	    	    		<h:outputLabel for="itDescricao" value="Descrição :" />
+			    	 	<h:outputLabel value="*" style="color:red" />
+		    	 	</div>
+			    	<div class="ui-grid-col-9">
+			    	 	<p:inputText id="itDescricao" value="#{indexadorBean.indexadorSelect.descricao}" style="width:97%">
+			    	 	</p:inputText>
+		    	 	</div>
+	    	 	</div>
+	    	 	
+	    	 	<div class="ui-grid-row">
+			    	<div class="ui-grid-col-2">
+			    	 	<h:outputLabel for="itCodigo" value="Código :" />
+			    	 	<h:outputLabel value="*" style="color:red" />
+    	 			</div>
+			    	 <div class="ui-grid-col-9">
+			    	 	<p:inputText id="itCodigo" value="#{indexadorBean.indexadorSelect.codigo}" style="width:97%">
+			    	 	</p:inputText>
+		    	 	</div>
+	    	 	</div>
+    	 	</p:panel>
+			
+			<f:facet name="footer">
+				<div class="ui-grid-row">
+      					<div class="ui-grid-col-4" style="text-align:right">
+						<p:commandButton actionListener="#{indexadorBean.salvarIndexador}" 
+							value="Salvar" icon="ui-icon-disk" id="btnSalvarIndexador" update="dtIndexador"
+							onclick="PF('load').show()" oncomplete="PF('load').hide()" >
+							<p:confirm header="Confirmação" message="Deseja realmente salvar esse Indexador?" icon="ui-icon-alert"/>	
+						</p:commandButton>
+					</div>
+					<div class="ui-grid-col-4" style="text-align:center">
+						<p:commandButton value="Inativar" actionListener="#{indexadorBean.inativarIndexador}"
+							id="btnInativarIndexador" icon="ui-icon-trash" disabled ="#{socioEmpresaBean.socioEmpresaSelect.id==null?true:false}"
+							update="messages,dtIndexador" onclick="PF('load').show()"
+							oncomplete="PF('indexadorDialog').hide();PF('load').hide()" style="margin-left:10px;margin-right:10px">
+							<p:confirm header="Confirmação" message="Deseja realmente inativar esse Indexador?" icon="ui-icon-alert"/>
+						</p:commandButton>
+					</div>
+				    <div class="ui-grid-col-4" style="text-align:left">
+						<p:commandButton value="Cancelar" onclick="PF('indexadorDialog').hide()"
+							id="btnCancelar" icon="ui-icon-close">
+						</p:commandButton>
+					</div>
+				</div>
+			</f:facet>
+		</p:dialog>
+		
+	</ui:define>
+
+</ui:composition>
+
+</html>

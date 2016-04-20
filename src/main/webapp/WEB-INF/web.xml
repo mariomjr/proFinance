@@ -14,7 +14,11 @@
 	  <filter-name>PrimeFaces FileUpload Filter</filter-name>
 	  <servlet-name>Faces Servlet</servlet-name>
   </filter-mapping>
-  
+  <listener>
+	  <description>Incialização</description>
+	  <display-name>ListenerProFinance</display-name>
+	  <listener-class>org.com.proFinance.infra.ListenerProFinance</listener-class>
+  </listener>
   <filter>    
 	  <filter-name>proFinanceFilter</filter-name>    
 	  <filter-class>org.com.proFinance.infra.FilterProFinance</filter-class>    

@@ -19,7 +19,6 @@ import org.com.proFinance.dataModel.LazyOcorrenciaProjetoDataModel;
 import org.com.proFinance.entity.DiaCorridoProjeto;
 import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
-import org.com.proFinance.enuns.EnumCreditoDebito;
 import org.com.proFinance.infra.UtilUser;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;

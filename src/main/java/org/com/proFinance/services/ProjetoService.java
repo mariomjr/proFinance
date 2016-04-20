@@ -11,8 +11,6 @@ import javax.inject.Inject;
 
 import org.com.proFinance.entity.DiaCorridoProjeto;
 import org.com.proFinance.entity.Projeto;
-import org.com.proFinance.enuns.EnumCreditoDebito;
-import org.hibernate.validator.internal.engine.messageinterpolation.parser.EscapedState;
 
 public class ProjetoService {
 
@@ -32,7 +30,7 @@ public class ProjetoService {
 		diaCorridoProjeto.setTaxaJuro((projeto.getJuroMes() / 100) + 1);
 		diaCorridoProjeto.setFatorDiario(calculaFatorDiario(
 				diaCorridoProjeto.getTaxaJuro(), projeto.getDataInicial()));
-		diaCorridoProjeto.setValorIndexador(wsBancoCentroService.getValorByCodigoAndData(139l, diaCorridoProjeto.getData()));
+		diaCorridoProjeto.setValorIndexador(wsBancoCentroService.getValorByCodigoAndData(4391l, diaCorridoProjeto.getData()));
 //		if (projeto.getCreditoDebito() != null
 //				&& projeto.getCreditoDebito().equals(EnumCreditoDebito.DEBITO)) {
 //			valor = valor * (-1);
