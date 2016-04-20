@@ -51,14 +51,18 @@ public class DiaCorridoProjeto implements Serializable{
 	
 	private Double valorIndexador;
 	
-	@OneToMany(mappedBy = "diaCorridoProjeto", targetEntity= OcorrenciaSocioEmpresa.class, cascade=CascadeType.ALL)
-	private List<OcorrenciaSocioEmpresa> listOcorrenciasSocioEmpresa;
+	private Double valorDebito;
+	
+	private Double valorCredito;
 	
 	@Transient
 	private boolean valorSaldoNegativo;
 	
 	@Transient
 	private Double valorSaldoTotal;
+	
+	@Transient
+	private Double somaJuroMesIndexador;
 
 	public Long getId() {
 		return id;
@@ -82,17 +86,6 @@ public class DiaCorridoProjeto implements Serializable{
 
 	public void setValorSaldo(Double valorSaldo) {
 		this.valorSaldo = valorSaldo;
-	}
-
-	public List<OcorrenciaSocioEmpresa> getListOcorrenciasSocioEmpresa() {
-		if(listOcorrenciasSocioEmpresa == null){
-			listOcorrenciasSocioEmpresa = new ArrayList<OcorrenciaSocioEmpresa>();
-		}
-		return listOcorrenciasSocioEmpresa;
-	}
-
-	public void setListOcorrenciasSocioEmpresa(List<OcorrenciaSocioEmpresa> listOcorrenciasSocioEmpresa) {
-		this.listOcorrenciasSocioEmpresa = listOcorrenciasSocioEmpresa;
 	}
 
 	public Double getJuroMes() {
@@ -155,6 +148,30 @@ public class DiaCorridoProjeto implements Serializable{
 		this.valorIndexador = valorIndexador;
 	}
 
+	public Double getSomaJuroMesIndexador() {
+		return somaJuroMesIndexador;
+	}
+
+	public void setSomaJuroMesIndexador(Double somaJuroMesIndexador) {
+		this.somaJuroMesIndexador = somaJuroMesIndexador;
+	}
+
+	public Double getValorDebito() {
+		return valorDebito;
+	}
+
+	public void setValorDebito(Double valorDebito) {
+		this.valorDebito = valorDebito;
+	}
+
+	public Double getValorCredito() {
+		return valorCredito;
+	}
+
+	public void setValorCredito(Double valorCredito) {
+		this.valorCredito = valorCredito;
+	}
+
 	public boolean isValorSaldoNegativo() {
 		if(getValorSaldoTotal()<0){
 			return true;
@@ -169,12 +186,11 @@ public class DiaCorridoProjeto implements Serializable{
 
 	public Double getValorSaldoTotal() {
 		valorSaldoTotal = 0.0;
-		for(OcorrenciaSocioEmpresa ocorrenciaSocioEmpresa: getListOcorrenciasSocioEmpresa()){
-			if(ocorrenciaSocioEmpresa.getValorCredito() != null){
-				valorSaldoTotal = valorSaldoTotal + ocorrenciaSocioEmpresa.getValorCredito();
-			}if(ocorrenciaSocioEmpresa.getValorDebito()!= null){
-				valorSaldoTotal = valorSaldoTotal + ocorrenciaSocioEmpresa.getValorDebito();
-			}
+		if(getValorCredito()!= null){
+			valorSaldoTotal = valorSaldoTotal + getValorDebito();
+		}
+		if(getValorDebito()!= null){
+			valorSaldoTotal = valorSaldoTotal + getValorDebito();
 		}
 		if(getValorSaldo()!= null){
 			valorSaldoTotal = valorSaldoTotal + getValorSaldo();

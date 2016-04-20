@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.com.proFinance.entity.Indexador;
+import org.com.proFinance.enuns.SimNao;
 import org.com.proFinance.infra.GenericHibernateDao;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -45,7 +46,7 @@ public class IndexadorDao {
 		
 		for (String atributo : filter.keySet()) {
 			Object filtro = filter.get(atributo);
-			if (atributo.equals("id")) {
+			if (atributo.equals("id") || atributo.equals("codigo") ) {
 				criteria.add(Restrictions.eq(atributo, Long.valueOf((String) filtro)));
 			}else{ 
 				criteria.add(Restrictions.ilike(atributo, (String) filtro, MatchMode.ANYWHERE));
@@ -81,5 +82,14 @@ public class IndexadorDao {
 			s.update(indexador);
 		}
 		s.flush();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Indexador> getListIndexadorAtivos(){
+		Session s = (Session) dao.getEntityManager().getDelegate();
+		Criteria c = s.createCriteria(Indexador.class);
+		c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		c.add(Restrictions.eq("ativo", SimNao.SIM));
+		return c.list();
 	}
 }

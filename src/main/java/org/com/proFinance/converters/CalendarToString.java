@@ -129,7 +129,7 @@ public class CalendarToString implements Serializable {
 	 * @param data Date
 	 * @return dd/MM/yyyy HH:mm
 	 */
-	public static String obterDataEHora(Date data) {
+	public static String obterDataEHoraDate(Date data) {
 		if (data != null) {
 			SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 			return formato.format(data);

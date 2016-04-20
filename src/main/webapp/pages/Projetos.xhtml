@@ -22,8 +22,9 @@
 			
 		<p:panel id="listagemProjetos">
 			
-			<p:commandButton value="Adicionar Projeto" icon="ui-icon-plus" resetValues="true"
-					actionListener="#{projetoBean.novoProjeto}" id="btnAdicionarProjeto" onclick="PF('load').show()"/>
+			<p:commandButton value="Adicionar Projeto" icon="ui-icon-plus" resetValues="true" update="mdlProjeto"
+					actionListener="#{projetoBean.limparProjeto}" id="btnAdicionarProjeto" onclick="PF('load').show()"
+					oncomplete="PF('projetoDialog').show();PF('load').hide()"/>
 			
 			<p:spacer height="30px"/>
 					
@@ -49,6 +50,187 @@
 				<p:graphicImage value="/img/loading.gif"/>
 		    </p:blockUI>
 		</p:panel>
+		
+		<p:dialog header="Projeto" widgetVar="projetoDialog" id="mdlProjeto" modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+			width="60%" closable="false">
+			
+			<p:messages id="messagesMdlProjeto" showDetail="true" autoUpdate="false" closable="true" />
+			
+			<p:panel id="pnProjetoMdl">
+				<div class="ui-grid-row">
+					<div class="ui-grid-col-2">
+						<h:outputLabel value="Nome do Projeto:" for="nomeProjeto"/>
+					</div>
+		
+					<div class="ui-grid-col-6">
+						<p:inputText value="#{projetoBean.projetoSelect.nome}" style="width:87%" id="nomeProjeto"/>
+			        </div>
+		        </div>
+		        
+		        <div class="ui-grid-row">
+					<div class="ui-grid-col-2">
+						<h:outputLabel value="Data Inicial:" for="dataInicial"/>
+					</div>
+		
+					<div class="ui-grid-col-4">
+						<p:calendar id="dataInicial"  value="#{projetoBean.projetoSelect.dataInicial}"  
+		         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}"
+		         			disabled="#{projetoBean.projetoSelect.id != null}"/>
+			        </div>
+			        
+			        <div class="ui-grid-col-2">
+						<h:outputLabel value="Juro/Mês" for="juroMes"/>
+					</div>
+		
+					<div class="ui-grid-col-4">
+						<p:inputText value="#{projetoBean.projetoSelect.juroMes}" style="width:87%" id="juroMes" converter="#{doubleConverter}"
+							disabled="#{projetoBean.projetoSelect.id != null}"/>
+			        </div>
+		        
+	        	</div>
+	        
+	        	<div class="ui-grid-row">
+	        	
+	        		<div class="ui-grid-col-2">
+						<h:outputLabel value="Data Final:" for="dataFinal"/>
+					</div>
+		
+					<div class="ui-grid-col-4">
+						<p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevista}"
+		         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}"
+		         			disabled="#{projetoBean.projetoSelect.id != null}"/>
+			        </div>
+		        
+				 	<div class="ui-grid-col-2">
+				 		<h:outputLabel value="Indexador: " for="srmIndexador"/>
+				 	</div>
+
+				 	<div class="ui-grid-col-4">
+				 		<p:selectOneMenu id="srmIndexador" value="#{projetoBean.projetoSelect.indexador}" 
+							style="width:80%" converter="#{indexadorConverter}">
+							<f:selectItem noSelectionOption="true"/>
+				            <f:selectItems value="#{projetoBean.listIndexadorItens}" />
+				        </p:selectOneMenu>
+				 	</div>
+			 	</div>
+			 	
+			 	<p:panel header="Sócios envolvidos">
+			 		
+				 	<p:commandButton value="Adicionar" icon="ui-icon-plus" resetValues="true" update="mdlOcorrenciaProjeto"
+						actionListener="#{projetoBean.limparOcorrencia}" id="btnAdicionarOcorrenciaProjeto" onclick="PF('load').show()"
+						oncomplete="PF('ocorrenciaProjetoDialog').show();PF('load').hide()"/>
+						
+				 	<p:dataTable var="ocorrenciaProjeto" value="#{projetoBean.projetoSelect.listOcorrenciasProjeto}" paginator="true" rows="5" 
+				 		rowKey="#{ocorrenciaProjeto.id}" rowIndexVar="rowVar"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+						rowsPerPageTemplate="5" id="dtOcorrenciaProjeto"
+						paginatorPosition="bottom" widgetVar="ocorrenciaProjetoTable">
+				 	
+				 		<p:column headerText="Sócio/Empresa">
+							<h:outputText value="#{ocorrenciaProjeto.socioEmpresa.nome}" />
+						</p:column>
+						
+						<p:column headerText="Tipo">
+							<h:outputText value="#{ocorrenciaProjeto.creditoDebito.label}" />
+						</p:column>
+						
+						<p:column headerText="Valor">
+							<h:outputText value="#{ocorrenciaProjeto.valor}" converter="#{doubleConverterDinheiro}"/>
+						</p:column>
+						
+						<p:column headerText="Excluir" width="5%" style="text-align:center">
+							<p:commandButton style="width:100%"
+									update="dtOcorrenciaProjeto" icon="ui-icon-trash">
+									<f:setPropertyActionListener value="#{rowVar}" target="#{projetoBean.removerOcorrenciaProjeto}" />
+									<p:confirm header="Confirmação" message="Deseja realmente remover esse valor?" icon="ui-icon-alert"/>
+								</p:commandButton>
+						</p:column>
+				 		
+				 	</p:dataTable>
+			 	</p:panel>
+			 	
+    	 	</p:panel>
+			
+			<f:facet name="footer">
+				<div class="ui-grid-row">
+      					<div class="ui-grid-col-6" style="text-align:center">
+						<p:commandButton actionListener="#{projetoBean.gerarPlanilha}" 
+							value="Gerar planilha" icon="ui-icon-disk" id="btnSalvarSocioEmpresa"
+							onclick="PF('load').show()" oncomplete="PF('load').hide()" >
+							<p:confirm header="Confirmação" message="Deseja realmente gerar a planilha?" icon="ui-icon-alert"/>	
+						</p:commandButton>
+					</div>
+				    <div class="ui-grid-col-6" style="text-align:center">
+						<p:commandButton value="Cancelar" onclick="PF('projetoDialog').hide()"
+							id="btnCancelar" icon="ui-icon-close">
+						</p:commandButton>
+					</div>
+				</div>
+			</f:facet>
+		</p:dialog>
+		
+		<p:dialog header="Sócio valores" widgetVar="ocorrenciaProjetoDialog" id="mdlOcorrenciaProjeto" modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+			width="40%" closable="false">
+			
+			<p:messages id="messagesMdlOcorrenciaProjeto" showDetail="true" autoUpdate="false" closable="true" />
+			
+			<div class="ui-grid-row">
+			 	<div class="ui-grid-col-4">
+			 		<h:outputLabel value="Sócio/Empresa: " for="srmSocioEmpresa"/>
+			 	</div>
+			 	<div class="ui-grid-col-6">
+			 		<p:selectOneMenu id="srmSocioEmpresa" value="#{projetoBean.ocorrenciaSelect.socioEmpresa}" 
+						style="width:80%" converter="#{socioEmpresaConverter}">
+			            <f:selectItems value="#{socioEmpresaBean.listSocioEmpresaItens}" />
+			        </p:selectOneMenu>
+			 	</div>
+		 	</div>
+		 	
+		 	<div class="ui-grid-row">
+		        <div class="ui-grid-col-4">
+					<h:outputLabel value="Tipo: " for="srmTipoOcorrencia"/>
+				</div>
+		
+				<div class="ui-grid-col-6">
+					<p:selectOneMenu id="srmTipoOcorrencia" value="#{projetoBean.ocorrenciaSelect.creditoDebito}" style="width:80%">
+			            <f:selectItems value="#{projetoBean.tipoItem}"/>
+			        </p:selectOneMenu>
+		        </div>
+			</div>
+			
+			 <div class="ui-grid-row">
+			 	<div class="ui-grid-col-4">
+					<h:outputLabel value="Valor: " for="vlrOcorrencia"/>
+				</div>
+		
+				<div class="ui-grid-col-6">
+					<p:inputText value="#{projetoBean.ocorrenciaSelect.valor}" style="width:87%" id="vlrOcorrencia" 
+						converter="#{doubleConverterDinheiro}"/>
+		        </div>
+	        </div>
+			
+			<f:facet name="footer">
+				<div class="ui-grid-row">
+      					<div class="ui-grid-col-6" style="text-align:center">
+						<p:commandButton actionListener="#{projetoBean.adicionarOcorrenciaProjeto}" 
+							value="Adicionar" icon="ui-icon-disk" id="btnAdicionarOcorrencia" update="dtOcorrenciaProjeto"
+							onclick="PF('load').show()" oncomplete="PF('load').hide()" >
+							<p:confirm header="Confirmação" message="Deseja realmente adicionar esse valor?" icon="ui-icon-alert"/>	
+						</p:commandButton>
+					</div>
+				    <div class="ui-grid-col-6" style="text-align:center">
+						<p:commandButton value="Cancelar" onclick="PF('ocorrenciaProjetoDialog').hide()"
+							id="btnCancelarOcorrencia" icon="ui-icon-close">
+						</p:commandButton>
+					</div>
+				</div>
+			</f:facet>
+			
+			<script >
+				$("[id*='vlrOcorrencia']").mask('#.##0,00', {reverse: true});
+			</script>
+			
+		</p:dialog>
 
 	</ui:define>
 

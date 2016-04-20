@@ -7,8 +7,6 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -46,10 +44,12 @@ public class Projeto implements Serializable{
 	@JoinColumn(name = "indexador_id") 
 	private Indexador indexador;
 	
+	@OneToMany(mappedBy = "projeto", targetEntity= OcorrenciaProjeto.class, cascade=CascadeType.ALL)
+	private List<OcorrenciaProjeto> listOcorrenciasProjeto;
+	
+	@Transient
 	private Double valorInicial;
 	
-	@Enumerated(EnumType.STRING)
-	private EnumCreditoDebito creditoDebito;
 
 	public Long getId() {
 		return id;
@@ -112,6 +112,14 @@ public class Projeto implements Serializable{
 	}
 
 	public Double getValorInicial() {
+		valorInicial = 0.0;
+		for(OcorrenciaProjeto ocorrencia : getListOcorrenciasProjeto()){
+			if(ocorrencia.getCreditoDebito()!= null && ocorrencia.getCreditoDebito().equals(EnumCreditoDebito.DEBITO)){
+				valorInicial += (ocorrencia.getValor()*(-1));
+			}else{
+				valorInicial += ocorrencia.getValor();
+			}
+		}
 		return valorInicial;
 	}
 
@@ -119,12 +127,15 @@ public class Projeto implements Serializable{
 		this.valorInicial = valorInicial;
 	}
 
-	public EnumCreditoDebito getCreditoDebito() {
-		return creditoDebito;
+	public List<OcorrenciaProjeto> getListOcorrenciasProjeto() {
+		if(listOcorrenciasProjeto == null){
+			listOcorrenciasProjeto = new ArrayList<OcorrenciaProjeto>();
+		}
+		return listOcorrenciasProjeto;
 	}
 
-	public void setCreditoDebito(EnumCreditoDebito creditoDebito) {
-		this.creditoDebito = creditoDebito;
+	public void setListOcorrenciasProjeto(List<OcorrenciaProjeto> listOcorrenciasProjeto) {
+		this.listOcorrenciasProjeto = listOcorrenciasProjeto;
 	}
 
 	@Override

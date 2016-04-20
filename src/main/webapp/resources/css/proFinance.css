@@ -29,8 +29,8 @@ body{
 .btnProjetos {
 	background-image: url(#{request.contextPath}/img/projetos200.png) !important;
 }
-.btnPlanilhas {
-	background-image: url(#{request.contextPath}/img/planilhas200.png) !important;
+.btnSimulacoes {
+	background-image: url(#{request.contextPath}/img/simulacoes200.png) !important;
 }
 
 .redTexto{

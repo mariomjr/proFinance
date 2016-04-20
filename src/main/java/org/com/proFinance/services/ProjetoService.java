@@ -10,7 +10,12 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.com.proFinance.entity.DiaCorridoProjeto;
+import org.com.proFinance.entity.Indexador;
+import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
+import org.com.proFinance.enuns.EnumCreditoDebito;
+import org.com.proFinance.wsBancoCentral.WSSerieVO;
+import org.com.proFinance.wsBancoCentral.WSValorSerieVO;
 
 public class ProjetoService {
 
@@ -21,23 +26,22 @@ public class ProjetoService {
 
 		double valor = projeto.getValorInicial();
 		int ordem = 0;
+		WSSerieVO wsSerieVo = null;
+		
+		if(projeto.getIndexador()!= null){
+			wsSerieVo = buscaValoresWebServiceIndicador(projeto.getIndexador(),projeto.getDataInicial(),projeto.getDataFinalPrevista());
+		}
+		
 		DiaCorridoProjeto diaCorridoProjeto = null;
 
 		diaCorridoProjeto = new DiaCorridoProjeto();
 		diaCorridoProjeto.setProjeto(projeto);
 		diaCorridoProjeto.setData(projeto.getDataInicial());
-		diaCorridoProjeto.setJuroMes(projeto.getJuroMes());
-		diaCorridoProjeto.setTaxaJuro((projeto.getJuroMes() / 100) + 1);
+		trataJuroMesIndexador(projeto, diaCorridoProjeto, wsSerieVo);
+		insereOcorrenciaProjeto(projeto, diaCorridoProjeto);
+		diaCorridoProjeto.setTaxaJuro((diaCorridoProjeto.getSomaJuroMesIndexador() / 100) + 1);
 		diaCorridoProjeto.setFatorDiario(calculaFatorDiario(
 				diaCorridoProjeto.getTaxaJuro(), projeto.getDataInicial()));
-		diaCorridoProjeto.setValorIndexador(wsBancoCentroService.getValorByCodigoAndData(4391l, diaCorridoProjeto.getData()));
-//		if (projeto.getCreditoDebito() != null
-//				&& projeto.getCreditoDebito().equals(EnumCreditoDebito.DEBITO)) {
-//			valor = valor * (-1);
-//			diaCorridoProjeto.setValorDebito(valor);
-//		} else {
-//			diaCorridoProjeto.setValorCredito(valor);
-//		}
 
 		diaCorridoProjeto.setOrdem(ordem++);
 		projeto.getListDiasCorridosProjeto().add(diaCorridoProjeto);
@@ -47,8 +51,8 @@ public class ProjetoService {
 			diaCorridoProjeto = new DiaCorridoProjeto();
 			diaCorridoProjeto.setProjeto(projeto);
 			diaCorridoProjeto.setData(data);
-			diaCorridoProjeto.setJuroMes(projeto.getJuroMes());
-			diaCorridoProjeto.setTaxaJuro((projeto.getJuroMes() / 100) + 1);
+			trataJuroMesIndexador(projeto, diaCorridoProjeto, wsSerieVo);
+			diaCorridoProjeto.setTaxaJuro((diaCorridoProjeto.getSomaJuroMesIndexador() / 100) + 1);
 			diaCorridoProjeto.setFatorDiario(calculaFatorDiario(
 					diaCorridoProjeto.getTaxaJuro(), data));
 			diaCorridoProjeto.setOrdem(ordem++);
@@ -60,6 +64,49 @@ public class ProjetoService {
 
 		}
 
+	}
+
+	private void insereOcorrenciaProjeto(Projeto projeto, DiaCorridoProjeto diaCorridoProjeto) {
+		for(OcorrenciaProjeto ocorrencia : projeto.getListOcorrenciasProjeto()){
+			ocorrencia.setDiaCorridoProjeto(diaCorridoProjeto);
+			ocorrencia.setData(diaCorridoProjeto.getData());
+			adicionaDebitoCredito(ocorrencia, diaCorridoProjeto);
+			diaCorridoProjeto.getListOcorrenciasProjeto().add(ocorrencia);
+		}
+		
+	}
+
+	private void trataJuroMesIndexador(Projeto projeto, DiaCorridoProjeto diaCorridoProjeto, WSSerieVO wsSerieVo) {
+		Double valor = 0.0;
+		
+		if(projeto.getJuroMes()>0){
+			diaCorridoProjeto.setJuroMes(projeto.getJuroMes());
+			valor += projeto.getJuroMes();
+		}
+		if(projeto.getIndexador()!= null){
+			diaCorridoProjeto.setValorIndexador(valorIndexador(wsSerieVo.getValores(), diaCorridoProjeto.getData().get(Calendar.MONTH)+1, 
+					diaCorridoProjeto.getData().get(Calendar.YEAR)));
+			valor += diaCorridoProjeto.getValorIndexador();
+		}
+		
+		diaCorridoProjeto.setSomaJuroMesIndexador(valor);
+	}
+	
+	private WSSerieVO buscaValoresWebServiceIndicador(Indexador indexador, Calendar dataInicial, Calendar dataFinal){
+		return wsBancoCentroService.getValorByCodigoAndDataInicialFinal(indexador.getCodigo(), dataInicial, dataFinal);
+		
+	}
+	
+	public double valorIndexador(WSValorSerieVO[] arrayValorSeries, Integer mes, Integer ano){
+		
+		for(WSValorSerieVO valorSerieVO : arrayValorSeries){
+			if(mes.intValue() == Integer.valueOf(valorSerieVO.getMes()).intValue()
+					&& ano.intValue() == Integer.valueOf(valorSerieVO.getAno()).intValue()){
+				return valorSerieVO.getValor().doubleValue();
+			}
+		}
+		
+		return 0.0;
 	}
 
 	private List<Calendar> listDataDiaCorrido(Calendar dataInicial,
@@ -137,6 +184,22 @@ public class ProjetoService {
 			}
 		}
 		
+	}
+	
+	public void adicionaDebitoCredito(OcorrenciaProjeto ocorrencia, DiaCorridoProjeto diaCorridoProjeto){
+		if(ocorrencia.getCreditoDebito().equals(EnumCreditoDebito.DEBITO)){
+			if(diaCorridoProjeto.getValorDebito()!= null){
+				diaCorridoProjeto.setValorDebito(diaCorridoProjeto.getValorDebito()+(ocorrencia.getValor()*(-1)));
+			}else{
+				diaCorridoProjeto.setValorDebito(ocorrencia.getValor()*(-1));
+			}
+		}else{
+			if(diaCorridoProjeto.getValorCredito()!= null){
+				diaCorridoProjeto.setValorCredito(diaCorridoProjeto.getValorCredito()+ocorrencia.getValor());
+			}else{
+				diaCorridoProjeto.setValorCredito(ocorrencia.getValor());
+			}
+		}
 	}
 
 	public void ordenarListaProjeto(List<DiaCorridoProjeto> listDiasCorridosProjeto) {

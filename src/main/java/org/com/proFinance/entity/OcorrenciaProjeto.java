@@ -43,6 +43,10 @@ public class OcorrenciaProjeto implements Serializable{
 	private DiaCorridoProjeto diaCorridoProjeto;
 	
 	@ManyToOne
+	@JoinColumn(name = "projeto_id") 
+	private Projeto projeto;
+	
+	@ManyToOne
 	@JoinColumn(name = "socioEmpresa_id") 
 	private SocioEmpresa socioEmpresa;
 	
@@ -51,6 +55,8 @@ public class OcorrenciaProjeto implements Serializable{
 	private LoginUser loginUser;
 	
 	private String descricao;
+	
+	private Boolean mostrarOcorrencia;
 
 	public Long getId() {
 		return id;
@@ -122,6 +128,22 @@ public class OcorrenciaProjeto implements Serializable{
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	public Boolean getMostrarOcorrencia() {
+		return mostrarOcorrencia;
+	}
+
+	public void setMostrarOcorrencia(Boolean mostrarOcorrencia) {
+		this.mostrarOcorrencia = mostrarOcorrencia;
+	}
+
+	public Projeto getProjeto() {
+		return projeto;
+	}
+
+	public void setProjeto(Projeto projeto) {
+		this.projeto = projeto;
 	}
 
 	@Override

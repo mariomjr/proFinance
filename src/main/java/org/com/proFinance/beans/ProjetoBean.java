@@ -14,10 +14,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 
+import org.com.proFinance.dao.IndexadorDao;
 import org.com.proFinance.dao.ProjetoDao;
 import org.com.proFinance.dao.SocioEmpresaDao;
 import org.com.proFinance.dataModel.LazyProjetoDataModel;
 import org.com.proFinance.entity.DiaCorridoProjeto;
+import org.com.proFinance.entity.Indexador;
 import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
 import org.com.proFinance.enuns.EnumCreditoDebito;
@@ -47,6 +49,9 @@ public class ProjetoBean implements Serializable{
 	@Inject
 	SocioEmpresaDao socioEmpresaDao;
 	
+	@Inject
+	IndexadorDao indexadorDao;
+	
 	private Projeto projetoSelect;
 	
 	private OcorrenciaProjeto ocorrenciaSelect;
@@ -54,9 +59,12 @@ public class ProjetoBean implements Serializable{
 	private DiaCorridoProjeto diaCorridoSelect;
 	
 	private LazyDataModel<Projeto> lazyProjeto;
+	
+	private List<SelectItem> listIndexadorItens;
 
 	@PostConstruct
 	public void init(){
+		atualizarListIndexadores();
 		lazyProjeto = new LazyProjetoDataModel(projetoDao);
 	}
 	
@@ -83,11 +91,6 @@ public class ProjetoBean implements Serializable{
 		}
 		return true;
 	}
-
-	public void novoProjeto() throws IOException{
-		setProjetoSelect(new Projeto());
-		redirecionarTelaEdit();
-	}
 	
 	public void redirecionarTelaEdit() throws IOException{
 		FacesContext.getCurrentInstance().getExternalContext().redirect("ProjetosEdit.jsf");
@@ -96,11 +99,14 @@ public class ProjetoBean implements Serializable{
 		FacesContext.getCurrentInstance().getExternalContext().redirect("Projetos.jsf");
 	}
 	
-	public void gerarPlanilha(){
+	public void gerarPlanilha() throws IOException{
 		
 		if(validaDadosPlanilha()){
 			getProjetoSelect().setListDiasCorridosProjeto(new ArrayList<DiaCorridoProjeto>());
 			projetoService.gerarNovoInvestimento(getProjetoSelect());
+			redirecionarTelaEdit();
+		}else{
+			RequestContext.getCurrentInstance().update("messagesMdlProjeto");
 		}
 		
 	}
@@ -115,9 +121,6 @@ public class ProjetoBean implements Serializable{
 		}else if(getProjetoSelect().getDataInicial().after(getProjetoSelect().getDataFinalPrevista())){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "Data inicial maior que data final!"));
 			return false;
-		}else if(getProjetoSelect().getJuroMes()== null){
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Juro/Mês é obrigatório!"));
-			return false;
 		}
 		return true;
 	}
@@ -125,33 +128,72 @@ public class ProjetoBean implements Serializable{
 	public List<SelectItem> getTipoItem(){
 		return UtilSelectItem.getListEnum(EnumCreditoDebito.values());
 	}
-
-	public void limparOcorrencia(){
-		setOcorrenciaSelect(new OcorrenciaProjeto());
-	}
 	
 	public void adicionarOcorrenciaDiaCorrido(){
+		
 		getOcorrenciaSelect().setDiaCorridoProjeto(getDiaCorridoSelect());
 		getOcorrenciaSelect().setData(getDiaCorridoSelect().getData());
 		getOcorrenciaSelect().setDataInclusao(Calendar.getInstance());
 		getOcorrenciaSelect().setLoginUser(UtilUser.getUserLogado());
+		getOcorrenciaSelect().setMostrarOcorrencia(true);
 		
-//		if(getOcorrenciaSelect().getCreditoDebito().equals(EnumCreditoDebito.DEBITO)){
-//			if(getDiaCorridoSelect().getValorDebito()!= null){
-//				getDiaCorridoSelect().setValorDebito(getDiaCorridoSelect().getValorDebito()+(getOcorrenciaSelect().getValor()*(-1)));
-//			}else{
-//				getDiaCorridoSelect().setValorDebito(getOcorrenciaSelect().getValor()*(-1));
-//			}
-//		}else{
-//			if(getDiaCorridoSelect().getValorCredito()!= null){
-//				getDiaCorridoSelect().setValorCredito(getDiaCorridoSelect().getValorCredito()+getOcorrenciaSelect().getValor());
-//			}else{
-//				getDiaCorridoSelect().setValorCredito(getOcorrenciaSelect().getValor());
-//			}
-//		}
+		projetoService.adicionaDebitoCredito(getOcorrenciaSelect(), getDiaCorridoSelect());
+		
 		projetoService.recalcularProjeto(getProjetoSelect(), getDiaCorridoSelect());
 		
 		getDiaCorridoSelect().getListOcorrenciasProjeto().add(getOcorrenciaSelect());
+	}
+	
+	public void adicionarOcorrenciaProjeto(){
+		
+		if(validarOcorrenciaProjeto()){
+			getOcorrenciaSelect().setProjeto(getProjetoSelect());
+			getOcorrenciaSelect().setMostrarOcorrencia(false);
+			getOcorrenciaSelect().setDataInclusao(Calendar.getInstance());
+			getOcorrenciaSelect().setLoginUser(UtilUser.getUserLogado());
+			getProjetoSelect().getListOcorrenciasProjeto().add(getOcorrenciaSelect());
+			
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Valores adicionado!"));
+			RequestContext.getCurrentInstance().execute("PF('ocorrenciaProjetoDialog').hide();");
+			limparOcorrencia();
+		}else{
+			RequestContext.getCurrentInstance().update("messagesMdlOcorrenciaProjeto");
+		}
+	}
+	
+	private boolean validarOcorrenciaProjeto() {
+		if(getOcorrenciaSelect().getSocioEmpresa()== null){
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Sócio/Empresa é obrigatório!"));
+			return false;
+		}else if(getOcorrenciaSelect().getCreditoDebito() == null){
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Tipo é obrigatório!"));
+			return false;
+		}else if(getOcorrenciaSelect().getValor()<=0){
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Valor é obrigatório!"));
+			return false;
+		}
+		return true;
+	}
+
+	public void setRemoverOcorrenciaProjeto(Integer index){
+		getProjetoSelect().getListOcorrenciasProjeto().remove(index.intValue());
+	}
+	
+	
+	public void atualizarListIndexadores(){
+		listIndexadorItens = new ArrayList<SelectItem>();
+		for(Indexador indexador : indexadorDao.getListIndexadorAtivos()){
+			listIndexadorItens.add(new SelectItem(indexador, indexador.getDescricao()));
+		}
+	}
+	
+	public void limparProjeto(){
+		setProjetoSelect(new Projeto());
+	}
+	
+	public void limparOcorrencia(){
+		setOcorrenciaSelect(new OcorrenciaProjeto());
 	}
 	
 	public Projeto getProjetoSelect() {
@@ -193,6 +235,10 @@ public class ProjetoBean implements Serializable{
 
 	public void setDiaCorridoSelect(DiaCorridoProjeto diaCorridoSelect) {
 		this.diaCorridoSelect = diaCorridoSelect;
+	}
+
+	public List<SelectItem> getListIndexadorItens() {
+		return listIndexadorItens;
 	}
 
 }
