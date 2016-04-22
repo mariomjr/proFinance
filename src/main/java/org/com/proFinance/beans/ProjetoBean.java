@@ -60,16 +60,28 @@ public class ProjetoBean implements Serializable{
 	
 	private LazyDataModel<Projeto> lazyProjeto;
 	
+	private List<Projeto> listProjetoMobile;
+	
 	private List<SelectItem> listIndexadorItens;
 
 	@PostConstruct
 	public void init(){
 		atualizarListIndexadores();
-		lazyProjeto = new LazyProjetoDataModel(projetoDao);
+		if(UtilUser.isMobile()){
+			listProjetoMobile = projetoDao.getListProjetosMobile();
+		}else{
+			lazyProjeto = new LazyProjetoDataModel(projetoDao);
+		}
 	}
 	
 	public void onRowSelect(SelectEvent event) throws IOException {
 		projetoSelect = projetoDao.loadProjetoById(((Projeto)event.getObject()).getId());
+		projetoService.recalcularProjeto(getProjetoSelect());
+		redirecionarTelaEdit();
+	}
+	
+	public void onRowSelectMobile() throws IOException{
+		projetoSelect = projetoDao.loadProjetoById(getProjetoSelect().getId());
 		projetoService.recalcularProjeto(getProjetoSelect());
 		redirecionarTelaEdit();
 	}
@@ -99,14 +111,19 @@ public class ProjetoBean implements Serializable{
 		FacesContext.getCurrentInstance().getExternalContext().redirect("Projetos.jsf");
 	}
 	
+	
 	public void gerarPlanilha() throws IOException{
 		
 		if(validaDadosPlanilha()){
 			getProjetoSelect().setListDiasCorridosProjeto(new ArrayList<DiaCorridoProjeto>());
-			projetoService.gerarNovoInvestimento(getProjetoSelect());
+			projetoService.gerarNovoInvestimento(getProjetoSelect(), false);
 			redirecionarTelaEdit();
 		}else{
-			RequestContext.getCurrentInstance().update("messagesMdlProjeto");
+			if(UtilUser.isMobile()){
+				RequestContext.getCurrentInstance().update("messages");
+			}else{
+				RequestContext.getCurrentInstance().update("messagesMdlProjeto");
+			}
 		}
 		
 	}
@@ -120,6 +137,12 @@ public class ProjetoBean implements Serializable{
 			return false;
 		}else if(getProjetoSelect().getDataInicial().after(getProjetoSelect().getDataFinalPrevista())){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "Data inicial maior que data final!"));
+			return false;
+		}else if(getProjetoSelect().getJuroMes()<=0 && getProjetoSelect().getIndexador() == null){
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "É necessário inserir juros por mês ou um indexador!"));
+			return false;
+		}else if(getProjetoSelect().getListOcorrenciasProjeto().isEmpty()){
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "É necessário inserir pelo menos um sócio envolvido!"));
 			return false;
 		}
 		return true;
@@ -239,6 +262,14 @@ public class ProjetoBean implements Serializable{
 
 	public List<SelectItem> getListIndexadorItens() {
 		return listIndexadorItens;
+	}
+
+	public List<Projeto> getListProjetoMobile() {
+		return listProjetoMobile;
+	}
+
+	public void setListProjetoMobile(List<Projeto> listProjetoMobile) {
+		this.listProjetoMobile = listProjetoMobile;
 	}
 
 }

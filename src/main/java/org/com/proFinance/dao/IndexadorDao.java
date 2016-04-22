@@ -1,5 +1,6 @@
 package org.com.proFinance.dao;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,6 +83,10 @@ public class IndexadorDao {
 			s.update(indexador);
 		}
 		s.flush();
+	}
+	
+	public List<Indexador> getListIndexadorMobile(){
+		return listar(new HashMap<String, Object>(), null, "ASCENDING", 0, 1000);
 	}
 	
 	@SuppressWarnings("unchecked")

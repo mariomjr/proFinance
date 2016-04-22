@@ -22,9 +22,8 @@ public class ProjetoService {
 	@Inject
 	WsBancoCentroService wsBancoCentroService;
 	
-	public void gerarNovoInvestimento(Projeto projeto) {
-
-		double valor = projeto.getValorInicial();
+	public void gerarNovoInvestimento(Projeto projeto, boolean isSimulacao) {
+		
 		int ordem = 0;
 		WSSerieVO wsSerieVo = null;
 		
@@ -44,6 +43,15 @@ public class ProjetoService {
 				diaCorridoProjeto.getTaxaJuro(), projeto.getDataInicial()));
 
 		diaCorridoProjeto.setOrdem(ordem++);
+		
+		double valor = 0.0;
+		if(isSimulacao){
+			valor = projeto.getValorSimulador();
+			diaCorridoProjeto.setValorSaldo(valor);
+		}else{
+			valor = projeto.getValorInicial();
+		}
+		
 		projeto.getListDiasCorridosProjeto().add(diaCorridoProjeto);
 
 		for (Calendar data : listDataDiaCorrido(projeto.getDataInicial(),

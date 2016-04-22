@@ -44,7 +44,11 @@ public class HomeBean implements Serializable{
 	}
 	
 	public void redirectProjetos() throws IOException{
-		exContext.redirect(exContext.getApplicationContextPath()+"/pages/Projetos.jsf");
+		if(UtilUser.isMobile()){
+			exContext.redirect(exContext.getApplicationContextPath()+"/mobile/Projetos.jsf");
+		}else{
+			exContext.redirect(exContext.getApplicationContextPath()+"/pages/Projetos.jsf");
+		}
 	}
 	
 	public void redirectOcorrenciaProjeto() throws IOException{
@@ -68,6 +72,14 @@ public class HomeBean implements Serializable{
 			exContext.redirect(exContext.getApplicationContextPath()+"/mobile/Indexador.jsf");
 		}else{			
 			exContext.redirect(exContext.getApplicationContextPath()+"/pages/Indexador.jsf");
+		}
+	}
+	
+	public void redirectSimulacao() throws IOException{
+		if(UtilUser.isMobile()){
+			exContext.redirect(exContext.getApplicationContextPath()+"/mobile/Simulador.jsf");
+		}else{			
+			exContext.redirect(exContext.getApplicationContextPath()+"/pages/Simulador.jsf");
 		}
 	}
 

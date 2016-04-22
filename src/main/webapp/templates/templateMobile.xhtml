@@ -31,10 +31,11 @@
 						<h2>ProFinance</h2>
 						<p:menu>
 						    <p:menuitem value="Início" actionListener="#{homeBean.redirectHome}" icon="ui-icon-home"/>
+						    <p:menuitem value="Indexadores" actionListener="#{homeBean.redirectIndexador}"  icon="ui-icon-info"/>
 						    <p:menuitem value="Sócio/Empresa" actionListener="#{homeBean.redirectSocios}"  icon="ui-icon-user"/>
-						    <p:menuitem value="Projetos" url="#" icon="ui-icon-shop"/>
+						    <p:menuitem value="Projetos" actionListener="#{homeBean.redirectProjetos}" icon="ui-icon-shop"/>
 						    <p:menuitem value="Ocorrências" actionListener="#{homeBean.redirectOcorrenciaProjeto}" icon="ui-icon-bullets"/>
-						    <p:menuitem value="Planilhas" url="#" />
+						    <p:menuitem value="Simulações" actionListener="#{homeBean.redirectSimulacao}" />
 						</p:menu>
 					</p:overlayPanel>
 	
@@ -63,7 +64,7 @@
 	        
 	        <pm:content id="contentItens2">
 	        	<h:form id="frmContent2">
-	        		<p:growl id="messages" showDetail="true" />	
+	        		<p:growl id="messages2" showDetail="true" />	
 					<ui:insert name="content2"/>
 				</h:form>
 			</pm:content>

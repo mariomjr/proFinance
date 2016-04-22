@@ -50,6 +50,12 @@ public class Projeto implements Serializable{
 	@Transient
 	private Double valorInicial;
 	
+	@Transient
+	private Double valorSimulador;
+	
+	@Transient
+	private String tabTitle;
+	
 
 	public Long getId() {
 		return id;
@@ -136,6 +142,22 @@ public class Projeto implements Serializable{
 
 	public void setListOcorrenciasProjeto(List<OcorrenciaProjeto> listOcorrenciasProjeto) {
 		this.listOcorrenciasProjeto = listOcorrenciasProjeto;
+	}
+	
+	public Double getValorSimulador() {
+		return valorSimulador;
+	}
+
+	public void setValorSimulador(Double valorSimulador) {
+		this.valorSimulador = valorSimulador;
+	}
+	
+	public String getTabTitle() {
+		return tabTitle;
+	}
+
+	public void setTabTitle(String tabTitle) {
+		this.tabTitle = tabTitle;
 	}
 
 	@Override

@@ -187,7 +187,7 @@ public class DiaCorridoProjeto implements Serializable{
 	public Double getValorSaldoTotal() {
 		valorSaldoTotal = 0.0;
 		if(getValorCredito()!= null){
-			valorSaldoTotal = valorSaldoTotal + getValorDebito();
+			valorSaldoTotal = valorSaldoTotal + getValorCredito();
 		}
 		if(getValorDebito()!= null){
 			valorSaldoTotal = valorSaldoTotal + getValorDebito();

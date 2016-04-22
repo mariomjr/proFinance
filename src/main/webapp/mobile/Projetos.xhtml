@@ -1,0 +1,109 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pm="http://primefaces.org/mobile"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+<f:view renderKitId="PRIMEFACES_MOBILE" />
+	<ui:composition template="/templates/templateMobile.xhtml">
+		<ui:define name="content">
+		
+			<div data-role="header">
+				<span class="ui-title headerTitleTopo">
+					<p:graphicImage value="/img/projetos24.png"/>
+					Projetos
+				</span>
+			</div>
+			
+			<p:commandButton value="Adicionar" icon="ui-icon-plus" actionListener="#{projetoBean.limparProjeto}"
+				oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" update="second:frmContent2"/>
+			
+			<p:dataList var="projeto" value="#{projetoBean.listProjetoMobile}" paginator="true" rows="5" id="dtListProjetos" pt:data-inset="true"
+					pt:data-role="listview">
+				
+			    <p:commandLink actionListener="#{projetoBean.onRowSelectMobile}" style="background:#EFEFEF !important;color:black">
+			    	<h2>#{projeto.nome}</h2>
+				    <p>#{calendarToString.formatarCalendar(projeto.dataInicial)}</p>
+				    <p>#{calendarToString.formatarCalendar(projeto.dataFinalPrevista)}</p>
+		            <f:setPropertyActionListener value="#{projeto}"  target="#{projetoBean.projetoSelect}" />
+		        </p:commandLink>
+			</p:dataList>
+			
+		</ui:define>
+		
+		<ui:define name="content2">
+        	<pm:field>
+                <p:outputLabel value="Nome: " for="itDescricao"></p:outputLabel>
+                <p:inputText value="#{projetoBean.projetoSelect.nome}" id="itDescricao">
+                </p:inputText>
+            </pm:field>
+            <pm:field>
+                <p:outputLabel value="Data Inicial: " for="dataInicial"></p:outputLabel>
+                 <p:calendar id="dataInicial"  value="#{projetoBean.projetoSelect.dataInicial}"
+         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"/>
+            </pm:field>	
+            <pm:field>
+                <p:outputLabel value="Data Final: " for="dataFinal"></p:outputLabel>
+                 <p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevista}"
+         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"/>
+            </pm:field>	
+            <pm:field>
+                <p:outputLabel value="Juro/Mês: " for="itJuroMes"></p:outputLabel>
+                 <p:inputText value="#{projetoBean.projetoSelect.juroMes}" id="itJuroMes">
+                </p:inputText>
+            </pm:field>	
+            <pm:field>
+                <p:outputLabel value="Indexador: " for="srmindexador"></p:outputLabel>
+                 <p:selectOneMenu id="srmindexador" value="#{projetoBean.projetoSelect.indexador}" 
+					style="width:80%" converter="#{indexadorConverter}">
+		            <f:selectItems value="#{projetoBean.listIndexadorItens}" />
+		        </p:selectOneMenu>
+            </pm:field>	
+            
+            <p:panel header="Sócios Envolvidos" toggleable="true">
+            	<p:dataList var="ocorrenciaProjeto" value="#{projetoBean.projetoSelect.listOcorrenciasProjeto}" paginator="true" rows="5" id="dtListOcorrenciaProjeto" 
+            		pt:data-inset="true" pt:data-role="listview">
+				
+				    <p:commandLink style="background:#EFEFEF !important;color:black">
+				    	<h2>#{ocorrenciaProjeto.socioEmpresa.nome}</h2>
+					    <p>#{ocorrenciaProjeto.creditoDebito.label} - R$#{labelsFormat.formatDouble(ocorrenciaProjeto.valor)}</p>
+			        </p:commandLink>
+				</p:dataList>
+            </p:panel>
+            
+            <p:commandButton value="Gerar planilha" actionListener="#{projetoBean.gerarPlanilha}"/>
+		
+		
+			<p:dialog header="Sócio Envolvido" widgetVar="socioEnvolvidoDialog" id="mdlSocioEnvolvido" showEffect="pop" width="100%"
+				closable="false">
+				
+				<pm:field>
+	                <p:outputLabel value="Sócio/Empresa: " for="srmSocioEmpresa"></p:outputLabel>
+	                <p:selectOneMenu id="srmSocioEmpresa" value="#{projetoBean.ocorrenciaSelect.socioEmpresa}" 
+							style="width:80%" converter="#{socioEmpresaConverter}">
+				            <f:selectItems value="#{socioEmpresaBean.listSocioEmpresaItens}" />
+				        </p:selectOneMenu>
+	            </pm:field>	
+	            <pm:field>
+	                <p:outputLabel value="Tipo: " for="srmTipoProjeto"></p:outputLabel>
+	                <p:selectOneMenu id="srmTipoProjeto" value="##{projetoBean.ocorrenciaSelect.creditoDebito}}" 
+						style="width:80%">
+			            <f:selectItems value="#{projetoBean.tipoItem}" />
+			        </p:selectOneMenu>
+	            </pm:field>	
+			    
+			    <pm:field>
+	                <p:outputLabel value="Valor: " for="itValor"></p:outputLabel>
+	                <p:inputText value="#{projetoBean.projetoSelect.nome}" id="itValor">
+	                </p:inputText>
+	            </pm:field>
+			    
+			    <p:commandButton value="Adicionar" actionListener="#{projetoBean.adicionarOcorrenciaProjeto}" 
+            	update="dtListOcorrenciaProjeto" />
+			</p:dialog>
+		
+		</ui:define>
+		
+	</ui:composition>
+</html>

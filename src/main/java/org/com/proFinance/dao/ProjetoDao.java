@@ -1,5 +1,6 @@
 package org.com.proFinance.dao;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,6 +66,7 @@ public class ProjetoDao {
 		return criteria;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<Projeto> getListTodosProjetos(){
 		
 		Session s = (Session) dao.getEntityManager().getDelegate();
@@ -107,5 +109,9 @@ public class ProjetoDao {
 			s.update(diaCorridoProjeto);
 		}
 		s.flush();
+	}
+	
+	public List<Projeto> getListProjetosMobile(){
+		return listar(new HashMap<String, Object>(), null, "ASCENDING", 0, 1000);
 	}
 }

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:composition template="/templates/template.xhtml">
+
+	<ui:define name="content">
+	
+	<style type="text/css">
+		table>thead>tr>th{
+			text-align:center !important;
+		}
+		
+		#dataInicial input, #dataFinal input{
+			width:74%;
+		}
+	</style>
+		
+	<p:toolbar>
+		<f:facet name="left">
+			<h:panelGrid columns="5">
+				<p:spacer width="10px"/>
+				<p:graphicImage value="/img/simulacoes64.png"/>
+				<p:spacer width="10px"/>
+				<p:outputLabel value="Simulação" />
+			</h:panelGrid>
+		</f:facet>
+	</p:toolbar>
+		<p:outputPanel id="pnOutGeral">
+		<p:panel id="pnDadosProjetos">
+			<div class="ui-grid-row">
+				<div class="ui-grid-col-2">
+					<h:outputLabel value="Data Inicial:" for="dataInicial"/>
+				</div>
+		
+				<div class="ui-grid-col-2">
+					<p:calendar id="dataInicial"  value="#{simuladorBean.projetoPadrao.dataInicial}"  
+	         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}"
+	         			disabled="#{simuladorBean.listProjetos.size() >0}"/>
+		        </div>
+		        
+		        <div class="ui-grid-col-2">
+					<h:outputLabel value="Data Final:" for="dataFinal"/>
+				</div>
+		
+				<div class="ui-grid-col-2">
+					<p:calendar id="dataFinal"  value="#{simuladorBean.projetoPadrao.dataFinalPrevista}"
+	         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"
+	         			disabled="#{simuladorBean.listProjetos.size() >0}"/>
+		        </div>
+		        
+   		        <div class="ui-grid-col-2">
+					<h:outputLabel value="Valor:" for="vlrInicial"/>
+				</div>
+		
+				<div class="ui-grid-col-2">
+					<p:inputText value="#{simuladorBean.projetoPadrao.valorSimulador}" style="width:88%" id="vlrInicial" converter="#{doubleConverterDinheiro}"
+						disabled="#{simuladorBean.listProjetos.size() >0}"/>
+		        </div>
+		        
+	        </div>
+	        
+	        <div class="ui-grid-row">
+				<div class="ui-grid-col-2">
+					<h:outputLabel value="Juro/Mês:" for="juroMes"/>
+				</div>
+		
+				<div class="ui-grid-col-2">
+					<p:inputText value="#{simuladorBean.projetoPadrao.juroMes}" style="width:87%" id="juroMes" converter="#{doubleConverter}"/>
+		        </div>
+		        
+			 	<div class="ui-grid-col-2">
+			 		<h:outputLabel value="Indexador: " for="srmIndexador"/>
+			 	</div>
+			 	<div class="ui-grid-col-2">
+			 		<p:selectOneMenu id="srmIndexador" value="#{simuladorBean.projetoPadrao.indexador}" 
+						style="width:80%" converter="#{indexadorConverter}">
+						<f:selectItem noSelectionOption="true"/>
+			            <f:selectItems value="#{simuladorBean.listIndexadorItens}" />
+			        </p:selectOneMenu>
+			 	</div>
+		        
+			</div>
+	        
+       		<p:commandButton value="Simular Valores" actionListener="#{simuladorBean.simularProjeto}" onclick="PF('load').show()"
+       			oncomplete="PF('load').hide()" update="pnOutGeral, juroMes, srmIndexador, pnDadosSimulacao" icon="ui-icon-document-b"/>
+       			
+  			<p:commandButton value="Limpar Simulações" actionListener="#{simuladorBean.limparSimulacoes}" onclick="PF('load').show()"
+ 				oncomplete="PF('load').hide()" update="pnOutGeral, juroMes, srmIndexador, pnDadosSimulacao, pnDadosProjetos" icon="ui-icon-trash"/>
+		</p:panel>
+		<p:panel  id="pnDadosSimulacao" rendered="#{simuladorBean.listProjetos.size()>0}">
+			
+			<p:tabView value="#{simuladorBean.listProjetos}" var="projeto">
+        		<p:tab title="#{projeto.tabTitle}">
+			
+					 <p:dataTable var="diaCorrido" value="#{projeto.listDiasCorridosProjeto}"
+					 	id="dtDiaCorrido" rowIndexVar="rowIndex">
+				        <p:column headerText="Data" style="text-align:right">
+				            <h:outputText value="#{calendarToString.obterData(diaCorrido.data)}" />
+				        </p:column>
+				        <p:column  headerText="#{projeto.indexador.descricao}" rendered="#{projeto.indexador.id != null}"
+				                	style="text-align:right">
+				            <h:outputText value="#{diaCorrido.valorIndexador}" converter="#{doubleConverter}" id="indexador#{rowIndex}"/>
+				        </p:column>
+				        <p:column headerText="Juro/Mês" style="text-align:right" rendered="#{projeto.juroMes>0}">
+				            <h:outputText value="#{diaCorrido.juroMes}" converter="#{doubleConverter}" id="juroMes#{rowIndex}"/>
+				        </p:column>
+				        <p:column headerText="Fator mensal" style="text-align:right">
+				            <h:outputText value="#{diaCorrido.taxaJuro}" converter="#{doubleConverter}" id="taxaJuro#{rowIndex}" />
+				        </p:column>
+				        <p:column headerText="Fator diário" style="text-align:right">
+				            <h:outputText value="#{diaCorrido.fatorDiario}" converter="#{doubleConverter}" id="fatorDiario#{rowIndex}" />
+				        </p:column>
+				        
+				        <p:column headerText="Saldo" style="text-align:right;font-weight:bold">
+				            <h:outputText value="#{diaCorrido.valorSaldoTotal}" converter="#{doubleConverterDinheiro}"
+				            	id="valorSaldo#{rowIndex}"/>
+				        </p:column>
+				        
+				    </p:dataTable>
+		    
+		    	</p:tab>
+		    </p:tabView>
+		
+		</p:panel>
+		</p:outputPanel>
+		
+		<script >
+			$("[id*='vlrInicial']").mask('#.##0,00', {reverse: true});
+		</script>
+
+	</ui:define>
+
+</ui:composition>
+
+</html>

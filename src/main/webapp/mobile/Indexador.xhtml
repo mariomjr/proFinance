@@ -1,0 +1,53 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pm="http://primefaces.org/mobile"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+<f:view renderKitId="PRIMEFACES_MOBILE" />
+	<ui:composition template="/templates/templateMobile.xhtml">
+		<ui:define name="content">
+		
+			<div data-role="header">
+				<span class="ui-title headerTitleTopo">
+					<p:graphicImage value="/img/indexador24.png"/>
+					Indexadores
+				</span>
+			</div>
+			
+			<p:commandButton value="Adicionar" icon="ui-icon-plus" actionListener="#{indexadorBean.limparIndexador}"
+				oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" update="second:frmContent2"/>
+			
+			<p:dataList var="indexador" value="#{indexadorBean.listIndexador}" paginator="true" rows="5" id="dtListIndexador" pt:data-inset="true"
+					pt:data-role="listview">
+				
+			    <p:commandLink oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" 
+			    	update="second:frmContent2" style="background:#EFEFEF !important;color:black">
+			    	<h2>#{indexador.descricao}</h2>
+				    <p>#{indexador.codigo}</p>
+				    <p>#{indexador.ativo.label}</p>
+		            <f:setPropertyActionListener value="#{indexador}"  target="#{indexadorBean.indexadorSelect}" />
+		        </p:commandLink>
+			</p:dataList>
+			
+		</ui:define>
+		
+		<ui:define name="content2">
+        	<pm:field>
+                <p:outputLabel value="Descrição: " for="itDescricao"></p:outputLabel>
+                <p:inputText value="#{indexadorBean.indexadorSelect.descricao}" id="itDescricao">
+                </p:inputText>
+            </pm:field>
+            <pm:field>
+                <p:outputLabel value="Código: " for="itCodigo"></p:outputLabel>
+                <p:inputText value="#{indexadorBean.indexadorSelect.codigo}" id="itCodigo">
+                </p:inputText>
+            </pm:field>	
+            <p:commandButton value="Salvar" actionListener="#{indexadorBean.salvarIndexadorMobile}" 
+            	update="@parent:messages, first:frmContent:dtListIndexador" />
+		
+		</ui:define>
+		
+	</ui:composition>
+</html>

@@ -1,6 +1,7 @@
 package org.com.proFinance.beans;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -14,6 +15,7 @@ import org.com.proFinance.dao.IndexadorDao;
 import org.com.proFinance.dataModel.LazyIndexadorDataModel;
 import org.com.proFinance.entity.Indexador;
 import org.com.proFinance.enuns.SimNao;
+import org.com.proFinance.infra.UtilUser;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -33,10 +35,16 @@ public class IndexadorBean implements Serializable{
 	public Indexador indexadorSelect;
 	
 	public LazyDataModel<Indexador> lazyIndexador;
+	
+	private List<Indexador> listIndexador;
 
 	@PostConstruct
 	public void init(){
-		lazyIndexador = new LazyIndexadorDataModel(indexadorDao);
+		if(UtilUser.isMobile()){
+			listIndexador = indexadorDao.getListIndexadorMobile();
+		}else{
+			lazyIndexador = new LazyIndexadorDataModel(indexadorDao);
+		}
 	}
 	
 	public void onRowSelect(SelectEvent event) {
@@ -53,6 +61,17 @@ public class IndexadorBean implements Serializable{
 			RequestContext.getCurrentInstance().update("messages");
 		}else{
 			RequestContext.getCurrentInstance().update("messagesMdlIndexador");
+		}
+	}
+	
+	public void salvarIndexadorMobile(){
+		if(validarDados()){
+			getIndexadorSelect().setAtivo(SimNao.SIM);
+			indexadorDao.salvarIndexador(getIndexadorSelect());
+			
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Indexador foi salvo!"));
+			listIndexador = indexadorDao.getListIndexadorMobile();
 		}
 	}
 	
@@ -94,5 +113,12 @@ public class IndexadorBean implements Serializable{
 		return lazyIndexador;
 	}
 
+	public List<Indexador> getListIndexador() {
+		return listIndexador;
+	}
+
+	public void setListIndexador(List<Indexador> listIndexador) {
+		this.listIndexador = listIndexador;
+	}
 }
 
