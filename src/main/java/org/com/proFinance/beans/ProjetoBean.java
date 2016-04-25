@@ -80,8 +80,8 @@ public class ProjetoBean implements Serializable{
 		redirecionarTelaEdit();
 	}
 	
-	public void onRowSelectMobile() throws IOException{
-		projetoSelect = projetoDao.loadProjetoById(getProjetoSelect().getId());
+	public void onRowSelectMobile(Projeto projeto) throws IOException{
+		projetoSelect = projetoDao.loadProjetoById(projeto.getId());
 		projetoService.recalcularProjeto(getProjetoSelect());
 		redirecionarTelaEdit();
 	}

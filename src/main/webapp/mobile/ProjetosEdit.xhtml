@@ -35,7 +35,7 @@
 			</p:panel>
 			
 			<p:dataTable var="diaCorrido" value="#{projetoBean.projetoSelect.listDiasCorridosProjeto}" tableStyleClass="ui-table-columntoggle"
-				rowKey="#{diaCorrido.id}" paginator="true" rows="5" id="dtDiaCorrido">
+				rowKey="#{diaCorrido.id}" id="dtDiaCorrido">
 				
 				<p:ajax event="swipeleft" listener="#{socioEmpresaBean.onRowSwipeLeft}" 
 					oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" update="second:frmContent2"/>
@@ -46,9 +46,9 @@
 				<p:column headerText="Juro/Mês"  priority="1">
 					<h:outputText value="#{diaCorrido.juroMes}" converter="#{doubleConverter}" />
 				</p:column>
-				<<p:column  headerText="#{projetoBean.projetoSelect.indexador.descricao}" rendered="#{projetoBean.projetoSelect.indexador.id != null}"
+				<p:column  headerText="#{projetoBean.projetoSelect.indexador.descricao}" rendered="#{projetoBean.projetoSelect.indexador.id != null}"
 					 priority="1">
-					<h:outputText value="#{diaCorrido.valorIndexador}" />
+					<h:outputText value="#{diaCorrido.valorIndexador}" converter="#{doubleConverter}"  />
 				</p:column>
 				<p:column headerText="Fator Mensal" priority="2">
 					<h:outputText value="#{diaCorrido.taxaJuro}" converter="#{doubleConverter}" />
@@ -57,13 +57,13 @@
 					<h:outputText value="#{diaCorrido.fatorDiario}" converter="#{doubleConverter}" />
 				</p:column>
 				<p:column headerText="Crédito" priority="2">
-					<h:outputText value="#{diaCorrido.valorCredito}" converter="#{doubleConverter}" />
+					<h:outputText value="#{diaCorrido.valorCredito}" converter="#{doubleConverterDinheiro}" />
 				</p:column>
 				<p:column headerText="Débito" priority="2">
-					<h:outputText value="#{diaCorrido.valorDebito}" converter="#{doubleConverter}" />
+					<h:outputText value="#{diaCorrido.valorDebito}" converter="#{doubleConverterDinheiro}" />
 				</p:column>
 				<p:column headerText="Saldo" priority="1">
-					<h:outputText value="#{diaCorrido.valorSaldoTotal}" />
+					<h:outputText value="#{diaCorrido.valorSaldoTotal}" converter="#{doubleConverterDinheiro}" />
 				</p:column>
 			</p:dataTable>
 			

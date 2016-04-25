@@ -22,11 +22,10 @@
 			<p:dataList var="projeto" value="#{projetoBean.listProjetoMobile}" paginator="true" rows="5" id="dtListProjetos" pt:data-inset="true"
 					pt:data-role="listview">
 				
-			    <p:commandLink actionListener="#{projetoBean.onRowSelectMobile}" style="background:#EFEFEF !important;color:black">
+			    <p:commandLink actionListener="#{projetoBean.onRowSelectMobile(projeto)}" style="background:#EFEFEF !important;color:black">
 			    	<h2>#{projeto.nome}</h2>
 				    <p>#{calendarToString.formatarCalendar(projeto.dataInicial)}</p>
 				    <p>#{calendarToString.formatarCalendar(projeto.dataFinalPrevista)}</p>
-		            <f:setPropertyActionListener value="#{projeto}"  target="#{projetoBean.projetoSelect}" />
 		        </p:commandLink>
 			</p:dataList>
 			
