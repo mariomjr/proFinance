@@ -50,6 +50,31 @@ public class WsBancoCentroService {
 		}
 	}
 	
+	public double getUltimoValor(Long idValor){
+		try{
+			WSSerieVO serieVo = getWsBancoCentroService().getFachadaWSSGS().getUltimoValorVO(idValor);
+			return serieVo.getUltimoValor().getValor().doubleValue();
+		}catch(Exception e){
+			System.out.println("Erro Webservice");
+			e.printStackTrace();
+			return 0.0;
+		}
+	}
+	
+	public boolean getExisteCodigo(Long idValor){
+		try{
+			WSSerieVO serieVo = getWsBancoCentroService().getFachadaWSSGS().getUltimoValorVO(idValor);
+			if(serieVo.isPossuiBloqueios()){
+				return false;
+			}
+			return true;
+		}catch(Exception e){
+			System.out.println("Erro Webservice");
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	public FachadaWSSGSService getWsBancoCentroService() throws AxisFault{
 		if(wsBancoCentroService == null){
 			wsBancoCentroService = new FachadaWSSGSServiceLocator();

@@ -90,8 +90,14 @@
 			        </p:selectOneMenu>
             </pm:field>	
             
+            <pm:field>
+                <p:outputLabel value="Descrição: " for="vlrDescricao"></p:outputLabel>
+                <p:inputText value="#{ocorrenciaProjetoBean.ocorrenciaProjetoSelect.descricao}" style="width:80%" 
+							id="vlrDescricao" />
+            </pm:field>	
+            
             <p:commandButton value="Salvar" actionListener="#{ocorrenciaProjetoBean.salvarOcorrenciaProjeto}" 
-            	update="@parent:messages, first:frmContent:dtListOcorrenciaProjeto" />
+            	update="first:frmContent:messages, first:frmContent:dtListOcorrenciaProjeto" />
 		
 		</ui:define>
 		

@@ -48,7 +48,7 @@ public class SimuladorBean implements Serializable{
 		projetoAux.setIndexador(getProjetoPadrao().getIndexador());
 		projetoAux.setValorSimulador(getProjetoPadrao().getValorSimulador());
 		projetoAux.setDataInicial(getProjetoPadrao().getDataInicial());
-		projetoAux.setDataFinalPrevista(getProjetoPadrao().getDataFinalPrevista());
+		projetoAux.setDataFinalPrevistaNova(getProjetoPadrao().getDataFinalPrevistaNova());
 		
 		projetoAux.setTabTitle(trataTitleTab(projetoAux));
 		

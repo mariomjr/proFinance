@@ -25,7 +25,7 @@
 			    <p:commandLink actionListener="#{projetoBean.onRowSelectMobile(projeto)}" style="background:#EFEFEF !important;color:black">
 			    	<h2>#{projeto.nome}</h2>
 				    <p>#{calendarToString.formatarCalendar(projeto.dataInicial)}</p>
-				    <p>#{calendarToString.formatarCalendar(projeto.dataFinalPrevista)}</p>
+				    <p>#{calendarToString.formatarCalendar(projeto.dataFinalPrevistaNova)}</p>
 		        </p:commandLink>
 			</p:dataList>
 			
@@ -44,23 +44,27 @@
             </pm:field>	
             <pm:field>
                 <p:outputLabel value="Data Final: " for="dataFinal"></p:outputLabel>
-                 <p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevista}"
+                 <p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevistaNova}"
          			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"/>
             </pm:field>	
             <pm:field>
                 <p:outputLabel value="Juro/Mês: " for="itJuroMes"></p:outputLabel>
-                 <p:inputText value="#{projetoBean.projetoSelect.juroMes}" id="itJuroMes">
+                 <p:inputText value="#{projetoBean.projetoSelect.juroMes}" id="itJuroMes" converter="#{doubleConverter}">
                 </p:inputText>
             </pm:field>	
             <pm:field>
                 <p:outputLabel value="Indexador: " for="srmindexador"></p:outputLabel>
                  <p:selectOneMenu id="srmindexador" value="#{projetoBean.projetoSelect.indexador}" 
 					style="width:80%" converter="#{indexadorConverter}">
+					<f:selectItem noSelectionOption="true"/>
 		            <f:selectItems value="#{projetoBean.listIndexadorItens}" />
 		        </p:selectOneMenu>
             </pm:field>	
             
-            <p:panel header="Sócios Envolvidos" toggleable="true">
+            <p:panel header="Sócios Envolvidos" toggleable="true" id="pnSocioEnvolvidos">
+            	<p:commandButton update="mdlSocioEnvolvido" value="Adicionar Sócio" actionListener="#{projetoBean.limparOcorrencia}"
+            		oncomplete="PF('socioEnvolvidoDialog').show()" global="false" process="@this"/>
+            
             	<p:dataList var="ocorrenciaProjeto" value="#{projetoBean.projetoSelect.listOcorrenciasProjeto}" paginator="true" rows="5" id="dtListOcorrenciaProjeto" 
             		pt:data-inset="true" pt:data-role="listview">
 				
@@ -71,11 +75,11 @@
 				</p:dataList>
             </p:panel>
             
-            <p:commandButton value="Gerar planilha" actionListener="#{projetoBean.gerarPlanilha}"/>
+            <p:commandButton update="messages2" value="Gerar planilha" actionListener="#{projetoBean.gerarPlanilha}"/>
 		
 		
-			<p:dialog header="Sócio Envolvido" widgetVar="socioEnvolvidoDialog" id="mdlSocioEnvolvido" showEffect="pop" width="100%"
-				closable="false">
+			<p:dialog header="Sócio Envolvido" widgetVar="socioEnvolvidoDialog" id="mdlSocioEnvolvido" showEffect="pop" modal="true"
+				>
 				
 				<pm:field>
 	                <p:outputLabel value="Sócio/Empresa: " for="srmSocioEmpresa"></p:outputLabel>
@@ -86,21 +90,26 @@
 	            </pm:field>	
 	            <pm:field>
 	                <p:outputLabel value="Tipo: " for="srmTipoProjeto"></p:outputLabel>
-	                <p:selectOneMenu id="srmTipoProjeto" value="##{projetoBean.ocorrenciaSelect.creditoDebito}}" 
+	                <p:selectOneMenu id="srmTipoProjeto" value="#{projetoBean.ocorrenciaSelect.creditoDebito}" 
 						style="width:80%">
 			            <f:selectItems value="#{projetoBean.tipoItem}" />
 			        </p:selectOneMenu>
 	            </pm:field>	
 			    
 			    <pm:field>
-	                <p:outputLabel value="Valor: " for="itValor"></p:outputLabel>
-	                <p:inputText value="#{projetoBean.projetoSelect.nome}" id="itValor">
+	                <p:outputLabel value="Valor: " for="itValorOcorrencia"></p:outputLabel>
+	                <p:inputText value="#{projetoBean.ocorrenciaSelect.valor}" id="itValorOcorrencia">
 	                </p:inputText>
 	            </pm:field>
 			    
-			    <p:commandButton value="Adicionar" actionListener="#{projetoBean.adicionarOcorrenciaProjeto}" 
-            	update="dtListOcorrenciaProjeto" />
+			    <p:commandButton value="Adicionar" oncomplete="PF('socioEnvolvidoDialog').hide()"
+			    	actionListener="#{projetoBean.adicionarOcorrenciaProjeto}"/>
+			    	
 			</p:dialog>
+			
+			<script >
+				$("[id*='itValorOcorrencia']").mask('#.##0,00', {reverse: true});
+			</script>
 		
 		</ui:define>
 		

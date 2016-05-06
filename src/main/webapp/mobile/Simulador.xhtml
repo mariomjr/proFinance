@@ -1,0 +1,103 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pm="http://primefaces.org/mobile"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+<f:view renderKitId="PRIMEFACES_MOBILE" />
+	<ui:composition template="/templates/templateMobile.xhtml">
+		<ui:define name="content">
+		
+			<div data-role="header" class="ui-header ui-bar-inherit">
+				<span class="ui-title headerTitleTopo">
+					<p:graphicImage value="/img/simulacoes24.png"/>
+					Simulador
+				</span>
+			</div>
+			
+			<p:panel header="Dados Simulação" toggleable="true" id="pnDadosSimulacao" widgetVar="varPnDadosSimulacao">
+            	<pm:field>
+                <p:outputLabel value="Data Inicial: " for="dataInicial"></p:outputLabel>
+	                 <p:calendar id="dataInicial"  value="#{simuladorBean.projetoPadrao.dataInicial}" disabled="#{simuladorBean.listProjetos.size() >0}"
+	         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"/>
+            	</pm:field>	
+	            <pm:field>
+	                <p:outputLabel value="Data Final: " for="dataFinal"></p:outputLabel>
+	                 <p:calendar id="dataFinal"  value="#{simuladorBean.projetoPadrao.dataFinalPrevistaNova}" disabled="#{simuladorBean.listProjetos.size() >0}"
+	         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"/>
+	            </pm:field>	
+	            <pm:field>
+	                <p:outputLabel value="Valor: " for="itValorSimulacao"></p:outputLabel>
+	                <p:inputText value="#{simuladorBean.projetoPadrao.valorSimulador}" id="itValorSimulacao" 
+	                	converter="#{doubleConverterDinheiro}" disabled="#{simuladorBean.listProjetos.size() >0}">
+	                </p:inputText>
+            	</pm:field>
+            	 <pm:field>
+	                <p:outputLabel value="Juro/Mês: " for="itJuroMes"></p:outputLabel>
+	                <p:inputText value="#{simuladorBean.projetoPadrao.juroMes}" id="itJuroMes" converter="#{doubleConverter}">
+	                </p:inputText>
+            	</pm:field>
+            	
+            	<pm:field>
+	                <p:outputLabel value="Indexador: " for="srmindexador"></p:outputLabel>
+	                 <p:selectOneMenu id="srmindexador" value="#{simuladorBean.projetoPadrao.indexador}" 
+						style="width:80%" converter="#{indexadorConverter}">
+						<f:selectItem noSelectionOption="true"/>
+			            <f:selectItems value="#{simuladorBean.listIndexadorItens}" />
+			        </p:selectOneMenu>
+            	</pm:field>	
+	            
+	            <p:commandButton value="Simular" update="frmContent" actionListener="#{simuladorBean.simularProjeto}"
+	            	oncomplete="PF('varPnDadosSimulacao').toggle()"/>
+			</p:panel>
+			
+			<p:commandButton value="Limpar Simulações" actionListener="#{simuladorBean.limparSimulacoes}" update="frmContent" 
+				icon="ui-icon-delete" rendered="#{simuladorBean.listProjetos.size() >0}" oncomplete="PF('varPnDadosSimulacao').toggle()">
+				<p:confirm header="Confirmação" message="Deseja realmente limpar as simulações?" icon="ui-icon-alert"/>
+			</p:commandButton>
+			
+			<p:tabView value="#{simuladorBean.listProjetos}" var="projeto">
+        		<p:tab title="#{projeto.tabTitle}">
+			
+					 <p:dataTable var="diaCorrido" value="#{projeto.listDiasCorridosProjeto}"
+					 	id="dtDiaCorrido" rowIndexVar="rowIndex" tableStyleClass="ui-table-columntoggle">		        
+				        
+				        <p:column headerText="Data" priority="1">
+							<h:outputText value="#{calendarToString.formatarCalendar(diaCorrido.data)}" />
+						</p:column>
+						<p:column headerText="Juro/Mês"  priority="1">
+							<h:outputText value="#{diaCorrido.juroMes}" converter="#{doubleConverter}" />
+						</p:column>
+						<p:column  headerText="#{projeto.indexador.descricao}" rendered="#{projeto.indexador.id != null}"
+							 priority="1">
+							<h:outputText value="#{diaCorrido.valorIndexador}" converter="#{doubleConverter}"  />
+						</p:column>
+						<p:column headerText="Fator Mensal" priority="2">
+							<h:outputText value="#{diaCorrido.taxaJuro}" converter="#{doubleConverter}" />
+						</p:column>
+						<p:column headerText="Fator Diário" priority="2">
+							<h:outputText value="#{diaCorrido.fatorDiario}" converter="#{doubleConverter}" />
+						</p:column>
+						<p:column headerText="Saldo" priority="1">
+							<h:outputText value="#{diaCorrido.valorSaldoTotal}" converter="#{doubleConverterDinheiro}" />
+						</p:column>
+				        
+				    </p:dataTable>
+		    
+		    	</p:tab>
+		    </p:tabView>
+		    
+		    <script >
+				$("[id*='itValorSimulacao']").mask('#.##0,00', {reverse: true});
+				$("[id*='itJuroMes']").mask('#0,00', {reverse: true});
+			</script>
+			
+		</ui:define>
+		
+		<ui:define name="content2">
+        
+		</ui:define>
+		
+	</ui:composition>
+</html>

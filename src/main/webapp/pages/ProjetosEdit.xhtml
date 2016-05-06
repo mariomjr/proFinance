@@ -23,6 +23,7 @@
     <script type="text/javascript">
 		$.blockUI({ message: '<h1><img src="#{request.contextPath}/img/loading.gif" /></h1>' });
 		$(document).ajaxStart($.blockUI);
+		$(document).ajaxStop($.unblockUI);
 		$(document).ready(function(){
 			$.unblockUI();
 		});
@@ -49,7 +50,8 @@
 				</div>
 		
 				<div class="ui-grid-col-2">
-					<p:inputText value="#{projetoBean.projetoSelect.nome}" style="width:87%" id="nomeProjeto"/>
+					<p:inputText value="#{projetoBean.projetoSelect.nome}" style="width:87%" id="nomeProjeto"
+						disabled="#{projetoBean.projetoSelect.id != null}"/>
 		        </div>
 				<div class="ui-grid-col-2">
 					<h:outputLabel value="Data Inicial:" for="dataInicial"/>
@@ -66,9 +68,10 @@
 				</div>
 		
 				<div class="ui-grid-col-2">
-					<p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevista}"
-	         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"
-	         			disabled="#{projetoBean.projetoSelect.id != null}"/>
+					<p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevistaNova}"
+	         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10">
+	         			<p:ajax event="dateSelect" listener="#{projetoBean.atualizarData}" update="pnDadosProjetos, btnRecalcularProjeto"/>
+         			</p:calendar>
 		        </div>
 		        
 	        </div>
@@ -88,7 +91,7 @@
 			 	</div>
 			 	<div class="ui-grid-col-2">
 			 		<p:selectOneMenu id="srmIndexador" value="#{projetoBean.projetoSelect.indexador}" 
-						style="width:80%" converter="#{indexadorConverter}">
+						style="width:80%" converter="#{indexadorConverter}" disabled="#{projetoBean.projetoSelect.id != null}">
 						<f:selectItem noSelectionOption="true"/>
 			            <f:selectItems value="#{projetoBean.listIndexadorItens}" />
 			        </p:selectOneMenu>
@@ -100,6 +103,11 @@
 	        	<div class="ui-grid-col-2">
 	        		<p:commandButton value="Atualizar" actionListener="#{projetoBean.gerarPlanilha}" onclick="PF('load').show()"
 		        		rendered="#{projetoBean.projetoSelect.id == null}"
+	        			oncomplete="PF('load').hide()" update="pnDadosInvestimento, formGeral" icon="ui-icon-document-b"/>
+	        	</div>
+	        	<div class="ui-grid-col-2">
+	        		<p:commandButton value="Recalcular" actionListener="#{projetoBean.recalcularProjeto}" onclick="PF('load').show()"
+		        		rendered="#{projetoBean.dataMudou}" id="btnRecalcularProjeto"
 	        			oncomplete="PF('load').hide()" update="pnDadosInvestimento, formGeral" icon="ui-icon-document-b"/>
 	        	</div>
 	        </div>
@@ -155,7 +163,7 @@
 		        </p:column>
 		 
 		        <p:rowExpansion>
-		            <p:panelGrid  columns="2" columnClasses="label,value" style="width:80%">
+		            <p:panelGrid  columns="2" columnClasses="label,value" style="width:85%">
 		               <p:dataTable var="ocorrenciaProjeto" value="#{diaCorrido.listOcorrenciasProjeto}">
 		               		<p:column headerText="Tipo" style="text-align:center">
 					            <h:outputText value="#{ocorrenciaProjeto.creditoDebito.label}"/>
@@ -168,6 +176,9 @@
 					        </p:column>
 					        <p:column headerText="Data inclusão" style="text-align:center">
 					            <h:outputText value="#{calendarToString.obterDataEHora(ocorrenciaProjeto.dataInclusao)}"/>
+					        </p:column>
+					        <p:column headerText="Descrição" style="text-align:center">
+					            <h:outputText value="#{ocorrenciaProjeto.descricao}"/>
 					        </p:column>
 		               </p:dataTable>
 		            </p:panelGrid>
@@ -229,21 +240,27 @@
 					<p:inputText value="#{projetoBean.ocorrenciaSelect.descricao}" style="width:87%" id="itDescricao"/>
 		        </div>
 	        </div>
-
-			<p:fileUpload fileUploadListener="#{projetoBean.uploadFileOcorrencia}" skinSimple="true" mode="advanced" 
-				update="messages" fileLimit="1"
-				sizeLimit="5000000" allowTypes="/(\.|\/)(gif|jpe?g|png|pdf|doc|docx|txt)$/" auto="true" label="Adicionar" />
+			
+			<p:outputPanel id="outPanelAnexo">
+				<p:fileUpload fileUploadListener="#{projetoBean.uploadFileOcorrencia}" skinSimple="true" mode="advanced" dragDropSupport="true"
+					update="messages, outPanelAnexo" fileLimit="1" rendered="#{projetoBean.ocorrenciaSelect.anexo == null}"
+					sizeLimit="5000000" allowTypes="/(\.|\/)(gif|jpe?g|png|pdf|doc|docx|txt)$/" auto="true" label="Adicionar" />
+					
+				<p:commandButton value="#{projetoBean.ocorrenciaSelect.anexo.nomeArquivo}" ajax="false" rendered="#{projetoBean.ocorrenciaSelect.anexo != null}" id="btnDownloadAnexo" icon="ui-icon-arrowthick-1-s">
+			        <p:fileDownload value="#{projetoBean.ocorrenciaSelect.anexo.file}" />
+			    </p:commandButton>	
+		    </p:outputPanel>
 
 			<f:facet name="footer">
 				<div class="ui-grid-row">
-      					<div class="ui-grid-col-4" style="text-align:right">
+      					<div class="ui-grid-col-6" style="text-align:center">
 						<p:commandButton actionListener="#{projetoBean.adicionarOcorrenciaDiaCorrido}" 
 							value="Adicionar" icon="ui-icon-disk" id="btnAdicionarOcorrencia" update="dtDiaCorrido"
 							onclick="PF('load').show()" oncomplete="PF('ocorrenciaDialog').hide();PF('load').hide()" >
 							<p:confirm header="Confirmação" message="Deseja realmente adicionar essa ocorrência?" icon="ui-icon-alert"/>	
 						</p:commandButton>
 					</div>
-				    <div class="ui-grid-col-4" style="text-align:left">
+				    <div class="ui-grid-col-6" style="text-align:center">
 						<p:commandButton value="Cancelar" onclick="PF('ocorrenciaDialog').hide()"
 							id="btnCancelarOcorrencia" icon="ui-icon-close">
 						</p:commandButton>

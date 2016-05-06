@@ -65,6 +65,8 @@ public class ProjetoBean implements Serializable{
 	private List<Projeto> listProjetoMobile;
 	
 	private List<SelectItem> listIndexadorItens;
+	
+	private boolean dataMudou = false;
 
 	@PostConstruct
 	public void init(){
@@ -77,12 +79,14 @@ public class ProjetoBean implements Serializable{
 	}
 	
 	public void onRowSelect(SelectEvent event) throws IOException {
+		setDataMudou(false);
 		projetoSelect = projetoDao.loadProjetoById(((Projeto)event.getObject()).getId());
 		projetoService.recalcularProjeto(getProjetoSelect());
 		redirecionarTelaEdit();
 	}
 	
 	public void onRowSelectMobile(Projeto projeto) throws IOException{
+		setDataMudou(false);
 		projetoSelect = projetoDao.loadProjetoById(projeto.getId());
 		projetoService.recalcularProjeto(getProjetoSelect());
 		redirecionarTelaEdit();
@@ -90,12 +94,16 @@ public class ProjetoBean implements Serializable{
 	
 	public void salvarProjeto(){
 		if(validarDados()){
+			getProjetoSelect().setDataFinalPrevistaAtual(getProjetoSelect().getDataFinalPrevistaNova());
 			projetoDao.salvarProjeto(getProjetoSelect());
 			
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Projeto foi salvo!"));
+			setDataMudou(false);
 		}
-		RequestContext.getCurrentInstance().update("messages");
+		if(UtilUser.isMobile() == false){
+			RequestContext.getCurrentInstance().update("messages");
+		}
 	}
 	
 	private boolean validarDados() {
@@ -125,23 +133,25 @@ public class ProjetoBean implements Serializable{
 			projetoService.gerarNovoInvestimento(getProjetoSelect(), false);
 			redirecionarTelaEdit();
 		}else{
-			if(UtilUser.isMobile()){
-				RequestContext.getCurrentInstance().update("messages");
-			}else{
+			if(UtilUser.isMobile() == false){
 				RequestContext.getCurrentInstance().update("messagesMdlProjeto");
 			}
 		}
 		
+	}
+	
+	public void recalcularProjeto(){
+		projetoService.recalcularMudancaData(getProjetoSelect());
 	}
 
 	private boolean validaDadosPlanilha() {
 		if(getProjetoSelect().getDataInicial()== null){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Data Inicial é obrigatório!"));
 			return false;
-		}else if(getProjetoSelect().getDataFinalPrevista()== null){
+		}else if(getProjetoSelect().getDataFinalPrevistaNova()== null){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Data Final é obrigatório!"));
 			return false;
-		}else if(getProjetoSelect().getDataInicial().after(getProjetoSelect().getDataFinalPrevista())){
+		}else if(getProjetoSelect().getDataInicial().after(getProjetoSelect().getDataFinalPrevistaNova())){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "Data inicial maior que data final!"));
 			return false;
 		}else if(getProjetoSelect().getJuroMes()<=0 && getProjetoSelect().getIndexador() == null){
@@ -187,7 +197,9 @@ public class ProjetoBean implements Serializable{
 			RequestContext.getCurrentInstance().execute("PF('ocorrenciaProjetoDialog').hide();");
 			limparOcorrencia();
 		}else{
-			RequestContext.getCurrentInstance().update("messagesMdlOcorrenciaProjeto");
+			if(UtilUser.isMobile() == false){
+				RequestContext.getCurrentInstance().update("messagesMdlOcorrenciaProjeto");
+			}
 		}
 	}
 	
@@ -225,6 +237,12 @@ public class ProjetoBean implements Serializable{
 		anexoOcorrencia.setExtensao(event.getFile().getContentType());
 
 		getOcorrenciaSelect().setAnexo(anexoOcorrencia);
+	}
+	
+	public void atualizarData(){
+		if(getProjetoSelect().getId() != null){
+			setDataMudou(true);
+		}
 	}
 	
 	public void limparProjeto(){
@@ -286,6 +304,14 @@ public class ProjetoBean implements Serializable{
 
 	public void setListProjetoMobile(List<Projeto> listProjetoMobile) {
 		this.listProjetoMobile = listProjetoMobile;
+	}
+
+	public boolean isDataMudou() {
+		return dataMudou;
+	}
+
+	public void setDataMudou(boolean dataMudou) {
+		this.dataMudou = dataMudou;
 	}
 
 }

@@ -83,14 +83,20 @@
 			
 			<f:facet name="footer">
 				<div class="ui-grid-row">
-      					<div class="ui-grid-col-4" style="text-align:right">
+					<div class="ui-grid-col-3" style="text-align:center">
+						<p:commandButton actionListener="#{indexadorBean.testarIndexadorWebService}" 
+							value="Testar" icon="ui-icon-link" id="btnTesteIndexador" update="messagesMdlIndexador"
+							onclick="PF('load').show()" oncomplete="PF('load').hide()" >
+						</p:commandButton>
+					</div>
+   					<div class="ui-grid-col-3" style="text-align:center">
 						<p:commandButton actionListener="#{indexadorBean.salvarIndexador}" 
 							value="Salvar" icon="ui-icon-disk" id="btnSalvarIndexador" update="dtIndexador"
 							onclick="PF('load').show()" oncomplete="PF('load').hide()" >
 							<p:confirm header="Confirmação" message="Deseja realmente salvar esse Indexador?" icon="ui-icon-alert"/>	
 						</p:commandButton>
 					</div>
-					<div class="ui-grid-col-4" style="text-align:center">
+					<div class="ui-grid-col-3" style="text-align:center">
 						<p:commandButton value="Inativar" actionListener="#{indexadorBean.inativarIndexador}"
 							id="btnInativarIndexador" icon="ui-icon-trash" disabled ="#{socioEmpresaBean.socioEmpresaSelect.id==null?true:false}"
 							update="messages,dtIndexador" onclick="PF('load').show()"
@@ -98,7 +104,7 @@
 							<p:confirm header="Confirmação" message="Deseja realmente inativar esse Indexador?" icon="ui-icon-alert"/>
 						</p:commandButton>
 					</div>
-				    <div class="ui-grid-col-4" style="text-align:left">
+				    <div class="ui-grid-col-3" style="text-align:center">
 						<p:commandButton value="Cancelar" onclick="PF('indexadorDialog').hide()"
 							id="btnCancelar" icon="ui-icon-close">
 						</p:commandButton>

@@ -9,7 +9,14 @@
 	<ui:composition template="/templates/templateMobile.xhtml">
 		<ui:define name="content">
 		
+		<style>
+			.ui-table-priority-2{
+				overflow:auto;
+			}
+		</style>
+		
 			<div data-role="header">
+				<p:commandButton icon="ui-icon-arrow-l" id="btnVoltarListagem" actionListener="#{projetoBean.voltarTela}"/>
 				<span class="ui-title headerTitleTopo">
 					<p:graphicImage value="/img/projetos24.png"/>
 					Projetos
@@ -19,26 +26,38 @@
 			<p:panel header="Dados Projeto" toggleable="true">
 				<pm:field>
 	                <p:outputLabel value="Nome: " for="itDescricao"></p:outputLabel>
-	                <p:inputText value="#{projetoBean.projetoSelect.nome}" id="itDescricao">
+	                <p:inputText value="#{projetoBean.projetoSelect.nome}" id="itDescricao" disabled="#{projetoBean.projetoSelect.id != null}">
 	                </p:inputText>
             	</pm:field>
             	<pm:field>
                 <p:outputLabel value="Data Inicial: " for="dataInicial"></p:outputLabel>
-	                 <p:calendar id="dataInicial"  value="#{projetoBean.projetoSelect.dataInicial}"
+	                 <p:calendar id="dataInicial"  value="#{projetoBean.projetoSelect.dataInicial}" disabled="#{projetoBean.projetoSelect.id != null}"
 	         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"/>
             	</pm:field>	
 	            <pm:field>
 	                <p:outputLabel value="Data Final: " for="dataFinal"></p:outputLabel>
-	                 <p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevista}"
+	                 <p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevistaNova}"
 	         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"/>
 	            </pm:field>	
+	            <pm:field>
+	                <p:outputLabel value="Juro/Mes: " for="itJuroMes"></p:outputLabel>
+	                <p:inputText value="#{projetoBean.projetoSelect.juroMes}" id="itJuroMes" 
+	                	disabled="#{projetoBean.projetoSelect.id != null}" converter="#{doubleConverter}">
+	                </p:inputText>
+            	</pm:field>
+            	<pm:field>
+	                <p:outputLabel value="Indexador: " for="srmindexador"></p:outputLabel>
+	                 <p:selectOneMenu id="srmindexador" value="#{projetoBean.projetoSelect.indexador}" 
+						style="width:80%" converter="#{indexadorConverter}" disabled="#{projetoBean.projetoSelect.id != null}">
+			            <f:selectItems value="#{projetoBean.listIndexadorItens}" />
+			        </p:selectOneMenu>
+            	</pm:field>	
 			</p:panel>
+			
+			<p:commandButton update="messages" value="Salvar" actionListener="#{projetoBean.salvarProjeto}"/>
 			
 			<p:dataTable var="diaCorrido" value="#{projetoBean.projetoSelect.listDiasCorridosProjeto}" tableStyleClass="ui-table-columntoggle"
 				rowKey="#{diaCorrido.id}" id="dtDiaCorrido">
-				
-				<p:ajax event="swipeleft" listener="#{socioEmpresaBean.onRowSwipeLeft}" 
-					oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" update="second:frmContent2"/>
 				
 				<p:column headerText="Data" priority="1">
 					<h:outputText value="#{calendarToString.formatarCalendar(diaCorrido.data)}" />
@@ -54,7 +73,7 @@
 					<h:outputText value="#{diaCorrido.taxaJuro}" converter="#{doubleConverter}" />
 				</p:column>
 				<p:column headerText="Fator Diário" priority="2">
-					<h:outputText value="#{diaCorrido.fatorDiario}" converter="#{doubleConverter}" />
+					<h:outputText value="#{diaCorrido.fatorDiario}" converter="#{doubleConverter}"/>
 				</p:column>
 				<p:column headerText="Crédito" priority="2">
 					<h:outputText value="#{diaCorrido.valorCredito}" converter="#{doubleConverterDinheiro}" />
@@ -65,12 +84,49 @@
 				<p:column headerText="Saldo" priority="1">
 					<h:outputText value="#{diaCorrido.valorSaldoTotal}" converter="#{doubleConverterDinheiro}" />
 				</p:column>
+				<p:column style="width:26px">
+		        	<p:commandButton icon="ui-icon-plus" id="btnAdicionarOcorrencia" actionListener="#{projetoBean.limparOcorrencia}"
+	        			style="width:26px;height:26px" oncomplete="PrimeFaces.Mobile.navigate('#second',{transition:'flip'})" update="second:frmContent2">
+			    	 		<f:setPropertyActionListener value="#{diaCorrido}" target="#{projetoBean.diaCorridoSelect}" />
+	        		</p:commandButton>
+        		</p:column>
 			</p:dataTable>
 			
 		</ui:define>
 		
 		<ui:define name="content2">
-        
+            <pm:field>
+                <p:outputLabel value="Tipo: " for="srmTipoOcorrencia"></p:outputLabel>
+                <p:selectOneMenu id="srmTipoOcorrencia" value="#{projetoBean.ocorrenciaSelect.creditoDebito}" 
+					style="width:80%">
+		            <f:selectItems value="#{projetoBean.tipoItem}" />
+		        </p:selectOneMenu>
+            </pm:field>	
+            <pm:field>
+                <p:outputLabel value="Valor: " for="vlrOcorrencia"></p:outputLabel>
+                <p:inputText value="#{projetoBean.ocorrenciaSelect.valor}" style="width:80%" 
+							id="vlrOcorrencia" converter="#{doubleConverterDinheiro}"/>
+            </pm:field>	
+            <pm:field>
+                <p:outputLabel value="Sócio/Empresa: " for="srmSocioEmpresa"></p:outputLabel>
+                <p:selectOneMenu id="srmSocioEmpresa" value="#{projetoBean.ocorrenciaSelect.socioEmpresa}" 
+						style="width:80%" converter="#{socioEmpresaConverter}">
+			            <f:selectItems value="#{socioEmpresaBean.listSocioEmpresaItens}" />
+			        </p:selectOneMenu>
+            </pm:field>	
+            
+            <pm:field>
+                <p:outputLabel value="Descrição: " for="vlrDescricao"></p:outputLabel>
+                <p:inputText value="#{projetoBean.ocorrenciaSelect.descricao}" style="width:80%" 
+							id="vlrDescricao" />
+            </pm:field>	
+            
+            <p:commandButton value="Adicionar" actionListener="#{projetoBean.adicionarOcorrenciaDiaCorrido}" 
+            	update="first:frmContent:messages, first:frmContent:dtDiaCorrido" oncomplete="PrimeFaces.Mobile.navigate('#first',{transition:'flip'})"/>
+            	
+           	<script >
+				$("[id*='vlrOcorrencia']").mask('#.##0,00', {reverse: true});
+			</script>
 		</ui:define>
 		
 	</ui:composition>

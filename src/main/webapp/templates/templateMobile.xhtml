@@ -13,6 +13,7 @@
 	<h:outputStylesheet library="css/themes" name="jquery.mobile.icons.min.css" />
 	<h:outputStylesheet library="css" name="proFinanceMobile.css" />
 	<h:outputScript library="js" name="proFinance.js" />
+	<h:outputScript library="js/libs" name="jquery.mask.js" />
 	
 </h:head>
 
@@ -27,6 +28,14 @@
     		<pm:content>
 				<h:form id="frmContent" >
 			     	<p:growl id="messages" showDetail="true" />
+			     	
+			     	<p:confirmDialog global="true">
+						<p:commandButton value="Sim" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-delete" />
+					</p:confirmDialog>
+			     	
 			     	<p:overlayPanel for="first:frmMenu:pnGroupItens"  widgetVar="pnlMenuVar" at="left" showEffect="overlay" >
 						<h2>ProFinance</h2>
 						<p:menu>
