@@ -3,6 +3,7 @@ package org.com.proFinance.entity;
 import java.io.Serializable;
 import java.util.Calendar;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -53,6 +55,10 @@ public class OcorrenciaProjeto implements Serializable{
 	@ManyToOne
 	@JoinColumn(name = "loginUser_id") 
 	private LoginUser loginUser;
+	
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name = "anexo_id") 
+	private Anexo anexo;
 	
 	private String descricao;
 	
@@ -144,6 +150,14 @@ public class OcorrenciaProjeto implements Serializable{
 
 	public void setProjeto(Projeto projeto) {
 		this.projeto = projeto;
+	}
+	
+	public Anexo getAnexo() {
+		return anexo;
+	}
+
+	public void setAnexo(Anexo anexo) {
+		this.anexo = anexo;
 	}
 
 	@Override

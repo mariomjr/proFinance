@@ -90,7 +90,9 @@
        			oncomplete="PF('load').hide()" update="pnOutGeral, juroMes, srmIndexador, pnDadosSimulacao" icon="ui-icon-document-b"/>
        			
   			<p:commandButton value="Limpar Simulações" actionListener="#{simuladorBean.limparSimulacoes}" onclick="PF('load').show()"
- 				oncomplete="PF('load').hide()" update="pnOutGeral, juroMes, srmIndexador, pnDadosSimulacao, pnDadosProjetos" icon="ui-icon-trash"/>
+ 				oncomplete="PF('load').hide()" update="pnOutGeral, juroMes, srmIndexador, pnDadosSimulacao, pnDadosProjetos" icon="ui-icon-trash">
+				<p:confirm header="Confirmação" message="Deseja realmente limpar as simulações?" icon="ui-icon-alert"/>
+			</p:commandButton>
 		</p:panel>
 		<p:panel  id="pnDadosSimulacao" rendered="#{simuladorBean.listProjetos.size()>0}">
 			

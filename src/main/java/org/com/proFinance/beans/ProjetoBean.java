@@ -18,6 +18,7 @@ import org.com.proFinance.dao.IndexadorDao;
 import org.com.proFinance.dao.ProjetoDao;
 import org.com.proFinance.dao.SocioEmpresaDao;
 import org.com.proFinance.dataModel.LazyProjetoDataModel;
+import org.com.proFinance.entity.Anexo;
 import org.com.proFinance.entity.DiaCorridoProjeto;
 import org.com.proFinance.entity.Indexador;
 import org.com.proFinance.entity.OcorrenciaProjeto;
@@ -28,6 +29,7 @@ import org.com.proFinance.services.ProjetoService;
 import org.com.proFinance.util.Uteis;
 import org.com.proFinance.util.UtilSelectItem;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 
@@ -111,6 +113,10 @@ public class ProjetoBean implements Serializable{
 		FacesContext.getCurrentInstance().getExternalContext().redirect("Projetos.jsf");
 	}
 	
+	public void voltarTela() throws IOException{
+		limparProjeto();
+		redirecionarTela();
+	}
 	
 	public void gerarPlanilha() throws IOException{
 		
@@ -209,6 +215,16 @@ public class ProjetoBean implements Serializable{
 		for(Indexador indexador : indexadorDao.getListIndexadorAtivos()){
 			listIndexadorItens.add(new SelectItem(indexador, indexador.getDescricao()));
 		}
+	}
+	
+	public void uploadFileOcorrencia(FileUploadEvent event) {
+		
+		Anexo anexoOcorrencia = new Anexo();
+		anexoOcorrencia.setNomeArquivo(event.getFile().getFileName());
+		anexoOcorrencia.setAnexo(event.getFile().getContents());
+		anexoOcorrencia.setExtensao(event.getFile().getContentType());
+
+		getOcorrenciaSelect().setAnexo(anexoOcorrencia);
 	}
 	
 	public void limparProjeto(){
