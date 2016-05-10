@@ -9,6 +9,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.com.proFinance.converters.CalendarToString;
 import org.com.proFinance.entity.DiaCorridoProjeto;
 import org.com.proFinance.entity.Indexador;
 import org.com.proFinance.entity.OcorrenciaProjeto;
@@ -220,6 +223,75 @@ public class ProjetoService {
 			}
 			
 		});
+	}
+	
+	Integer colunaTaxaJuro;
+	Integer colunaFatorDiario;
+	Integer colunaDebito;
+	Integer colunaCredito;
+	Integer colunaJuroMes;
+	Integer colunaSaldo;
+	Integer colunaIndexador;
+	Integer colunaData;
+	
+	public void inserirDiasCorridoProjeto(Projeto projeto, Row linhaRow, Integer ordem) {
+		if(linhaRow.getCell(0).getCellType() == Cell.CELL_TYPE_NUMERIC){
+			DiaCorridoProjeto diaCorridoProjeto = new DiaCorridoProjeto();
+			
+			if(colunaData!= null){
+				diaCorridoProjeto.setData(CalendarToString.dateToCalendar(linhaRow.getCell(colunaData).getDateCellValue()));
+			}
+			if(colunaTaxaJuro!= null){
+				diaCorridoProjeto.setTaxaJuro(linhaRow.getCell(colunaTaxaJuro).getNumericCellValue());
+			}
+			if(colunaFatorDiario!= null){
+				diaCorridoProjeto.setFatorDiario(linhaRow.getCell(colunaFatorDiario).getNumericCellValue());
+			}
+			if(colunaJuroMes!= null){
+				diaCorridoProjeto.setJuroMes(linhaRow.getCell(colunaJuroMes).getNumericCellValue());
+			}
+			if(colunaSaldo!= null){
+				diaCorridoProjeto.setJuroMes(linhaRow.getCell(colunaSaldo).getNumericCellValue());
+			}
+			
+			diaCorridoProjeto.setOrdem(ordem++);
+			
+			projeto.getListDiasCorridosProjeto().add(diaCorridoProjeto);
+		}else if(linhaRow.getCell(0).getStringCellValue().equalsIgnoreCase("DATA")){
+			
+			colunaTaxaJuro = null;
+			colunaFatorDiario = null;
+			colunaDebito = null;
+			colunaCredito = null;
+			colunaJuroMes = null;
+			colunaSaldo = null;
+			colunaIndexador = null;
+			colunaData = null;
+			for(int coluna= 0; coluna< linhaRow.getLastCellNum(); coluna++){
+				setValoresCampoColuna(linhaRow.getCell(coluna).getStringCellValue(), coluna);
+			}
+		}
+		
+	}
+
+	private void setValoresCampoColuna(String stringCell, Integer coluna) {
+		if(stringCell.toUpperCase().contains("TAXA JURO")){
+			colunaTaxaJuro = coluna;
+		}else if(stringCell.toUpperCase().contains("SALDO")){
+			colunaSaldo = coluna;
+		}else if(stringCell.toUpperCase().contains("DÉBITO") || stringCell.toUpperCase().contains("DEBITO")){
+			colunaDebito = coluna;
+		}else if(stringCell.toUpperCase().contains("CRÉDITO") || stringCell.toUpperCase().contains("CREDITO")){
+			colunaCredito = coluna;
+		}else if(stringCell.toUpperCase().contains("JUROS") || stringCell.toUpperCase().contains("MÊS")){
+			colunaJuroMes = coluna;
+		}else if(stringCell.toUpperCase().contains("FATOR") || stringCell.toUpperCase().contains("DIÁRIO")){
+			colunaFatorDiario = coluna;
+		}else if(stringCell.toUpperCase().contains("CDI")){
+			colunaIndexador = coluna;
+		}else if(stringCell.toUpperCase().contains("DATA")){
+			colunaData = coluna;
+		}
 	}
 
 }

@@ -201,6 +201,12 @@ public class CalendarToString implements Serializable {
 		return cal;
 	}
 	
+	public static Calendar dateToCalendar(Date date){ 
+		  Calendar cal = Calendar.getInstance();
+		  cal.setTime(date);
+		  return cal;
+		}
+	
 	public static String calendarparaStringUS(Calendar data) {
 
 		if (data != null) {

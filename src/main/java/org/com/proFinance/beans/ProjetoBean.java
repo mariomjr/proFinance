@@ -1,6 +1,7 @@
 package org.com.proFinance.beans;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,6 +15,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.com.proFinance.dao.IndexadorDao;
 import org.com.proFinance.dao.ProjetoDao;
 import org.com.proFinance.dao.SocioEmpresaDao;
@@ -227,6 +231,37 @@ public class ProjetoBean implements Serializable{
 		getOcorrenciaSelect().setAnexo(anexoOcorrencia);
 	}
 	
+	public void uploadExcel(FileUploadEvent event) {
+		try {
+			if (event.getFile() != null) {
+
+				InputStream input = event.getFile().getInputstream();
+				XSSFWorkbook workbook = new XSSFWorkbook(input);
+				
+				getProjetoSelect().setListDiasCorridosProjeto(new ArrayList<DiaCorridoProjeto>());
+				Row linhaRow;
+				Integer ordem = 0;
+				
+				for (int indicePlanilha = 0; indicePlanilha < workbook.getNumberOfSheets(); indicePlanilha++) {
+					XSSFSheet planilha = workbook.getSheetAt(indicePlanilha);
+					
+					for(int linha  = 0; linha < planilha.getLastRowNum(); linha++){
+						linhaRow = planilha.getRow(linha);
+						projetoService.inserirDiasCorridoProjeto(getProjetoSelect(), linhaRow, ordem);
+					}
+				}
+				
+				workbook.close();
+				input.close();
+
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", event.getFile().getFileName() + " foi importado com sucesso.");
+				FacesContext.getCurrentInstance().addMessage(null, message);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void limparProjeto(){
 		setProjetoSelect(new Projeto());
 	}

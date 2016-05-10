@@ -23,6 +23,7 @@
     <script type="text/javascript">
 		$.blockUI({ message: '<h1><img src="#{request.contextPath}/img/loading.gif" /></h1>' });
 		$(document).ajaxStart($.blockUI);
+		$(document).ajaxStop($.unblockUI);
 		$(document).ready(function(){
 			$.unblockUI();
 		});
@@ -102,6 +103,10 @@
 		        		rendered="#{projetoBean.projetoSelect.id == null}"
 	        			oncomplete="PF('load').hide()" update="pnDadosInvestimento, formGeral" icon="ui-icon-document-b"/>
 	        	</div>
+	        	<div class="ui-grid-col-2">
+		        	<p:commandButton value="Importar projeto excel" icon="ui-icon-arrowreturnthick-1-s" onclick="PF('load').show()"
+	        			oncomplete="PF('load').hide(); PF('dialogImportacaoExcel').show()" update="mdlImportacaoExcel"/>
+       			</div>
 	        </div>
 		</p:panel>
 		<p:panel  id="pnDadosInvestimento" rendered="#{projetoBean.projetoSelect.listDiasCorridosProjeto.size()>0}">
@@ -251,6 +256,21 @@
 				</div>
 			</f:facet>
 		</p:dialog>
+		
+		
+		<p:dialog header="Importação de arquivo excel" widgetVar="dialogImportacaoExcel" id="mdlImportacaoExcel" modal="true" showEffect="fade"
+				hideEffect="fade" resizable="true" width="50%">
+
+				<div class="ui-grid-row">
+					<div class="ui-grid-col-12">
+						<p:fileUpload fileUploadListener="#{projetoBean.uploadExcel}" mode="advanced" dragDropSupport="true" cancelLabel="Cancelar"
+							uploadLabel="Enviar" label="Adicionar" update="messages,pnDadosInvestimento" sizeLimit="1000000" fileLimit="1" allowTypes="/(\.|\/)(xls|xlsx)$/"
+							oncomplete="PF('dialogImportacaoExcel').hide()">
+						</p:fileUpload>
+					</div>
+				</div>
+
+			</p:dialog>
 
 	</ui:define>
 
