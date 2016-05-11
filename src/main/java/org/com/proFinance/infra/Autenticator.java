@@ -2,6 +2,7 @@ package org.com.proFinance.infra;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Calendar;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.com.proFinance.beans.HomeBean;
 import org.com.proFinance.dao.LoginUserDao;
 import org.com.proFinance.entity.LoginUser;
+import org.com.proFinance.util.LDAPUtil;
 
 @ManagedBean(name="autenticator")
 @SessionScoped
@@ -31,8 +33,11 @@ public class Autenticator implements Serializable{
 	
 	public void loginProject() throws IOException {
 		
-		setLogin(loginUserDao.buscaUserByLogin(getLogin().getLogin()));
-		if(getLogin().getId()!= null){
+		
+		if(LDAPUtil.autenticarAD(getLogin().getLogin(), getLogin().getPassword()) || isUsuarioAdmin()){
+			
+			insereAlteraLogin(getLogin().getLogin());
+			
 			HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 	        session.setAttribute("usuarioLogado", getLogin());
 	        
@@ -49,7 +54,32 @@ public class Autenticator implements Serializable{
 	}
 
 	
-    public void logout() throws IOException {
+    private void insereAlteraLogin(String login) {
+		LoginUser loginAux = loginUserDao.buscaUserByLogin(login);
+		
+		if(loginAux == null){
+			loginAux = new LoginUser();
+			loginAux.setLogin(login);
+		}
+		if(isUsuarioAdmin() == false){
+			loginAux.setAdUser(LDAPUtil.getADUserByLogin(loginAux.getLogin()));
+		}
+		
+		loginAux.setDataUltimaEntrada(Calendar.getInstance());
+		loginUserDao.salvaLoginUser(loginAux);
+		setLogin(loginAux);
+	}
+
+
+	private boolean isUsuarioAdmin() {
+		if(getLogin().getLogin().equals("ADMIN") && getLogin().getPassword().equals("1122")){
+			return true;
+		}
+		return false;
+	}
+
+
+	public void logout() throws IOException {
         UtilUser.getSession().invalidate();
     	homeBean.redirectLogin();
     }

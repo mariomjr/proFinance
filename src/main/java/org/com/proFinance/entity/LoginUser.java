@@ -1,6 +1,7 @@
 package org.com.proFinance.entity;
 
 import java.io.Serializable;
+import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,13 +22,16 @@ public class LoginUser implements Serializable {
     @GeneratedValue
 	private Long id;
 	
+	@Transient
 	private String password;
 	
 	@Column(nullable=false, unique = true)
 	private String login;
 	
+	private Calendar dataUltimaEntrada;
+	
 	@Transient
-	private boolean logado = false;
+	private ADUser adUser;
 
 	public Long getId() {
 		return id;
@@ -53,12 +57,20 @@ public class LoginUser implements Serializable {
 		this.password = password;
 	}
 
-	public boolean isLogado() {
-		return logado;
+	public ADUser getAdUser() {
+		return adUser;
 	}
 
-	public void setLogado(boolean logado) {
-		this.logado = logado;
+	public void setAdUser(ADUser adUser) {
+		this.adUser = adUser;
+	}
+
+	public Calendar getDataUltimaEntrada() {
+		return dataUltimaEntrada;
+	}
+
+	public void setDataUltimaEntrada(Calendar dataUltimaEntrada) {
+		this.dataUltimaEntrada = dataUltimaEntrada;
 	}
 	
 }
