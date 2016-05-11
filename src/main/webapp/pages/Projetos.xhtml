@@ -42,7 +42,7 @@
 					<h:outputText value="#{calendarToString.obterData(projeto.dataInicial)}" />
 				</p:column>
 				<p:column headerText="Data Final">
-					<h:outputText value="#{calendarToString.obterData(projeto.dataFinalPrevista)}" />
+					<h:outputText value="#{calendarToString.obterData(projeto.dataFinalPrevistaNova)}" />
 				</p:column>
 			</p:dataTable>
 			
@@ -96,7 +96,7 @@
 					</div>
 		
 					<div class="ui-grid-col-4">
-						<p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevista}"
+						<p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevistaNova}"
 		         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}"
 		         			disabled="#{projetoBean.projetoSelect.id != null}"/>
 			        </div>

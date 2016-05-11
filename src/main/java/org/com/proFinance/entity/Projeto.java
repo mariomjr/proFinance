@@ -33,7 +33,9 @@ public class Projeto implements Serializable{
 	
 	private Calendar dataInicial;
 	
-	private Calendar dataFinalPrevista;
+	private Calendar dataFinalPrevistaAtual;
+	
+	private Calendar dataFinalPrevistaNova;
 	
 	@OneToMany(mappedBy = "projeto", targetEntity= DiaCorridoProjeto.class, cascade=CascadeType.ALL)
 	private List<DiaCorridoProjeto> listDiasCorridosProjeto;
@@ -81,12 +83,20 @@ public class Projeto implements Serializable{
 		this.dataInicial = dataInicial;
 	}
 
-	public Calendar getDataFinalPrevista() {
-		return dataFinalPrevista;
+	public Calendar getDataFinalPrevistaAtual() {
+		return dataFinalPrevistaAtual;
 	}
 
-	public void setDataFinalPrevista(Calendar dataFinalPrevista) {
-		this.dataFinalPrevista = dataFinalPrevista;
+	public void setDataFinalPrevistaAtual(Calendar dataFinalPrevistaAtual) {
+		this.dataFinalPrevistaAtual = dataFinalPrevistaAtual;
+	}
+
+	public Calendar getDataFinalPrevistaNova() {
+		return dataFinalPrevistaNova;
+	}
+
+	public void setDataFinalPrevistaNova(Calendar dataFinalPrevistaNova) {
+		this.dataFinalPrevistaNova = dataFinalPrevistaNova;
 	}
 
 	public List<DiaCorridoProjeto> getListDiasCorridosProjeto() {

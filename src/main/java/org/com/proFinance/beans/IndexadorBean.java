@@ -16,6 +16,7 @@ import org.com.proFinance.dataModel.LazyIndexadorDataModel;
 import org.com.proFinance.entity.Indexador;
 import org.com.proFinance.enuns.SimNao;
 import org.com.proFinance.infra.UtilUser;
+import org.com.proFinance.services.WsBancoCentroService;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -31,6 +32,9 @@ public class IndexadorBean implements Serializable{
 
 	@Inject
 	IndexadorDao indexadorDao;
+	
+	@Inject
+	WsBancoCentroService wsBancoCentroService;
 	
 	public Indexador indexadorSelect;
 	
@@ -49,6 +53,17 @@ public class IndexadorBean implements Serializable{
 	
 	public void onRowSelect(SelectEvent event) {
 		indexadorSelect = indexadorDao.loadIndexadorById(((Indexador)event.getObject()).getId());
+	}
+	
+	public void testarIndexadorWebService(){
+		boolean testeIndexador = wsBancoCentroService.getExisteCodigo(getIndexadorSelect().getCodigo());
+		if(testeIndexador){
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Código existente!"));
+		}else{
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "Código inexistente ou possui bloqueios!"));
+		}
 	}
 	
 	public void salvarIndexador(){

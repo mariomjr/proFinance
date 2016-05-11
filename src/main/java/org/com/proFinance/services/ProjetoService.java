@@ -31,7 +31,7 @@ public class ProjetoService {
 		WSSerieVO wsSerieVo = null;
 		
 		if(projeto.getIndexador()!= null){
-			wsSerieVo = buscaValoresWebServiceIndicador(projeto.getIndexador(),projeto.getDataInicial(),projeto.getDataFinalPrevista());
+			wsSerieVo = buscaValoresWebServiceIndicador(projeto.getIndexador(),projeto.getDataInicial(),projeto.getDataFinalPrevistaNova());
 		}
 		
 		DiaCorridoProjeto diaCorridoProjeto = null;
@@ -57,8 +57,14 @@ public class ProjetoService {
 		
 		projeto.getListDiasCorridosProjeto().add(diaCorridoProjeto);
 
-		for (Calendar data : listDataDiaCorrido(projeto.getDataInicial(),
-				projeto.getDataFinalPrevista())) {
+		adicionarDiasCorrido(projeto, valor, wsSerieVo, projeto.getDataInicial(), projeto.getDataFinalPrevistaNova(), ordem);
+
+	}
+	
+	public void adicionarDiasCorrido(Projeto projeto, Double valor, WSSerieVO wsSerieVo, Calendar dataInicial, Calendar dataFinal, int ordem){
+		DiaCorridoProjeto diaCorridoProjeto = null;
+		for (Calendar data : listDataDiaCorrido(dataInicial,
+				dataFinal)) {
 			diaCorridoProjeto = new DiaCorridoProjeto();
 			diaCorridoProjeto.setProjeto(projeto);
 			diaCorridoProjeto.setData(data);
@@ -72,9 +78,7 @@ public class ProjetoService {
 			diaCorridoProjeto.setValorSaldo(valor);
 
 			projeto.getListDiasCorridosProjeto().add(diaCorridoProjeto);
-
 		}
-
 	}
 
 	private void insereOcorrenciaProjeto(Projeto projeto, DiaCorridoProjeto diaCorridoProjeto) {
@@ -94,7 +98,7 @@ public class ProjetoService {
 			diaCorridoProjeto.setJuroMes(projeto.getJuroMes());
 			valor += projeto.getJuroMes();
 		}
-		if(projeto.getIndexador()!= null){
+		if(projeto.getIndexador()!= null && wsSerieVo!= null){
 			diaCorridoProjeto.setValorIndexador(valorIndexador(wsSerieVo.getValores(), diaCorridoProjeto.getData().get(Calendar.MONTH)+1, 
 					diaCorridoProjeto.getData().get(Calendar.YEAR)));
 			valor += diaCorridoProjeto.getValorIndexador();
@@ -211,6 +215,27 @@ public class ProjetoService {
 				diaCorridoProjeto.setValorCredito(ocorrencia.getValor());
 			}
 		}
+	}
+	
+	public void recalcularMudancaData(Projeto projeto){
+		WSSerieVO wsSerieVo = null;
+		
+		if(projeto.getIndexador()!= null){
+			wsSerieVo = buscaValoresWebServiceIndicador(projeto.getIndexador(),projeto.getDataFinalPrevistaAtual(),projeto.getDataFinalPrevistaNova());
+		}
+		DiaCorridoProjeto diaCorrido = getDiaCorrido(projeto.getListDiasCorridosProjeto(), projeto.getDataFinalPrevistaAtual());
+		adicionarDiasCorrido(projeto, diaCorrido.getValorSaldo(), wsSerieVo,projeto.getDataFinalPrevistaAtual(),projeto.getDataFinalPrevistaNova(), diaCorrido.getOrdem());
+		
+		ordenarListaProjeto(projeto.getListDiasCorridosProjeto());
+	}
+	
+	private DiaCorridoProjeto getDiaCorrido(List<DiaCorridoProjeto> listDiaCorrido, Calendar data){
+		for(DiaCorridoProjeto diaCorrido : listDiaCorrido){
+			if(diaCorrido.getData().equals(data)){
+				return diaCorrido;
+			}
+		}
+		return null;
 	}
 
 	public void ordenarListaProjeto(List<DiaCorridoProjeto> listDiasCorridosProjeto) {
