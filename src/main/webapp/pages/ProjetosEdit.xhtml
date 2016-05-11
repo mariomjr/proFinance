@@ -67,7 +67,7 @@
 				</div>
 		
 				<div class="ui-grid-col-2">
-					<p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevista}"
+					<p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevistaNova}"
 	         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"
 	         			disabled="#{projetoBean.projetoSelect.id != null}"/>
 		        </div>
@@ -126,7 +126,8 @@
 		                	style="text-align:right;width:4em">
 		            <h:outputText value="#{diaCorrido.valorIndexador}" converter="#{doubleConverter}" id="indexador#{rowIndex}"/>
 		        </p:column>
-		        <p:column headerText="Juro/Mês" style="text-align:right;width:5em" rendered="#{projetoBean.projetoSelect.juroMes>0}">
+		        <p:column headerText="Juro/Mês" style="text-align:right;width:5em" 
+		        	rendered="#{projetoBean.projetoSelect.juroMes != null and projetoBean.projetoSelect.juroMes>0}">
 		            <h:outputText value="#{diaCorrido.juroMes}" converter="#{doubleConverter}" id="juroMes#{rowIndex}"/>
 		        </p:column>
 		        <p:column headerText="Fator mensal" style="text-align:right;width:9em">
@@ -144,7 +145,7 @@
 		        </p:column>
 		        
 		        <p:column headerText="Saldo" >
-		            <h:outputText value="#{diaCorrido.valorSaldoTotal}" converter="#{doubleConverterDinheiro}" styleClass="#{diaCorrido.valorSaldoNegativo ?'redTexto':'greenTexto'}"
+		            <h:outputText value="#{diaCorrido.valorSaldo}" converter="#{doubleConverterDinheiro}" styleClass="#{diaCorrido.valorSaldoNegativo ?'redTexto':'greenTexto'}"
 		            	id="valorSaldo#{rowIndex}"/>
 		        </p:column>
 		        
@@ -264,7 +265,7 @@
 				<div class="ui-grid-row">
 					<div class="ui-grid-col-12">
 						<p:fileUpload fileUploadListener="#{projetoBean.uploadExcel}" mode="advanced" dragDropSupport="true" cancelLabel="Cancelar"
-							uploadLabel="Enviar" label="Adicionar" update="messages,pnDadosInvestimento" sizeLimit="1000000" fileLimit="1" allowTypes="/(\.|\/)(xls|xlsx)$/"
+							uploadLabel="Enviar" label="Adicionar" update="messages,formGeral ,pnDadosInvestimento, pnDadosProjetos" sizeLimit="1000000" fileLimit="1" allowTypes="/(\.|\/)(xls|xlsx)$/"
 							oncomplete="PF('dialogImportacaoExcel').hide()">
 						</p:fileUpload>
 					</div>

@@ -91,6 +91,7 @@ public class SocioEmpresaDao {
 		return listar(new HashMap<String, Object>(), null, "ASCENDING", 0, 1000);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<SocioEmpresa> getListSocioEmpresaAtivo(){
 		
 		Session s = (Session) dao.getEntityManager().getDelegate();

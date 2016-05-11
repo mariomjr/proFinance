@@ -15,6 +15,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -128,6 +129,9 @@ public class ProjetoBean implements Serializable{
 			getProjetoSelect().setListDiasCorridosProjeto(new ArrayList<DiaCorridoProjeto>());
 			projetoService.gerarNovoInvestimento(getProjetoSelect(), false);
 			redirecionarTelaEdit();
+		}else if(validaPlanilhaImportacao()){
+			getProjetoSelect().setListDiasCorridosProjeto(new ArrayList<DiaCorridoProjeto>());
+			redirecionarTelaEdit();
 		}else{
 			if(UtilUser.isMobile()){
 				RequestContext.getCurrentInstance().update("messages");
@@ -153,6 +157,14 @@ public class ProjetoBean implements Serializable{
 			return false;
 		}else if(getProjetoSelect().getListOcorrenciasProjeto().isEmpty()){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "É necessário inserir pelo menos um sócio envolvido!"));
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean validaPlanilhaImportacao() {
+		if(StringUtils.isBlank(getProjetoSelect().getNome())){
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo nome do projeto é obrigatório!"));
 			return false;
 		}
 		return true;
@@ -240,22 +252,25 @@ public class ProjetoBean implements Serializable{
 				
 				getProjetoSelect().setListDiasCorridosProjeto(new ArrayList<DiaCorridoProjeto>());
 				Row linhaRow;
-				Integer ordem = 0;
 				
-				for (int indicePlanilha = 0; indicePlanilha < workbook.getNumberOfSheets(); indicePlanilha++) {
-					XSSFSheet planilha = workbook.getSheetAt(indicePlanilha);
-					
+				XSSFSheet planilha = workbook.getSheet("PROJETO");
+				
+				if(planilha!= null){
 					for(int linha  = 0; linha < planilha.getLastRowNum(); linha++){
 						linhaRow = planilha.getRow(linha);
-						projetoService.inserirDiasCorridoProjeto(getProjetoSelect(), linhaRow, ordem);
+						projetoService.inserirDiasCorridoProjeto(getProjetoSelect(), linhaRow);
 					}
+					FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", event.getFile().getFileName() + " foi importado com sucesso.");
+					FacesContext.getCurrentInstance().addMessage(null, message);
+				}else{
+					FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Atenção", "Renomeie o nome da planilha para 'PROJETO'!");
+					FacesContext.getCurrentInstance().addMessage(null, message);
 				}
 				
 				workbook.close();
 				input.close();
 
-				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", event.getFile().getFileName() + " foi importado com sucesso.");
-				FacesContext.getCurrentInstance().addMessage(null, message);
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

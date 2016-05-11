@@ -97,4 +97,19 @@ public class IndexadorDao {
 		c.add(Restrictions.eq("ativo", SimNao.SIM));
 		return c.list();
 	}
+	
+	public Indexador findIndexadorByNome(String nome){
+		
+		Session s = (Session) dao.getEntityManager().getDelegate();
+		Criteria c = s.createCriteria(Indexador.class);
+		c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		c.add(Restrictions.eq("ativo", SimNao.SIM));
+		c.add(Restrictions.eq("descricao", nome));
+		Object indexador = c.uniqueResult();
+		if(indexador!= null){
+			return (Indexador)indexador;
+		}
+		return null;
+		
+	}
 }

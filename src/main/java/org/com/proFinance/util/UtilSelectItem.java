@@ -104,7 +104,8 @@ public class UtilSelectItem {
     	
     }
     
-    public static List<SelectItem> getListaSelectItemDoEnum(Class classe, String label, boolean emBranco){
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public static List<SelectItem> getListaSelectItemDoEnum(Class classe, String label, boolean emBranco){
     	EnumSet<?> enumSet = EnumSet.allOf(classe);
         Object[] enums = enumSet.toArray();
     	List<SelectItem> listaSelectItemEnums = new ArrayList<SelectItem>();
