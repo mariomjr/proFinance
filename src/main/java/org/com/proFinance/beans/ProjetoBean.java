@@ -142,10 +142,10 @@ public class ProjetoBean implements Serializable{
 		if(getProjetoSelect().getDataInicial()== null){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Data Inicial é obrigatório!"));
 			return false;
-		}else if(getProjetoSelect().getDataFinalPrevista()== null){
+		}else if(getProjetoSelect().getDataFinalPrevistaNova()== null){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Data Final é obrigatório!"));
 			return false;
-		}else if(getProjetoSelect().getDataInicial().after(getProjetoSelect().getDataFinalPrevista())){
+		}else if(getProjetoSelect().getDataInicial().after(getProjetoSelect().getDataFinalPrevistaNova())){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "Data inicial maior que data final!"));
 			return false;
 		}else if(getProjetoSelect().getJuroMes()<=0 && getProjetoSelect().getIndexador() == null){
