@@ -114,7 +114,7 @@
 				 	</div>
 			 	</div>
 			 	
-			 	<p:panel header="Sócios envolvidos">
+			 	<p:panel header="Investidores envolvidos">
 			 		
 				 	<p:commandButton value="Adicionar" icon="ui-icon-plus" resetValues="true" update="mdlOcorrenciaProjeto"
 						actionListener="#{projetoBean.limparOcorrencia}" id="btnAdicionarOcorrenciaProjeto" onclick="PF('load').show()"
@@ -126,7 +126,7 @@
 						rowsPerPageTemplate="5" id="dtOcorrenciaProjeto"
 						paginatorPosition="bottom" widgetVar="ocorrenciaProjetoTable">
 				 	
-				 		<p:column headerText="Sócio/Empresa">
+				 		<p:column headerText="Investidor">
 							<h:outputText value="#{ocorrenciaProjeto.socioEmpresa.nome}" />
 						</p:column>
 						
@@ -169,14 +169,14 @@
 			</f:facet>
 		</p:dialog>
 		
-		<p:dialog header="Sócio valores" widgetVar="ocorrenciaProjetoDialog" id="mdlOcorrenciaProjeto" modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+		<p:dialog header="Investidor valores" widgetVar="ocorrenciaProjetoDialog" id="mdlOcorrenciaProjeto" modal="true" showEffect="fade" hideEffect="fade" resizable="true"
 			width="40%" closable="false">
 			
 			<p:messages id="messagesMdlOcorrenciaProjeto" showDetail="true" autoUpdate="false" closable="true" />
 			
 			<div class="ui-grid-row">
 			 	<div class="ui-grid-col-4">
-			 		<h:outputLabel value="Sócio/Empresa: " for="srmSocioEmpresa"/>
+			 		<h:outputLabel value="Investidor: " for="srmSocioEmpresa"/>
 			 	</div>
 			 	<div class="ui-grid-col-6">
 			 		<p:selectOneMenu id="srmSocioEmpresa" value="#{projetoBean.ocorrenciaSelect.socioEmpresa}" 

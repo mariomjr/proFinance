@@ -169,7 +169,7 @@
 					        <p:column headerText="Valor" style="text-align:right">
 					            <h:outputText value="#{ocorrenciaProjeto.valor}" converter="#{doubleConverterDinheiro}"/>
 					        </p:column>
-					        <p:column headerText="Sócio/Empresa" style="text-align:right">
+					        <p:column headerText="Investidor" style="text-align:right">
 					            <h:outputText value="#{ocorrenciaProjeto.socioEmpresa.nome}"/>
 					        </p:column>
 					        <p:column headerText="Data inclusão" style="text-align:center">
@@ -196,7 +196,7 @@
 			
 			<div class="ui-grid-row">
 			 	<div class="ui-grid-col-2">
-			 		<h:outputLabel value="Sócio/Empresa: " for="srmSocioEmpresa"/>
+			 		<h:outputLabel value="Investidor: " for="srmSocioEmpresa"/>
 			 	</div>
 			 	<div class="ui-grid-col-6">
 			 		<p:selectOneMenu id="srmSocioEmpresa" value="#{projetoBean.ocorrenciaSelect.socioEmpresa}" 

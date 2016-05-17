@@ -33,9 +33,17 @@ public class LDAPUtil {
 	
 	public static final String pathAd = "DC=SAGAGYN,DC=LOCAL";
 	
+	public static final String pathAdMalls = "DC=JMP-SagaMalls,DC=local";
+	
 	public static final String urlAd = "ldap://192.6.1.152:389";
 	
+	public static final String urlAdMalls = "ldap://10.62.50.7:389";
+	
 	public static final String usuarioAutenticacao = "cadadmin@sagagyn.local";
+	
+	public static final String usuarioAutenticacaoMalls = "imalls@jmp-sagamalls.local";
+	
+	public static final String senhaUsuarioMalls = "Malls02";
 	
 	public static final String senhaUsuario = "@saga2015";
 	
@@ -50,7 +58,7 @@ public class LDAPUtil {
 		StringBuilder pesquisa = new StringBuilder();
 		pesquisa.append("(&(objectClass=user)");
 		pesquisa.append("(sAMAccountName="+login+")");
-		pesquisa.append("(userAccountControl=512)");
+		pesquisa.append("(|(userAccountControl=66048)(userAccountControl=512))");
 		pesquisa.append(")");
 
 		listUserAD = buscaLDAP(pesquisa.toString());
@@ -58,9 +66,10 @@ public class LDAPUtil {
 		if(listUserAD.isEmpty() == false){
 			ADUser adUser = listUserAD.get(0);
 			try {
-		        context = new InitialDirContext(getPropertiesLDAP(adUser.getDistinguishedName(), senha));
+		        context = new InitialDirContext(getPropertiesLDAPMalls(adUser.getDistinguishedName(), senha));
 		        return true;
 		    } catch (Exception e) {
+		    	e.printStackTrace();
 		        return false;
 		    }
 		}else{
@@ -74,7 +83,7 @@ public class LDAPUtil {
 		StringBuilder pesquisa = new StringBuilder();
 		pesquisa.append("(&(objectClass=user)");
 		pesquisa.append("(sAMAccountName="+login+")");
-		pesquisa.append("(userAccountControl=512)");
+		pesquisa.append("(|(userAccountControl=66048)(userAccountControl=512))");
 		pesquisa.append(")");
 
 		listUserAD = buscaLDAP(pesquisa.toString());
@@ -110,14 +119,14 @@ public class LDAPUtil {
 		
 		try {
 			NamingEnumeration results = null;
-			contexto = new InitialLdapContext(getPropertiesLDAP(usuarioAutenticacao, senhaUsuario), null);
+			contexto = new InitialLdapContext(getPropertiesLDAPMalls(usuarioAutenticacaoMalls, senhaUsuarioMalls), null);
 			SearchControls search = new SearchControls();
 			String[] atributosRetorno = getCamposRetorno();
 			search.setSearchScope(SearchControls.SUBTREE_SCOPE);
 			search.setReturningAttributes(atributosRetorno);
 
 
-			results = contexto.search(pathAd,consulta,search);
+			results = contexto.search(pathAdMalls,consulta,search);
 			
 			while (results != null && results.hasMoreElements()) {
 		
@@ -437,6 +446,18 @@ public class LDAPUtil {
 		env.put(Context.SECURITY_CREDENTIALS, senha);
 		env.put(Context.INITIAL_CONTEXT_FACTORY,contextFactory);
 		env.put(Context.PROVIDER_URL, urlAd);
+		
+		return env;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Hashtable getPropertiesLDAPMalls(String usuario, String senha){
+		Hashtable env = new Hashtable(5, 0.75f);
+		env.put(Context.SECURITY_AUTHENTICATION, tipoSecurityAutenticator);
+		env.put(Context.SECURITY_PRINCIPAL, usuario);
+		env.put(Context.SECURITY_CREDENTIALS, senha);
+		env.put(Context.INITIAL_CONTEXT_FACTORY,contextFactory);
+		env.put(Context.PROVIDER_URL, urlAdMalls);
 		
 		return env;
 	}

@@ -15,14 +15,14 @@
 					<p:spacer width="10px"/>
 					<p:graphicImage value="/img/socios64.png"/>
 					<p:spacer width="10px"/>
-					<p:outputLabel value="Sócios/Empresas" />
+					<p:outputLabel value="Investidores" />
 				</h:panelGrid>
 			</f:facet>
 		</p:toolbar>
 			
 		<p:panel id="listagemSocioEmpresas">
 			
-			<p:commandButton value="Adicionar Sócio/Empresa" icon="ui-icon-plus" update="mdlSocioEmpresa" resetValues="true"
+			<p:commandButton value="Adicionar Investidor" icon="ui-icon-plus" update="mdlSocioEmpresa" resetValues="true"
 					actionListener="#{socioEmpresaBean.limparSocioEmpresa}" id="btnAdicionarSocioEmpresa" 
 					oncomplete="PF('socioEmpresaDialog').show()"/>
 			
@@ -56,7 +56,7 @@
 		    </p:blockUI>
 		</p:panel>
 		
-		<p:dialog header="Sócio/Empresa" widgetVar="socioEmpresaDialog" id="mdlSocioEmpresa" modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+		<p:dialog header="Investidor" widgetVar="socioEmpresaDialog" id="mdlSocioEmpresa" modal="true" showEffect="fade" hideEffect="fade" resizable="true"
 			width="60%" closable="false">
 			
 			<p:messages id="messagesMdlSocioEmpresa" showDetail="true" autoUpdate="false" closable="true" />
@@ -90,7 +90,7 @@
 						<p:commandButton actionListener="#{socioEmpresaBean.salvarSocioEmpresa}" 
 							value="Salvar" icon="ui-icon-disk" id="btnSalvarSocioEmpresa" update="dtSocioEmpresa, messages"
 							onclick="PF('load').show()" oncomplete="PF('load').hide()" >
-							<p:confirm header="Confirmação" message="Deseja realmente salvar esse Sócio/Empresa?" icon="ui-icon-alert"/>	
+							<p:confirm header="Confirmação" message="Deseja realmente salvar esse investidor?" icon="ui-icon-alert"/>	
 						</p:commandButton>
 					</div>
 					<div class="ui-grid-col-4" style="text-align:center">
@@ -98,7 +98,7 @@
 							id="btnRemoverSocioEmpresa" icon="ui-icon-trash" disabled ="#{socioEmpresaBean.socioEmpresaSelect.id==null?true:false}"
 							update="messages,dtSocioEmpresa" onclick="PF('load').show()"
 							oncomplete="PF('socioEmpresaDialog').hide();PF('load').hide()" style="margin-left:10px;margin-right:10px">
-							<p:confirm header="Confirmação" message="Deseja realmente remover esse Sócio/Empresa?" icon="ui-icon-alert"/>
+							<p:confirm header="Confirmação" message="Deseja realmente remover esse investidor?" icon="ui-icon-alert"/>
 						</p:commandButton>
 					</div>
 				    <div class="ui-grid-col-4" style="text-align:left">

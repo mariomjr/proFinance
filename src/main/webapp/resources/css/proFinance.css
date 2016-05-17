@@ -19,7 +19,7 @@ body{
 }
 
 .btnSocios {
-	background-image: url(#{request.contextPath}/img/socios200.png) !important;
+	background-image: url(#{request.contextPath}/img/investidores200.png) !important;
 }
 
 .btnOcorrencias {
