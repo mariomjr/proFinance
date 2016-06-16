@@ -55,6 +55,10 @@ public class DiaCorridoProjeto implements Serializable{
 	
 	private Double valorCredito;
 	
+	@ManyToOne
+	@JoinColumn(name = "indexador_id") 
+	private Indexador indexador;
+	
 	@Transient
 	private boolean valorSaldoNegativo;
 	
@@ -170,6 +174,14 @@ public class DiaCorridoProjeto implements Serializable{
 
 	public void setValorCredito(Double valorCredito) {
 		this.valorCredito = valorCredito;
+	}
+
+	public Indexador getIndexador() {
+		return indexador;
+	}
+
+	public void setIndexador(Indexador indexador) {
+		this.indexador = indexador;
 	}
 
 	public boolean isValorSaldoNegativo() {

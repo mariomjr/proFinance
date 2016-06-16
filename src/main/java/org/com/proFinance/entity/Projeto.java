@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.com.proFinance.enuns.EnumCreditoDebito;
+import org.com.proFinance.enuns.SimNao;
 
 @Entity
 public class Projeto implements Serializable{
@@ -57,6 +60,9 @@ public class Projeto implements Serializable{
 	
 	@Transient
 	private String tabTitle;
+	
+	@Enumerated(EnumType.STRING)
+	private SimNao ativo;
 	
 
 	public Long getId() {
@@ -168,6 +174,14 @@ public class Projeto implements Serializable{
 
 	public void setTabTitle(String tabTitle) {
 		this.tabTitle = tabTitle;
+	}
+
+	public SimNao getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(SimNao ativo) {
+		this.ativo = ativo;
 	}
 
 	@Override

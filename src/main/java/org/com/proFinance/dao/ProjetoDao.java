@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.com.proFinance.entity.DiaCorridoProjeto;
 import org.com.proFinance.entity.Projeto;
+import org.com.proFinance.enuns.SimNao;
 import org.com.proFinance.infra.GenericHibernateDao;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -61,6 +62,7 @@ public class ProjetoDao {
 			}
 		}
 		
+		criteria.add(Restrictions.eq("ativo", SimNao.SIM));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
 		return criteria;

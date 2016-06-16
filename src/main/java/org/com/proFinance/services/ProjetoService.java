@@ -48,6 +48,9 @@ public class ProjetoService {
 		diaCorridoProjeto.setTaxaJuro((diaCorridoProjeto.getSomaJuroMesIndexador() / 100) + 1);
 		diaCorridoProjeto.setFatorDiario(calculaFatorDiario(
 				diaCorridoProjeto.getTaxaJuro(), projeto.getDataInicial()));
+		if(projeto.getIndexador()!= null){
+			diaCorridoProjeto.setIndexador(projeto.getIndexador());
+		}
 
 		diaCorridoProjeto.setOrdem(ordem++);
 		
@@ -77,6 +80,10 @@ public class ProjetoService {
 			diaCorridoProjeto.setFatorDiario(calculaFatorDiario(
 					diaCorridoProjeto.getTaxaJuro(), data));
 			diaCorridoProjeto.setOrdem(ordem++);
+			
+			if(projeto.getIndexador()!= null){
+				diaCorridoProjeto.setIndexador(projeto.getIndexador());
+			}
 
 			valor = valor * diaCorridoProjeto.getFatorDiario();
 			diaCorridoProjeto.setValorSaldo(valor);
@@ -255,16 +262,16 @@ public class ProjetoService {
 		});
 	}
 	
-	Integer colunaTaxaJuro;
-	Integer colunaFatorDiario;
-	Integer colunaDebito;
-	Integer colunaCredito;
-	Integer colunaJuroMes;
-	Integer colunaSaldo;
-	Integer colunaIndexador;
-	Integer colunaData;
-	Indexador indexador;
-	Double valorAntigo;
+	public Integer colunaTaxaJuro;
+	public Integer colunaFatorDiario;
+	public Integer colunaDebito;
+	public Integer colunaCredito;
+	public Integer colunaJuroMes;
+	public Integer colunaSaldo;
+	public Integer colunaIndexador;
+	public Integer colunaData;
+	public Indexador indexador;
+	public Double valorAntigo;
 	int i;
 	int ordem;
 	

@@ -31,7 +31,7 @@
 			<p:dataTable var="projeto" value="#{projetoBean.lazyProjeto}" paginator="true" rows="10" rowKey="#{projeto.id}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 				rowsPerPageTemplate="5,10,15" selectionMode="single" id="dtProjeto" lazy="true"
-				paginatorPosition="bottom" widgetVar="projetoTable">
+				paginatorPosition="bottom" widgetVar="projetoTable" emptyMessage="Nenhum projeto encontrado!">
 
 				<p:ajax event="rowSelect" listener="#{projetoBean.onRowSelect}"/>
 
@@ -74,8 +74,7 @@
 		
 					<div class="ui-grid-col-4">
 						<p:calendar id="dataInicial"  value="#{projetoBean.projetoSelect.dataInicial}"  
-		         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}"
-		         			disabled="#{projetoBean.projetoSelect.id != null}"/>
+		         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}"/>
 			        </div>
 			        
 			        <div class="ui-grid-col-2">
@@ -83,8 +82,7 @@
 					</div>
 		
 					<div class="ui-grid-col-4">
-						<p:inputText value="#{projetoBean.projetoSelect.juroMes}" style="width:87%" id="juroMes" converter="#{doubleConverter}"
-							disabled="#{projetoBean.projetoSelect.id != null}"/>
+						<p:inputText value="#{projetoBean.projetoSelect.juroMes}" style="width:87%" id="juroMes" converter="#{doubleConverter}"/>
 			        </div>
 		        
 	        	</div>
@@ -97,8 +95,7 @@
 		
 					<div class="ui-grid-col-4">
 						<p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevistaNova}"
-		         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}"
-		         			disabled="#{projetoBean.projetoSelect.id != null}"/>
+		         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}"/>
 			        </div>
 		        
 				 	<div class="ui-grid-col-2">

@@ -68,8 +68,9 @@
 		
 				<div class="ui-grid-col-2">
 					<p:calendar id="dataFinal"  value="#{projetoBean.projetoSelect.dataFinalPrevistaNova}"
-	         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"
-	         			disabled="#{projetoBean.projetoSelect.id != null}"/>
+	         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10">
+         				<p:ajax event="dateSelect" listener="#{projetoBean.mudancaData}" update="pnDadosProjetos"/>
+        			</p:calendar>
 		        </div>
 		        
 	        </div>
@@ -97,21 +98,25 @@
 		        
 			</div>
 	        
-	        <div class="ui-grid-row">
-	        	<div class="ui-grid-col-2">
-	        		<p:commandButton value="Atualizar" actionListener="#{projetoBean.gerarPlanilha}" onclick="PF('load').show()"
-		        		rendered="#{projetoBean.projetoSelect.id == null}"
-	        			oncomplete="PF('load').hide()" update="pnDadosInvestimento, formGeral" icon="ui-icon-document-b"/>
-	        	</div>
-	        	<div class="ui-grid-col-2">
-		        	<p:commandButton value="Importar projeto excel" icon="ui-icon-arrowreturnthick-1-s" onclick="PF('load').show()"
-	        			oncomplete="PF('load').hide(); PF('dialogImportacaoExcel').show()" update="mdlImportacaoExcel"/>
-       			</div>
-	        </div>
+       		<p:commandButton value="Atualizar" actionListener="#{projetoBean.gerarPlanilha}" onclick="PF('load').show()"
+        		rendered="#{projetoBean.projetoSelect.id == null}"
+       			oncomplete="PF('load').hide()" update="pnDadosInvestimento, formGeral" icon="ui-icon-document-b"/>
+       			
+    		<p:commandButton value="Atualizar Planilha" actionListener="#{projetoBean.atualizarProjeto}" onclick="PF('load').show()"
+        		rendered="#{projetoBean.mudouDataFinal}" oncomplete="PF('load').hide()" update="pnDadosInvestimento, formGeral" icon="ui-icon-document-b"/>
+        		
+        	<p:commandButton value="Importar projeto excel" icon="ui-icon-arrowreturnthick-1-s" onclick="PF('load').show()"
+       			oncomplete="PF('load').hide(); PF('dialogImportacaoExcel').show()" update="mdlImportacaoExcel"/>
 		</p:panel>
+		
 		<p:panel  id="pnDadosInvestimento" rendered="#{projetoBean.projetoSelect.listDiasCorridosProjeto.size()>0}">
 			<p:commandButton value="Salvar" actionListener="#{projetoBean.salvarProjeto}" icon="ui-icon-disk"
 				onclick="PF('load').show()" oncomplete="PF('load').hide()" update="formGeral"/>
+				
+			<p:commandButton value="Excluir" actionListener="#{projetoBean.excluirProjeto}" icon="ui-icon-circle-close"
+				onclick="PF('load').show()" oncomplete="PF('load').hide()" update="formGeral">
+				<p:confirm header="Confirmação" message="Deseja realmente excluir esse projeto?" icon="ui-icon-alert"/>
+			</p:commandButton>
 			
 			 <p:dataTable var="diaCorrido" value="#{projetoBean.projetoSelect.listDiasCorridosProjeto}"
 			 	id="dtDiaCorrido" rowIndexVar="rowIndex">

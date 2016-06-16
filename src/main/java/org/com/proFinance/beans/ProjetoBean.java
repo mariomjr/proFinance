@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.com.proFinance.converters.CalendarToString;
 import org.com.proFinance.dao.IndexadorDao;
 import org.com.proFinance.dao.ProjetoDao;
 import org.com.proFinance.dao.SocioEmpresaDao;
@@ -29,6 +30,7 @@ import org.com.proFinance.entity.Indexador;
 import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
 import org.com.proFinance.enuns.EnumCreditoDebito;
+import org.com.proFinance.enuns.SimNao;
 import org.com.proFinance.infra.UtilUser;
 import org.com.proFinance.services.ProjetoService;
 import org.com.proFinance.util.Uteis;
@@ -70,6 +72,8 @@ public class ProjetoBean implements Serializable{
 	private List<Projeto> listProjetoMobile;
 	
 	private List<SelectItem> listIndexadorItens;
+	
+	private Boolean mudouDataFinal;
 
 	@PostConstruct
 	public void init(){
@@ -82,6 +86,8 @@ public class ProjetoBean implements Serializable{
 	}
 	
 	public void onRowSelect(SelectEvent event) throws IOException {
+		setMudouDataFinal(Boolean.FALSE);
+		
 		projetoSelect = projetoDao.loadProjetoById(((Projeto)event.getObject()).getId());
 		projetoService.recalcularProjeto(getProjetoSelect());
 		redirecionarTelaEdit();
@@ -95,6 +101,8 @@ public class ProjetoBean implements Serializable{
 	
 	public void salvarProjeto(){
 		if(validarDados()){
+			getProjetoSelect().setDataFinalPrevistaAtual(getProjetoSelect().getDataFinalPrevistaNova());
+			getProjetoSelect().setAtivo(SimNao.SIM);
 			projetoDao.salvarProjeto(getProjetoSelect());
 			
 			FacesContext.getCurrentInstance().addMessage(null,
@@ -259,6 +267,9 @@ public class ProjetoBean implements Serializable{
 					for(int linha  = 0; linha < planilha.getLastRowNum(); linha++){
 						linhaRow = planilha.getRow(linha);
 						projetoService.inserirDiasCorridoProjeto(getProjetoSelect(), linhaRow);
+						if(linha == (planilha.getLastRowNum())-1){
+							getProjetoSelect().setDataFinalPrevistaNova(CalendarToString.dateToCalendar(linhaRow.getCell(projetoService.colunaData).getDateCellValue()));
+						}
 					}
 					FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", event.getFile().getFileName() + " foi importado com sucesso.");
 					FacesContext.getCurrentInstance().addMessage(null, message);
@@ -275,6 +286,43 @@ public class ProjetoBean implements Serializable{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void excluirProjeto(){
+		getProjetoSelect().setAtivo(SimNao.NAO);
+		projetoDao.salvarProjeto(getProjetoSelect());
+		try {
+			redirecionarTela();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Projeto excluído!"));
+		RequestContext.getCurrentInstance().update("messages");
+		
+	}
+	
+	public void mudancaData(){
+		setMudouDataFinal(Boolean.TRUE);
+	}
+	
+	public void atualizarProjeto(){
+		if(validaMudancaData()){
+			projetoService.recalcularMudancaData(getProjetoSelect());
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Projeto atualizado!"));
+		}
+		RequestContext.getCurrentInstance().update("messages");
+	}
+
+	private boolean validaMudancaData() {
+		if(getProjetoSelect().getDataFinalPrevistaAtual()!= null &&
+				getProjetoSelect().getDataFinalPrevistaAtual().after(getProjetoSelect().getDataFinalPrevistaNova())){
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_WARN, "Atenção", "Nova data deve ser maior que data prevista!"));
+			return false;
+		}
+		return true;
 	}
 
 	public void limparProjeto(){
@@ -336,6 +384,17 @@ public class ProjetoBean implements Serializable{
 
 	public void setListProjetoMobile(List<Projeto> listProjetoMobile) {
 		this.listProjetoMobile = listProjetoMobile;
+	}
+
+	public Boolean getMudouDataFinal() {
+		if(mudouDataFinal == null){
+			mudouDataFinal = Boolean.FALSE;
+		}
+		return mudouDataFinal;
+	}
+
+	public void setMudouDataFinal(Boolean mudouDataFinal) {
+		this.mudouDataFinal = mudouDataFinal;
 	}
 
 }

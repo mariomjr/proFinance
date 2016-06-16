@@ -34,7 +34,7 @@ public class Autenticator implements Serializable{
 	public void loginProject() throws IOException {
 		
 		
-		if(LDAPUtil.autenticarAD(getLogin().getLogin(), getLogin().getPassword()) || isUsuarioAdmin()){
+		if(isUsuarioAdmin() || LDAPUtil.autenticarAD(getLogin().getLogin(), getLogin().getPassword())){
 			
 			insereAlteraLogin(getLogin().getLogin());
 			
