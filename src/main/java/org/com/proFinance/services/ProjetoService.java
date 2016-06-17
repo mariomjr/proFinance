@@ -332,7 +332,9 @@ public class ProjetoService {
 				i = 0;
 				ordem = 0;
 				for(int coluna= 0; coluna< linhaRow.getLastCellNum(); coluna++){
-					setValoresCampoColuna(linhaRow.getCell(coluna).getStringCellValue(), coluna);
+					if(linhaRow.getCell(coluna)!= null){
+						setValoresCampoColuna(linhaRow.getCell(coluna).getStringCellValue(), coluna);
+					}
 				}
 			}
 		}
