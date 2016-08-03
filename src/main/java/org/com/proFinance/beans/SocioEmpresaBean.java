@@ -100,9 +100,6 @@ public class SocioEmpresaBean implements Serializable{
 		}else if(Uteis.validaNullVazio(getSocioEmpresaSelect().getSigla())){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Sigla é obrigatório!"));
 			return false;
-		}else if(Uteis.validaNullVazio(getSocioEmpresaSelect().getCpfCnpj())){
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo CPF/CNPJ é obrigatório!"));
-			return false;
 		}
 		return true;
 	}
