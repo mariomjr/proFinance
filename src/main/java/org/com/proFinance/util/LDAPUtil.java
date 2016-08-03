@@ -33,17 +33,17 @@ public class LDAPUtil {
 	
 	public static final String pathAd = "DC=SAGAGYN,DC=LOCAL";
 	
-	public static final String pathAdMalls = "DC=JMP-SagaMalls,DC=local";
+	public static final String pathAdMalls = "DC=GRUPOSAGA,DC=local";
 	
 	public static final String urlAd = "ldap://192.6.1.152:389";
 	
-	public static final String urlAdMalls = "ldap://10.62.50.7:389";
+	public static final String urlAdMalls = "ldap://10.62.50.10:389";
+	
+	public static final String usuarioAutenticacaoMalls = "proMalls@gruposaga.local";
+	
+	public static final String senhaUsuarioMalls = "@saga2016";
 	
 	public static final String usuarioAutenticacao = "cadadmin@sagagyn.local";
-	
-	public static final String usuarioAutenticacaoMalls = "imalls@jmp-sagamalls.local";
-	
-	public static final String senhaUsuarioMalls = "Malls02";
 	
 	public static final String senhaUsuario = "@saga2015";
 	
