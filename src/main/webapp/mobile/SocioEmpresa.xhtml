@@ -32,9 +32,6 @@
 				<p:column headerText="Sigla"  priority="1">
 					<h:outputText value="#{socioEmpresa.sigla}" />
 				</p:column>
-				<p:column headerText="CPF/CNPJ"  priority="2">
-					<h:outputText value="#{socioEmpresa.cpfCnpj}" />
-				</p:column>
 				<p:column headerText="Ativo" priority="2">
 					<h:outputText value="#{socioEmpresa.ativo.label}" />
 				</p:column>
@@ -47,7 +44,6 @@
 			    	update="second:frmContent2" style="background:#EFEFEF !important;color:black">
 			    	<h2>#{socioEmpresa.nome}</h2>
 				    <p>#{socioEmpresa.sigla}</p>
-				    <p>#{socioEmpresa.cpfCnpj}</p>
 		            <f:setPropertyActionListener value="#{socioEmpresa}"  target="#{socioEmpresaBean.socioEmpresaSelect}" />
 		        </p:commandLink>
 			</p:dataList>
@@ -64,12 +60,7 @@
                 <p:outputLabel value="Sigla: " for="itSigla"></p:outputLabel>
                 <p:inputText value="#{socioEmpresaBean.socioEmpresaSelect.sigla}" id="itSigla">
                 </p:inputText>
-            </pm:field>	
-            <pm:field>
-                <p:outputLabel value="CPF/CNPJ: " for="itCpfCnpj"></p:outputLabel>
-                <p:inputText value="#{socioEmpresaBean.socioEmpresaSelect.cpfCnpj}" id="itCpfCnpj">
-                </p:inputText>
-            </pm:field>	
+            </pm:field>
             <p:commandButton value="Salvar" actionListener="#{socioEmpresaBean.salvarSocioEmpresaMobile}" 
             	update="first:frmContent:messages, first:frmContent:dtListSocioEmpresa" />
 		
