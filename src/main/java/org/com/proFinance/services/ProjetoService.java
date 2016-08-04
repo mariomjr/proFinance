@@ -324,6 +324,7 @@ public class ProjetoService {
 				diaCorridoProjeto.setIndexador(indexador);
 				
 				diaCorridoProjeto.setOrdem(ordem++);
+				diaCorridoProjeto.setProjeto(projeto);
 				
 				projeto.getListDiasCorridosProjeto().add(diaCorridoProjeto);
 			}else if(linhaRow.getCell(0).getStringCellValue().equalsIgnoreCase("DATA")){

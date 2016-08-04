@@ -144,8 +144,7 @@
 		                	style="text-align:right;width:4em">
 		            <h:outputText value="#{diaCorrido.valorIndexador}" converter="#{doubleConverter}" id="indexador#{rowIndex}"/>
 		        </p:column>
-		        <p:column headerText="Juro/Mês" style="text-align:right;width:5em" 
-		        	rendered="#{projetoBean.projetoSelect.juroMes != null and projetoBean.projetoSelect.juroMes>0}">
+		        <p:column headerText="Juro/Mês" style="text-align:right;width:5em" >
 		            <h:outputText value="#{diaCorrido.juroMes}" converter="#{doubleConverter}" id="juroMes#{rowIndex}"/>
 		        </p:column>
 		        <p:column headerText="Fator mensal" style="text-align:right;width:9em">
