@@ -2,6 +2,7 @@ package org.com.proFinance.util;
 
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.UUID;
 
 import javax.inject.Named;
 
@@ -23,5 +24,9 @@ public class Uteis {
 		String s = nf.format(valor);
 		
 		return "R$"+s;
+	}
+	
+	public static String randomId(){
+		return UUID.randomUUID().toString().substring(0, 20);
 	}
 }

@@ -3,6 +3,7 @@ package org.com.proFinance.beans;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -14,6 +15,7 @@ import javax.inject.Inject;
 
 import org.com.proFinance.dao.SocioEmpresaDao;
 import org.com.proFinance.dataModel.LazySocioEmpresaDataModel;
+import org.com.proFinance.entity.Empresa;
 import org.com.proFinance.entity.SocioEmpresa;
 import org.com.proFinance.enuns.SimNao;
 import org.com.proFinance.infra.UtilUser;
@@ -36,6 +38,8 @@ public class SocioEmpresaBean implements Serializable{
 	SocioEmpresaDao socioEmpresaDao;
 	
 	private SocioEmpresa socioEmpresaSelect;
+	
+	private Empresa empresaSelect;
 	
 	private LazyDataModel<SocioEmpresa> lazySocioEmpresa;
 	
@@ -66,7 +70,7 @@ public class SocioEmpresaBean implements Serializable{
 			socioEmpresaDao.salvarSocioEmpresa(getSocioEmpresaSelect());
 			
 			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Sócio/Empresa foi salvo!"));
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Investidor foi salvo!"));
 			RequestContext.getCurrentInstance().execute("PF('socioEmpresaDialog').hide();");
 			
 		}else{
@@ -80,7 +84,7 @@ public class SocioEmpresaBean implements Serializable{
 			socioEmpresaDao.salvarSocioEmpresa(getSocioEmpresaSelect());
 			
 			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Sócio/Empresa foi salvo!"));
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Investidor foi salvo!"));
 			listSocioEmpresa = socioEmpresaDao.getListSocioEmpresaMobile();
 		}
 	}
@@ -90,7 +94,43 @@ public class SocioEmpresaBean implements Serializable{
 		socioEmpresaDao.salvarSocioEmpresa(getSocioEmpresaSelect());
 		
 		FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Sócio/Empresa foi inativado!"));
+				new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Investidor foi inativado!"));
+	}
+	
+	public void adicionarEmpresa(){
+		
+		if(validaDadosEmpresa()){
+			if(getEmpresaSelect().getRandomId() == null){
+				getEmpresaSelect().setRandomId(Uteis.randomId());
+				getEmpresaSelect().setAtivo(SimNao.SIM);
+				getEmpresaSelect().setSocioEmpresa(getSocioEmpresaSelect());
+				getSocioEmpresaSelect().getListEmpresa().add(getEmpresaSelect());
+			}
+			RequestContext.getCurrentInstance().execute("PF('empresaDialog').hide();");
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Empresa foi inativado!"));
+		}else{
+			RequestContext.getCurrentInstance().update("messagesMdlEmpresa");
+		}
+	}
+	
+	public void setRemoverEmpresa(Integer index){
+		
+		Empresa empresa = getSocioEmpresaSelect().getListEmpresaAtivas().get(index.intValue());
+		empresa.setAtivo(SimNao.NAO);
+		
+//		getProjetoSelect().getListOcorrenciasProjeto().remove(index.intValue());
+	}
+	
+	private boolean validaDadosEmpresa() {
+		if(Uteis.validaNullVazio(getEmpresaSelect().getNome())){
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Nome é obrigatório!"));
+			return false;
+		}else if(Uteis.validaNullVazio(getEmpresaSelect().getCnpj())){
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo CNPJ é obrigatório!"));
+			return false;
+		}
+		return true;
 	}
 	
 	private boolean validarDados() {
@@ -107,6 +147,10 @@ public class SocioEmpresaBean implements Serializable{
 	public void limparSocioEmpresa(){
 		setSocioEmpresaSelect(new SocioEmpresa());
 	}
+	
+	public void limparEmpresa(){
+		setEmpresaSelect(new Empresa());
+	}
 
 	public List<SelectItem> getListSocioEmpresaItens() {
 		listSocioEmpresaItens = new ArrayList<SelectItem>();
@@ -116,6 +160,8 @@ public class SocioEmpresaBean implements Serializable{
 		
 		return listSocioEmpresaItens;
 	}
+	
+	
 
 	public SocioEmpresa getSocioEmpresaSelect() {
 		if(socioEmpresaSelect == null){
@@ -143,5 +189,15 @@ public class SocioEmpresaBean implements Serializable{
 	public void setListSocioEmpresa(List<SocioEmpresa> listSocioEmpresa) {
 		this.listSocioEmpresa = listSocioEmpresa;
 	}
-	
+
+	public Empresa getEmpresaSelect() {
+		if(empresaSelect == null){
+			empresaSelect = new Empresa();
+		}
+		return empresaSelect;
+	}
+
+	public void setEmpresaSelect(Empresa empresaSelect) {
+		this.empresaSelect = empresaSelect;
+	}
 }

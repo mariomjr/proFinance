@@ -119,7 +119,7 @@
 			</p:commandButton>
 			
 			 <p:dataTable var="diaCorrido" value="#{projetoBean.projetoSelect.listDiasCorridosProjeto}"
-			 	id="dtDiaCorrido" rowIndexVar="rowIndex">
+			 	id="dtDiaCorrido" rowIndexVar="rowIndex" scrollable="true" scrollHeight="600">
 			 	
 		        <p:column style="width:16px">
 		            <p:rowToggler rendered="#{diaCorrido.listOcorrenciasProjeto.size() > 0}" />
@@ -127,7 +127,18 @@
 		        <p:column headerText="Data" style="text-align:right">
 		            <h:outputText value="#{calendarToString.obterData(diaCorrido.data)}" />
 		        </p:column>
-		        <p:column  headerText="#{projetoBean.projetoSelect.indexador.descricao}" rendered="#{projetoBean.projetoSelect.indexador.id != null}"
+		        <p:column headerText="Indexador" rendered="#{projetoBean.projetoSelect.indexador.id != null}"
+		                	style="text-align:right;width:6em">
+		            
+		            <p:selectOneMenu  value="#{diaCorrido.indexador}" 
+						style="width:80%" converter="#{indexadorConverter}" rendered="#{projetoBean.isDiaPrimeiroDiaCorrido(diaCorrido)}">
+						<f:selectItem noSelectionOption="true"/>
+			            <f:selectItems value="#{projetoBean.listIndexadorItens}" />
+			        </p:selectOneMenu>
+			        
+		            <h:outputText value="#{diaCorrido.indexador.descricao}" id="indexadorDesc#{rowIndex}" rendered="#{projetoBean.isDiaPrimeiroDiaCorrido(diaCorrido) == false}"/>
+		        </p:column>
+		        <p:column headerText="#{projetoBean.projetoSelect.indexador.descricao}" rendered="#{projetoBean.projetoSelect.indexador.id != null}"
 		                	style="text-align:right;width:4em">
 		            <h:outputText value="#{diaCorrido.valorIndexador}" converter="#{doubleConverter}" id="indexador#{rowIndex}"/>
 		        </p:column>

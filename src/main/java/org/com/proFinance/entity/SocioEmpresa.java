@@ -1,6 +1,7 @@
 package org.com.proFinance.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -11,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.com.proFinance.enuns.SimNao;
 
@@ -32,6 +34,9 @@ public class SocioEmpresa implements Serializable{
 	
 	@OneToMany(mappedBy = "socioEmpresa", targetEntity= Empresa.class, cascade=CascadeType.ALL)
 	private List<Empresa> listEmpresa;
+	
+	@Transient
+	private List<Empresa> listEmpresaAtivas;
 	
 	@Enumerated(EnumType.STRING)
 	private SimNao ativo;
@@ -66,6 +71,31 @@ public class SocioEmpresa implements Serializable{
 
 	public void setAtivo(SimNao ativo) {
 		this.ativo = ativo;
+	}
+
+	public List<Empresa> getListEmpresa() {
+		if(listEmpresa == null){
+			listEmpresa = new ArrayList<Empresa>();
+		}
+		return listEmpresa;
+	}
+
+	public void setListEmpresa(List<Empresa> listEmpresa) {
+		this.listEmpresa = listEmpresa;
+	}
+	
+	public List<Empresa> getListEmpresaAtivas() {
+		listEmpresaAtivas = new ArrayList<Empresa>();
+		for(Empresa empresa : getListEmpresa()){
+			if(empresa.getAtivo().equals(SimNao.SIM)){
+				listEmpresaAtivas.add(empresa);
+			}
+		}
+		return listEmpresaAtivas;
+	}
+
+	public void setListEmpresaAtivas(List<Empresa> listEmpresaAtivas) {
+		this.listEmpresaAtivas = listEmpresaAtivas;
 	}
 
 	@Override

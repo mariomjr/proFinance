@@ -302,6 +302,14 @@ public class ProjetoBean implements Serializable{
 		
 	}
 	
+	public boolean isDiaPrimeiroDiaCorrido(DiaCorridoProjeto diaCorrido){
+		if(diaCorrido.getData().get(Calendar.DAY_OF_MONTH) == 1){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 	public void mudancaData(){
 		setMudouDataFinal(Boolean.TRUE);
 	}

@@ -314,6 +314,7 @@ public class ProjetoService {
 					projeto.setIndexador(indexador);
 					diaCorridoProjeto.setValorIndexador(linhaRow.getCell(colunaIndexador).getNumericCellValue());
 				}
+				diaCorridoProjeto.setIndexador(indexador);
 				
 				diaCorridoProjeto.setOrdem(ordem++);
 				

@@ -73,6 +73,37 @@
 		    	 	</div>
 	    	 	</div>
     	 	</p:panel>
+    	 	
+    	 	<p:panel header="Empresas">
+			 		
+			 	<p:commandButton value="Adicionar Empresa" icon="ui-icon-plus" resetValues="true" update="mdlEmpresa"
+					actionListener="#{socioEmpresaBean.limparEmpresa}" id="btnAdicionarEmpresa" onclick="PF('load').show()"
+					oncomplete="PF('empresaDialog').show();PF('load').hide()"/>
+					
+			 	<p:dataTable var="empresa" value="#{socioEmpresaBean.socioEmpresaSelect.listEmpresaAtivas}" paginator="true" rows="5" 
+			 		rowKey="#{empresa.id}" rowIndexVar="rowVar"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5" id="dtEmpresas" emptyMessage="Nenhuma empresa adicionada"
+					paginatorPosition="bottom" widgetVar="empresaTable">
+			 	
+			 		<p:column headerText="Nome">
+						<h:outputText value="#{empresa.nome}" />
+					</p:column>
+					
+					<p:column headerText="CNPJ">
+						<h:outputText value="#{empresa.cnpj}" />
+					</p:column>
+					
+					<p:column headerText="Excluir" width="5%" style="text-align:center">
+						<p:commandButton style="width:100%"
+							update="dtEmpresas" icon="ui-icon-trash">
+							<f:setPropertyActionListener value="#{rowVar}" target="#{socioEmpresaBean.removerEmpresa}" />
+							<p:confirm header="Confirmação" message="Deseja realmente remover essa empresa?" icon="ui-icon-alert"/>
+						</p:commandButton>
+					</p:column>
+			 		
+			 	</p:dataTable>
+		 	</p:panel>
 			
 			<f:facet name="footer">
 				<div class="ui-grid-row">
@@ -100,7 +131,51 @@
 			</f:facet>
 		</p:dialog>
 		
-		<script>$("[id*='ifCnpjSocioEmpresa']").mask('00.000.000/0000-00', {reverse: true});</script>		
+		<p:dialog header="Empresa" widgetVar="empresaDialog" id="mdlEmpresa" modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+			width="40%" closable="false">
+			
+			<p:messages id="messagesMdlEmpresa" showDetail="true" autoUpdate="false" closable="true" />
+			
+			<div class="ui-grid-row">
+			 	<div class="ui-grid-col-4">
+					<h:outputLabel value="Nome: " for="itNomeEmpresa"/>
+				</div>
+		
+				<div class="ui-grid-col-6">
+					<p:inputText value="#{socioEmpresaBean.empresaSelect.nome}" style="width:87%" id="itNomeEmpresa" />
+		        </div>
+	        </div>
+			
+			<div class="ui-grid-row">
+			 	<div class="ui-grid-col-4">
+					<h:outputLabel value="CNPJ: " for="itCnpjSocioEmpresa"/>
+				</div>
+		
+				<div class="ui-grid-col-6">
+					<p:inputText value="#{socioEmpresaBean.empresaSelect.cnpj}" style="width:87%" id="itCnpjSocioEmpresa" />
+		        </div>
+	        </div>
+			
+			<f:facet name="footer">
+				<div class="ui-grid-row">
+      					<div class="ui-grid-col-6" style="text-align:center">
+						<p:commandButton actionListener="#{socioEmpresaBean.adicionarEmpresa}" 
+							value="Adicionar" icon="ui-icon-disk" id="btnAdicionarEmpresaMdl" update="dtEmpresas"
+							onclick="PF('load').show()" oncomplete="PF('load').hide()" >
+							<p:confirm header="Confirmação" message="Deseja realmente adicionar essa empresa?" icon="ui-icon-alert"/>	
+						</p:commandButton>
+					</div>
+				    <div class="ui-grid-col-6" style="text-align:center">
+						<p:commandButton value="Cancelar" onclick="PF('empresaDialog').hide()"
+							id="btnCancelarEmpresa" icon="ui-icon-close">
+						</p:commandButton>
+					</div>
+				</div>
+			</f:facet>
+
+		</p:dialog>
+		
+		<script>$("[id*='itCnpjSocioEmpresa']").mask('00.000.000/0000-00', {reverse: true});</script>		
 
 
 	</ui:define>
