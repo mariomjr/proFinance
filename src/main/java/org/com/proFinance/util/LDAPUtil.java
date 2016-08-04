@@ -33,7 +33,7 @@ public class LDAPUtil {
 	
 	public static final String pathAd = "DC=SAGAGYN,DC=LOCAL";
 	
-	public static final String pathAdMalls = "DC=GRUPOSAGA,DC=local";
+	public static final String pathAdMalls = "DC=gruposaga,DC=local";
 	
 	public static final String urlAd = "ldap://192.6.1.152:389";
 	

@@ -332,6 +332,10 @@ public class ProjetoBean implements Serializable{
 		}
 		return true;
 	}
+	
+	public void recalcularMudancaIndexadorMes(DiaCorridoProjeto diaCorridoProjeto){
+		projetoService.recalcularMudancaIndexadorMes(diaCorridoProjeto, getProjetoSelect());
+	}
 
 	public void limparProjeto(){
 		setProjetoSelect(new Projeto());

@@ -18,6 +18,7 @@ import org.com.proFinance.entity.Indexador;
 import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
 import org.com.proFinance.enuns.EnumCreditoDebito;
+import org.com.proFinance.infra.UtilUser;
 import org.com.proFinance.wsBancoCentral.WSSerieVO;
 import org.com.proFinance.wsBancoCentral.WSValorSerieVO;
 
@@ -306,9 +307,15 @@ public class ProjetoService {
 				}
 				if(colunaDebito!= null){
 					diaCorridoProjeto.setValorDebito(linhaRow.getCell(colunaDebito).getNumericCellValue());
+					if(diaCorridoProjeto.getValorDebito()!=0){
+						adicionaOcorrencia(diaCorridoProjeto, EnumCreditoDebito.DEBITO);
+					}
 				}
 				if(colunaCredito!= null){
 					diaCorridoProjeto.setValorCredito(linhaRow.getCell(colunaCredito).getNumericCellValue());
+					if(diaCorridoProjeto.getValorCredito()>0){
+						adicionaOcorrencia(diaCorridoProjeto, EnumCreditoDebito.CREDITO);
+					}
 				}
 				if(colunaIndexador!= null){
 					projeto.setIndexador(indexador);
@@ -342,6 +349,26 @@ public class ProjetoService {
 		
 	}
 
+	private void adicionaOcorrencia(DiaCorridoProjeto diaCorridoProjeto, EnumCreditoDebito tipo) {
+		
+		OcorrenciaProjeto ocorrenciaProjeto = new OcorrenciaProjeto();
+		ocorrenciaProjeto.setDiaCorridoProjeto(diaCorridoProjeto);
+		ocorrenciaProjeto.setCreditoDebito(tipo);
+		ocorrenciaProjeto.setData(Calendar.getInstance());
+		ocorrenciaProjeto.setDataInclusao(Calendar.getInstance());
+		ocorrenciaProjeto.setLoginUser(UtilUser.getUserLogado());
+		ocorrenciaProjeto.setMostrarOcorrencia(Boolean.TRUE);
+		
+		if(tipo.equals(EnumCreditoDebito.DEBITO)){
+			ocorrenciaProjeto.setValor(diaCorridoProjeto.getValorDebito()*(-1));
+		}else{
+			ocorrenciaProjeto.setValor(diaCorridoProjeto.getValorCredito());
+		}
+		
+		diaCorridoProjeto.getListOcorrenciasProjeto().add(ocorrenciaProjeto);
+		
+	}
+
 	private void setValoresCampoColuna(String stringCell, Integer coluna) {
 		if(stringCell.toUpperCase().contains("TAXA JURO") || stringCell.toUpperCase().contains("FATOR MENSAL")){
 			colunaTaxaJuro = coluna;
@@ -361,6 +388,54 @@ public class ProjetoService {
 		}else if(stringCell.toUpperCase().contains("DATA")){
 			colunaData = coluna;
 		}
+	}
+
+	public void recalcularMudancaIndexadorMes(DiaCorridoProjeto diaCorridoProjeto, Projeto projetoSelect) {
+		
+		atualizaValorIndexadorMesDiaCorrido(diaCorridoProjeto, projetoSelect);
+		
+		recalcularProjeto(projetoSelect, diaCorridoProjeto);
+	}
+
+	private void atualizaValorIndexadorMesDiaCorrido(DiaCorridoProjeto diaCorridoProjeto, Projeto projetoSelect) {
+		ordenarListaProjeto(projetoSelect.getListDiasCorridosProjeto());
+		int ano = diaCorridoProjeto.getData().get(Calendar.YEAR);
+		int mes =  diaCorridoProjeto.getData().get(Calendar.MONTH);
+		
+		
+		WSSerieVO wsSerieVO = null;
+		if(diaCorridoProjeto.getIndexador()!= null){
+			wsSerieVO = buscaValoresWebServiceIndicador(diaCorridoProjeto.getIndexador(), diaCorridoProjeto.getData(), diaCorridoProjeto.getData());
+		}else{
+			diaCorridoProjeto.setValorIndexador(0.0);
+		}
+		
+		trataJuroMesIndexador(projetoSelect, diaCorridoProjeto, wsSerieVO);
+		diaCorridoProjeto.setTaxaJuro((diaCorridoProjeto.getSomaJuroMesIndexador() / 100) + 1);
+		diaCorridoProjeto.setFatorDiario(calculaFatorDiario(diaCorridoProjeto.getTaxaJuro(), diaCorridoProjeto.getData()));
+		
+		for(DiaCorridoProjeto diaCorridoProjetoAux : projetoSelect.getListDiasCorridosProjeto()){
+			if(diaCorridoProjetoAux != diaCorridoProjeto && diaCorridoProjetoAux.getData().get(Calendar.YEAR) == ano &&
+					diaCorridoProjetoAux.getData().get(Calendar.MONTH) == mes){
+				diaCorridoProjetoAux.setIndexador(diaCorridoProjeto.getIndexador());
+				trataJuroMesIndexador(projetoSelect, diaCorridoProjeto, wsSerieVO);
+				
+				if(diaCorridoProjeto.getIndexador()== null){
+					diaCorridoProjetoAux.setValorIndexador(0.0);
+				}
+				trataJuroMesIndexador(projetoSelect, diaCorridoProjetoAux, wsSerieVO);
+				diaCorridoProjetoAux.setTaxaJuro((diaCorridoProjetoAux.getSomaJuroMesIndexador() / 100) + 1);
+				diaCorridoProjetoAux.setFatorDiario(calculaFatorDiario(diaCorridoProjetoAux.getTaxaJuro(), diaCorridoProjetoAux.getData()));
+			}
+			
+		}
+		
+	}
+	
+
+	private void recalcularProjetoIndexador(Projeto projetoSelect, DiaCorridoProjeto diaCorridoProjeto) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
