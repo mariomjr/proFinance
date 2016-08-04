@@ -3,6 +3,8 @@ package org.com.proFinance.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -63,6 +65,9 @@ public class Projeto implements Serializable{
 	
 	@Enumerated(EnumType.STRING)
 	private SimNao ativo;
+	
+	@Transient
+	private Double ultimoSaldo;
 	
 
 	public Long getId() {
@@ -182,6 +187,26 @@ public class Projeto implements Serializable{
 
 	public void setAtivo(SimNao ativo) {
 		this.ativo = ativo;
+	}
+
+	public Double getUltimoSaldo() {
+		ultimoSaldo = 0.0;
+		Collections.sort(listDiasCorridosProjeto,new Comparator<DiaCorridoProjeto>(){
+			
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			public int compare(DiaCorridoProjeto  o1, DiaCorridoProjeto  o2) {
+				Comparable c1 = (Comparable) o1.getOrdem();
+				Comparable c2 = (Comparable) o2.getOrdem();
+				return c1.compareTo(c2);
+			}
+			
+		});
+		DiaCorridoProjeto diaCorridoProjeto = listDiasCorridosProjeto.get(listDiasCorridosProjeto.size()-1);
+		return diaCorridoProjeto.getValorSaldo();
+	}
+
+	public void setUltimoSaldo(Double ultimoSaldo) {
+		this.ultimoSaldo = ultimoSaldo;
 	}
 
 	@Override

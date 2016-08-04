@@ -44,6 +44,9 @@
 				<p:column headerText="Data Final">
 					<h:outputText value="#{calendarToString.obterData(projeto.dataFinalPrevistaNova)}" />
 				</p:column>
+				<p:column headerText="Saldo">
+					<h:outputText value="#{projeto.ultimoSaldo}" converter="#{doubleConverterDinheiro}"/>
+				</p:column>
 			</p:dataTable>
 			
 			<p:blockUI block="dtProjeto" trigger="dtProjeto">

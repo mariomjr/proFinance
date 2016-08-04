@@ -86,11 +86,11 @@
 		        </div>
 		        
 			 	<div class="ui-grid-col-2">
-			 		<h:outputLabel value="Indexador: " for="srmIndexador"/>
+			 		<h:outputLabel value="Indexador: " for="srmIndexador" rendered="false"/>
 			 	</div>
 			 	<div class="ui-grid-col-2">
 			 		<p:selectOneMenu id="srmIndexador" value="#{projetoBean.projetoSelect.indexador}" 
-						style="width:80%" converter="#{indexadorConverter}">
+						style="width:80%" converter="#{indexadorConverter}" rendered="false">
 						<f:selectItem noSelectionOption="true"/>
 			            <f:selectItems value="#{projetoBean.listIndexadorItens}" />
 			        </p:selectOneMenu>
