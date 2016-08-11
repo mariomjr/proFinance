@@ -414,6 +414,8 @@ public class ProjetoService {
 	private void setValoresCampoColuna(String stringCell, Integer coluna) {
 		if(stringCell.toUpperCase().contains("TAXA JURO") || stringCell.toUpperCase().contains("FATOR MENSAL")){
 			colunaTaxaJuro = coluna;
+		}else if(stringCell.toUpperCase().contains("JURO")){
+			colunaJuroMes = coluna;
 		}
 		if(stringCell.toUpperCase().contains("SALDO")){
 			colunaSaldo = coluna;
@@ -429,9 +431,6 @@ public class ProjetoService {
 			colunaDebito = coluna;
 		}else if((stringCell.toUpperCase().contains("CRÉDITO") || stringCell.toUpperCase().contains("CREDITO"))&& mapEmpresaCnpj.isEmpty()){
 			colunaCredito = coluna;
-		}
-		if(stringCell.toUpperCase().contains("JURO")){
-			colunaJuroMes = coluna;
 		}
 		if(stringCell.toUpperCase().contains("DIÁRIO")){
 			colunaFatorDiario = coluna;
