@@ -69,6 +69,12 @@ public class Projeto implements Serializable{
 	@Transient
 	private Double ultimoSaldo;
 	
+	@Transient
+	private Double valorTotalCredito;
+	
+	@Transient
+	private Double valorTotalDebito;
+	
 
 	public Long getId() {
 		return id;
@@ -207,6 +213,34 @@ public class Projeto implements Serializable{
 
 	public void setUltimoSaldo(Double ultimoSaldo) {
 		this.ultimoSaldo = ultimoSaldo;
+	}
+
+	public Double getValorTotalCredito() {
+		valorTotalCredito = 0.0;
+		for(DiaCorridoProjeto diaCorrido: getListDiasCorridosProjeto()){
+			if(diaCorrido.getValorCredito()!= null){
+				valorTotalCredito += diaCorrido.getValorCredito();
+			}
+		}
+		return valorTotalCredito;
+	}
+
+	public void setValorTotalCredito(Double valorTotalCredito) {
+		this.valorTotalCredito = valorTotalCredito;
+	}
+
+	public Double getValorTotalDebito() {
+		valorTotalDebito = 0.0;
+		for(DiaCorridoProjeto diaCorrido: getListDiasCorridosProjeto()){
+			if(diaCorrido.getValorDebito()!= null){
+				valorTotalDebito += diaCorrido.getValorDebito();
+			}
+		}
+		return valorTotalDebito;
+	}
+
+	public void setValorTotalDebito(Double valorTotalDebito) {
+		this.valorTotalDebito = valorTotalDebito;
 	}
 
 	@Override

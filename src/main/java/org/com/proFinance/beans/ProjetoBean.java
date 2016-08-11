@@ -266,9 +266,8 @@ public class ProjetoBean implements Serializable{
 				if(planilha!= null){
 					for(int linha  = 0; linha < planilha.getLastRowNum(); linha++){
 						linhaRow = planilha.getRow(linha);
-						projetoService.inserirDiasCorridoProjeto(getProjetoSelect(), linhaRow);
-						if(linha == (planilha.getLastRowNum())-1){
-							getProjetoSelect().setDataFinalPrevistaNova(CalendarToString.dateToCalendar(linhaRow.getCell(projetoService.colunaData).getDateCellValue()));
+						if(linhaRow!= null && linhaRow.getCell(0) != null){
+							projetoService.inserirDiasCorridoProjeto(getProjetoSelect(), linhaRow);
 						}
 					}
 					FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", event.getFile().getFileName() + " foi importado com sucesso.");

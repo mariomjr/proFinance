@@ -53,6 +53,10 @@ public class OcorrenciaProjeto implements Serializable{
 	private SocioEmpresa socioEmpresa;
 	
 	@ManyToOne
+	@JoinColumn(name = "empresa_id") 
+	private Empresa empresa;
+	
+	@ManyToOne
 	@JoinColumn(name = "loginUser_id") 
 	private LoginUser loginUser;
 	
@@ -118,6 +122,14 @@ public class OcorrenciaProjeto implements Serializable{
 
 	public void setSocioEmpresa(SocioEmpresa socioEmpresa) {
 		this.socioEmpresa = socioEmpresa;
+	}
+
+	public Empresa getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Empresa empresa) {
+		this.empresa = empresa;
 	}
 
 	public LoginUser getLoginUser() {

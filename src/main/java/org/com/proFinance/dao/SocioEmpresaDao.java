@@ -6,9 +6,11 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.com.proFinance.entity.Empresa;
 import org.com.proFinance.entity.SocioEmpresa;
 import org.com.proFinance.enuns.SimNao;
 import org.com.proFinance.infra.GenericHibernateDao;
+import org.com.proFinance.util.Uteis;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -100,5 +102,18 @@ public class SocioEmpresaDao {
 		c.add(Restrictions.eq("ativo",SimNao.SIM));
 		return c.list();
 		
+	}
+	
+	public Empresa findEmpresaByCnpjAndNome(String cnpj, String nome){
+		Session s = (Session) dao.getEntityManager().getDelegate();
+		Criteria c = s.createCriteria(Empresa.class, "empresa");
+		c.createAlias("empresa.socioEmpresa", "socioEmpresa");
+		c.add(Restrictions.eq("empresa.cnpj",cnpj));
+		c.add(Restrictions.eq("socioEmpresa.nome",nome));
+		Object result = c.uniqueResult();
+		if(result!= null){
+			return (Empresa)result;
+		}
+		return null;
 	}
 }

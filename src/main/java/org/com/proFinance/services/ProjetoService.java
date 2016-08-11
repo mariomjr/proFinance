@@ -5,7 +5,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -13,10 +15,13 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.com.proFinance.converters.CalendarToString;
 import org.com.proFinance.dao.IndexadorDao;
+import org.com.proFinance.dao.SocioEmpresaDao;
 import org.com.proFinance.entity.DiaCorridoProjeto;
+import org.com.proFinance.entity.Empresa;
 import org.com.proFinance.entity.Indexador;
 import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
+import org.com.proFinance.entity.SocioEmpresa;
 import org.com.proFinance.enuns.EnumCreditoDebito;
 import org.com.proFinance.infra.UtilUser;
 import org.com.proFinance.wsBancoCentral.WSSerieVO;
@@ -29,6 +34,9 @@ public class ProjetoService {
 	
 	@Inject
 	IndexadorDao indexadorDao;
+	
+	@Inject
+	SocioEmpresaDao socioEmpresaDao;
 	
 	public void gerarNovoInvestimento(Projeto projeto, boolean isSimulacao) {
 		
@@ -273,6 +281,7 @@ public class ProjetoService {
 	public Integer colunaData;
 	public Indexador indexador;
 	public Double valorAntigo;
+	public Map<Integer, Empresa> mapEmpresaCnpj;
 	int i;
 	int ordem;
 	
@@ -287,6 +296,8 @@ public class ProjetoService {
 						projeto.setDataInicial(diaCorridoProjeto.getData());
 						i++;
 					}
+					projeto.setDataFinalPrevistaNova(CalendarToString.dateToCalendar(linhaRow.getCell(colunaData).getDateCellValue()));
+					projeto.setDataFinalPrevistaAtual(CalendarToString.dateToCalendar(linhaRow.getCell(colunaData).getDateCellValue()));
 				}
 				if(colunaTaxaJuro!= null){
 					diaCorridoProjeto.setTaxaJuro(linhaRow.getCell(colunaTaxaJuro).getNumericCellValue());
@@ -305,18 +316,42 @@ public class ProjetoService {
 				if(colunaSaldo!= null){
 					diaCorridoProjeto.setValorSaldo(linhaRow.getCell(colunaSaldo).getNumericCellValue());
 				}
-				if(colunaDebito!= null){
-					diaCorridoProjeto.setValorDebito(linhaRow.getCell(colunaDebito).getNumericCellValue());
-					if(diaCorridoProjeto.getValorDebito()!=0){
-						adicionaOcorrencia(diaCorridoProjeto, EnumCreditoDebito.DEBITO);
+				if(mapEmpresaCnpj.isEmpty() == false){
+					for (Map.Entry<Integer, Empresa> entry : mapEmpresaCnpj.entrySet()) {
+					    Integer key = entry.getKey();
+					    Empresa value = entry.getValue();
+					    Double valor = linhaRow.getCell(key).getNumericCellValue();
+					    if(valor < 0){
+					    	if(diaCorridoProjeto.getValorDebito() == null){
+					    		diaCorridoProjeto.setValorDebito(valor);
+					    	}else{
+					    		diaCorridoProjeto.setValorDebito(diaCorridoProjeto.getValorDebito() + valor);
+					    	}
+					    	adicionaOcorrencia(diaCorridoProjeto, EnumCreditoDebito.DEBITO, value, valor);
+					    }else if(valor > 0){
+					    	if(diaCorridoProjeto.getValorCredito() == null){
+					    		diaCorridoProjeto.setValorCredito(valor);
+					    	}else{
+					    		diaCorridoProjeto.setValorCredito(diaCorridoProjeto.getValorCredito() + valor);
+					    	}
+					    	adicionaOcorrencia(diaCorridoProjeto, EnumCreditoDebito.CREDITO, value, valor);
+					    }
+					}
+				}else{
+					if(colunaDebito!= null){
+						diaCorridoProjeto.setValorDebito(linhaRow.getCell(colunaDebito).getNumericCellValue());
+						if(diaCorridoProjeto.getValorDebito()!=0){
+							adicionaOcorrencia(diaCorridoProjeto, EnumCreditoDebito.DEBITO,null, diaCorridoProjeto.getValorDebito());
+						}
+					}
+					if(colunaCredito!= null){
+						diaCorridoProjeto.setValorCredito(linhaRow.getCell(colunaCredito).getNumericCellValue());
+						if(diaCorridoProjeto.getValorCredito()>0){
+							adicionaOcorrencia(diaCorridoProjeto, EnumCreditoDebito.CREDITO, null, diaCorridoProjeto.getValorCredito());
+						}
 					}
 				}
-				if(colunaCredito!= null){
-					diaCorridoProjeto.setValorCredito(linhaRow.getCell(colunaCredito).getNumericCellValue());
-					if(diaCorridoProjeto.getValorCredito()>0){
-						adicionaOcorrencia(diaCorridoProjeto, EnumCreditoDebito.CREDITO);
-					}
-				}
+				
 				if(colunaIndexador!= null){
 					projeto.setIndexador(indexador);
 					diaCorridoProjeto.setValorIndexador(linhaRow.getCell(colunaIndexador).getNumericCellValue());
@@ -338,6 +373,7 @@ public class ProjetoService {
 				colunaIndexador = null;
 				colunaData = null;
 				indexador = null;
+				mapEmpresaCnpj = new HashMap<Integer, Empresa>();
 				i = 0;
 				ordem = 0;
 				for(int coluna= 0; coluna< linhaRow.getLastCellNum(); coluna++){
@@ -350,7 +386,7 @@ public class ProjetoService {
 		
 	}
 
-	private void adicionaOcorrencia(DiaCorridoProjeto diaCorridoProjeto, EnumCreditoDebito tipo) {
+	private void adicionaOcorrencia(DiaCorridoProjeto diaCorridoProjeto, EnumCreditoDebito tipo, Empresa empresa, Double valor) {
 		
 		OcorrenciaProjeto ocorrenciaProjeto = new OcorrenciaProjeto();
 		ocorrenciaProjeto.setDiaCorridoProjeto(diaCorridoProjeto);
@@ -359,11 +395,15 @@ public class ProjetoService {
 		ocorrenciaProjeto.setDataInclusao(Calendar.getInstance());
 		ocorrenciaProjeto.setLoginUser(UtilUser.getUserLogado());
 		ocorrenciaProjeto.setMostrarOcorrencia(Boolean.TRUE);
+		if(empresa!= null){
+			ocorrenciaProjeto.setEmpresa(empresa);
+			ocorrenciaProjeto.setSocioEmpresa(empresa.getSocioEmpresa());
+		}
 		
 		if(tipo.equals(EnumCreditoDebito.DEBITO)){
-			ocorrenciaProjeto.setValor(diaCorridoProjeto.getValorDebito()*(-1));
+			ocorrenciaProjeto.setValor(valor*(-1));
 		}else{
-			ocorrenciaProjeto.setValor(diaCorridoProjeto.getValorCredito());
+			ocorrenciaProjeto.setValor(valor);
 		}
 		
 		diaCorridoProjeto.getListOcorrenciasProjeto().add(ocorrenciaProjeto);
@@ -373,17 +413,29 @@ public class ProjetoService {
 	private void setValoresCampoColuna(String stringCell, Integer coluna) {
 		if(stringCell.toUpperCase().contains("TAXA JURO") || stringCell.toUpperCase().contains("FATOR MENSAL")){
 			colunaTaxaJuro = coluna;
-		}else if(stringCell.toUpperCase().contains("SALDO")){
+		}
+		if(stringCell.toUpperCase().contains("SALDO")){
 			colunaSaldo = coluna;
-		}else if(stringCell.toUpperCase().contains("DÉBITO") || stringCell.toUpperCase().contains("DEBITO")){
+		}
+		if(stringCell.toUpperCase().contains("CNPJ")){
+			String[] itens = stringCell.split(";");
+			String cnpj = itens[2].substring(itens[2].indexOf(":")+1);
+			Empresa empresa = socioEmpresaDao.findEmpresaByCnpjAndNome(cnpj, itens[1]);
+			if(empresa != null){
+				mapEmpresaCnpj.put(coluna, empresa);
+			}
+		}else if((stringCell.toUpperCase().contains("DÉBITO") || stringCell.toUpperCase().contains("DEBITO"))&& mapEmpresaCnpj.isEmpty()){
 			colunaDebito = coluna;
-		}else if(stringCell.toUpperCase().contains("CRÉDITO") || stringCell.toUpperCase().contains("CREDITO")){
+		}else if((stringCell.toUpperCase().contains("CRÉDITO") || stringCell.toUpperCase().contains("CREDITO"))&& mapEmpresaCnpj.isEmpty()){
 			colunaCredito = coluna;
-		}else if(stringCell.toUpperCase().contains("JURO")){
+		}
+		if(stringCell.toUpperCase().contains("JURO")){
 			colunaJuroMes = coluna;
-		}else if(stringCell.toUpperCase().contains("DIÁRIO")){
+		}
+		if(stringCell.toUpperCase().contains("DIÁRIO")){
 			colunaFatorDiario = coluna;
-		}else if(indexadorDao.findIndexadorByNome(stringCell.toUpperCase())!= null){
+		}
+		if(indexadorDao.findIndexadorByNome(stringCell.toUpperCase())!= null){
 			indexador = indexadorDao.findIndexadorByNome(stringCell.toUpperCase());
 			colunaIndexador = coluna;
 		}else if(stringCell.toUpperCase().contains("DATA")){
