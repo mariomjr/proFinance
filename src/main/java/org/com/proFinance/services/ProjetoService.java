@@ -72,22 +72,24 @@ public class ProjetoService {
 		
 		projeto.getListDiasCorridosProjeto().add(diaCorridoProjeto);
 
-		adicionarDiasCorrido(projeto, valor, wsSerieVo, projeto.getDataInicial(), projeto.getDataFinalPrevistaNova(), ordem);
+		adicionarDiasCorrido(projeto, valor, wsSerieVo, projeto.getDataInicial(), projeto.getDataFinalPrevistaNova(), diaCorridoProjeto);
 
 	}
 	
-	public void adicionarDiasCorrido(Projeto projeto, Double valor, WSSerieVO wsSerieVo, Calendar dataInicial, Calendar dataFinal, int ordem){
+	public void adicionarDiasCorrido(Projeto projeto, Double valor, WSSerieVO wsSerieVo, Calendar dataInicial, Calendar dataFinal, DiaCorridoProjeto diaCorrido){
 		DiaCorridoProjeto diaCorridoProjeto = null;
+		Integer orderAtual = diaCorrido.getOrdem();
 		for (Calendar data : listDataDiaCorrido(dataInicial,
 				dataFinal)) {
 			diaCorridoProjeto = new DiaCorridoProjeto();
 			diaCorridoProjeto.setProjeto(projeto);
 			diaCorridoProjeto.setData(data);
+			diaCorridoProjeto.setJuroMes(diaCorrido.getJuroMes());
 			trataJuroMesIndexador(projeto, diaCorridoProjeto, wsSerieVo);
 			diaCorridoProjeto.setTaxaJuro((diaCorridoProjeto.getSomaJuroMesIndexador() / 100) + 1);
 			diaCorridoProjeto.setFatorDiario(calculaFatorDiario(
 					diaCorridoProjeto.getTaxaJuro(), data));
-			diaCorridoProjeto.setOrdem(ordem++);
+			diaCorridoProjeto.setOrdem(orderAtual++);
 			
 			if(projeto.getIndexador()!= null){
 				diaCorridoProjeto.setIndexador(projeto.getIndexador());
@@ -243,7 +245,7 @@ public class ProjetoService {
 			wsSerieVo = buscaValoresWebServiceIndicador(projeto.getIndexador(),projeto.getDataFinalPrevistaAtual(),projeto.getDataFinalPrevistaNova());
 		}
 		DiaCorridoProjeto diaCorrido = getDiaCorrido(projeto.getListDiasCorridosProjeto(), projeto.getDataFinalPrevistaAtual());
-		adicionarDiasCorrido(projeto, diaCorrido.getValorSaldo(), wsSerieVo,projeto.getDataFinalPrevistaAtual(),projeto.getDataFinalPrevistaNova(), diaCorrido.getOrdem());
+		adicionarDiasCorrido(projeto, diaCorrido.getValorSaldo(), wsSerieVo,projeto.getDataFinalPrevistaAtual(),projeto.getDataFinalPrevistaNova(), diaCorrido);
 		
 		ordenarListaProjeto(projeto.getListDiasCorridosProjeto());
 	}
