@@ -10,7 +10,6 @@ import org.com.proFinance.entity.Empresa;
 import org.com.proFinance.entity.SocioEmpresa;
 import org.com.proFinance.enuns.SimNao;
 import org.com.proFinance.infra.GenericHibernateDao;
-import org.com.proFinance.util.Uteis;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;

@@ -21,7 +21,6 @@ import org.com.proFinance.entity.Empresa;
 import org.com.proFinance.entity.Indexador;
 import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
-import org.com.proFinance.entity.SocioEmpresa;
 import org.com.proFinance.enuns.EnumCreditoDebito;
 import org.com.proFinance.infra.UtilUser;
 import org.com.proFinance.wsBancoCentral.WSSerieVO;
@@ -114,11 +113,11 @@ public class ProjetoService {
 	private void trataJuroMesIndexador(Projeto projeto, DiaCorridoProjeto diaCorridoProjeto, WSSerieVO wsSerieVo) {
 		Double valor = 0.0;
 		
-		if(projeto.getJuroMes()>0){
-			diaCorridoProjeto.setJuroMes(projeto.getJuroMes());
-			valor += projeto.getJuroMes();
+		if(diaCorridoProjeto.getJuroMes()>0){
+//			diaCorridoProjeto.setJuroMes(projeto.getJuroMes());
+			valor += diaCorridoProjeto.getJuroMes();
 		}
-		if(projeto.getIndexador()!= null && wsSerieVo!= null){
+		if(diaCorridoProjeto.getIndexador()!= null && wsSerieVo!= null){
 			diaCorridoProjeto.setValorIndexador(valorIndexador(wsSerieVo.getValores(), diaCorridoProjeto.getData().get(Calendar.MONTH)+1, 
 					diaCorridoProjeto.getData().get(Calendar.YEAR)));
 			valor += diaCorridoProjeto.getValorIndexador();
@@ -485,10 +484,39 @@ public class ProjetoService {
 		
 	}
 	
-
-	private void recalcularProjetoIndexador(Projeto projetoSelect, DiaCorridoProjeto diaCorridoProjeto) {
-		// TODO Auto-generated method stub
+	
+	public void recalcularMudancaJuroMes(DiaCorridoProjeto diaCorridoProjeto, Projeto projetoSelect) {
 		
+		atualizaValoJuroMesDiaCorrido(diaCorridoProjeto, projetoSelect);
+		
+		recalcularProjeto(projetoSelect, diaCorridoProjeto);
+	}
+
+	private void atualizaValoJuroMesDiaCorrido(DiaCorridoProjeto diaCorridoProjeto, Projeto projeto) {
+		ordenarListaProjeto(projeto.getListDiasCorridosProjeto());
+		WSSerieVO wsSerieVO = null;
+		if(diaCorridoProjeto.getIndexador()!= null){
+			wsSerieVO = buscaValoresWebServiceIndicador(diaCorridoProjeto.getIndexador(), diaCorridoProjeto.getData(), diaCorridoProjeto.getData());
+		}else{
+			diaCorridoProjeto.setValorIndexador(0.0);
+		}
+		
+		trataJuroMesIndexador(projeto, diaCorridoProjeto, wsSerieVO);
+		diaCorridoProjeto.setTaxaJuro((diaCorridoProjeto.getSomaJuroMesIndexador() / 100) + 1);
+		diaCorridoProjeto.setFatorDiario(calculaFatorDiario(diaCorridoProjeto.getTaxaJuro(), diaCorridoProjeto.getData()));
+		
+		for(DiaCorridoProjeto diaCorrido : projeto.getListDiasCorridosProjeto()){
+			if(diaCorrido.getOrdem()>diaCorridoProjeto.getOrdem()){
+				diaCorrido.setJuroMes(diaCorridoProjeto.getJuroMes());
+				if(diaCorrido.getIndexador()!= null && diaCorrido.getData().get(Calendar.DAY_OF_MONTH) == 1
+						&& diaCorrido.getValorIndexador() != null){
+					wsSerieVO = buscaValoresWebServiceIndicador(diaCorridoProjeto.getIndexador(), diaCorrido.getData(), diaCorrido.getData());
+				}
+				trataJuroMesIndexador(projeto, diaCorrido, wsSerieVO);
+				diaCorrido.setTaxaJuro((diaCorrido.getSomaJuroMesIndexador() / 100) + 1);
+				diaCorrido.setFatorDiario(calculaFatorDiario(diaCorrido.getTaxaJuro(), diaCorrido.getData()));
+			}
+		}
 	}
 
 }

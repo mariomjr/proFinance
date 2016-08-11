@@ -145,7 +145,13 @@
 		            <h:outputText value="#{diaCorrido.valorIndexador}" converter="#{doubleConverter}" id="indexador#{rowIndex}"/>
 		        </p:column>
 		        <p:column headerText="Juro/Mês" style="text-align:right;width:5em" >
-		            <h:outputText value="#{diaCorrido.juroMes}" converter="#{doubleConverter}" id="juroMes#{rowIndex}"/>
+		        	<p:inputText value="#{diaCorrido.juroMes}" rendered="#{projetoBean.isDiaPrimeiroDiaCorrido(diaCorrido)}" id="juroMesInput"
+		        		style="width:88%" converter="#{doubleConverter}">
+		        		<p:ajax event="change" listener="#{projetoBean.recalcularMudancaJurosMes(diaCorrido)}"
+		        			onstart="PF('load').show()" oncomplete="PF('load').hide()" update="dtDiaCorrido"/>
+		        	</p:inputText>
+		            <h:outputText value="#{diaCorrido.juroMes}" converter="#{doubleConverter}" id="juroMes#{rowIndex}"
+		            	rendered="#{projetoBean.isDiaPrimeiroDiaCorrido(diaCorrido) == false}"/>
 		        </p:column>
 		        <p:column headerText="Fator mensal" style="text-align:right;width:9em">
 		            <h:outputText value="#{diaCorrido.taxaJuro}" converter="#{doubleConverter}" id="taxaJuro#{rowIndex}" />

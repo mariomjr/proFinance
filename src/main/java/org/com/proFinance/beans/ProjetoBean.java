@@ -19,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.com.proFinance.converters.CalendarToString;
 import org.com.proFinance.dao.IndexadorDao;
 import org.com.proFinance.dao.ProjetoDao;
 import org.com.proFinance.dao.SocioEmpresaDao;
@@ -335,6 +334,11 @@ public class ProjetoBean implements Serializable{
 	public void recalcularMudancaIndexadorMes(DiaCorridoProjeto diaCorridoProjeto){
 		projetoService.recalcularMudancaIndexadorMes(diaCorridoProjeto, getProjetoSelect());
 	}
+	
+	public void recalcularMudancaJurosMes(DiaCorridoProjeto diaCorridoProjeto){
+		projetoService.recalcularMudancaJuroMes(diaCorridoProjeto, getProjetoSelect());
+	}
+	
 
 	public void limparProjeto(){
 		setProjetoSelect(new Projeto());
