@@ -28,6 +28,7 @@ import org.com.proFinance.entity.DiaCorridoProjeto;
 import org.com.proFinance.entity.Indexador;
 import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
+import org.com.proFinance.entity.ProjetoDiaCorridoAnoAux;
 import org.com.proFinance.enuns.EnumCreditoDebito;
 import org.com.proFinance.enuns.SimNao;
 import org.com.proFinance.infra.UtilUser;
@@ -73,6 +74,8 @@ public class ProjetoBean implements Serializable{
 	private List<SelectItem> listIndexadorItens;
 	
 	private Boolean mudouDataFinal;
+	
+	private List<ProjetoDiaCorridoAnoAux> listProjetoDiaCorridoAno;
 
 	@PostConstruct
 	public void init(){
@@ -86,12 +89,14 @@ public class ProjetoBean implements Serializable{
 	
 	public void onRowSelect(SelectEvent event) throws IOException {
 		setMudouDataFinal(Boolean.FALSE);
+		setListProjetoDiaCorridoAno(new ArrayList<ProjetoDiaCorridoAnoAux>());
 		
 		projetoSelect = projetoDao.loadProjetoById(((Projeto)event.getObject()).getId());
 		projetoService.recalcularProjeto(getProjetoSelect());
+		inserirListProjetoDiaCorridoAno(projetoSelect);
 		redirecionarTelaEdit();
 	}
-	
+
 	public void onRowSelectMobile(Projeto projeto) throws IOException{
 		projetoSelect = projetoDao.loadProjetoById(projeto.getId());
 		projetoService.recalcularProjeto(getProjetoSelect());
@@ -144,6 +149,26 @@ public class ProjetoBean implements Serializable{
 				RequestContext.getCurrentInstance().update("messages");
 			}else{
 				RequestContext.getCurrentInstance().update("messagesMdlProjeto");
+			}
+		}
+		
+	}
+	
+	
+	private void inserirListProjetoDiaCorridoAno(Projeto projeto) {
+		ProjetoDiaCorridoAnoAux projetoDiaCorridoAno = null;
+		Integer anoAtual = null;
+		
+		for(DiaCorridoProjeto diaCorrido : projeto.getListDiasCorridosProjeto()){
+			if(anoAtual == null || (anoAtual != null && anoAtual!= diaCorrido.getData().get(Calendar.YEAR))){
+				anoAtual = diaCorrido.getData().get(Calendar.YEAR);
+				projetoDiaCorridoAno = new ProjetoDiaCorridoAnoAux();
+				projetoDiaCorridoAno.setAno(anoAtual);
+				projetoDiaCorridoAno.setListDiasCorridosProjeto(new ArrayList<DiaCorridoProjeto>());
+				projetoDiaCorridoAno.getListDiasCorridosProjeto().add(diaCorrido);
+				getListProjetoDiaCorridoAno().add(projetoDiaCorridoAno);
+			}else{
+				projetoDiaCorridoAno.getListDiasCorridosProjeto().add(diaCorrido);
 			}
 		}
 		
@@ -412,4 +437,14 @@ public class ProjetoBean implements Serializable{
 		this.mudouDataFinal = mudouDataFinal;
 	}
 
+	public List<ProjetoDiaCorridoAnoAux> getListProjetoDiaCorridoAno() {
+		if(listProjetoDiaCorridoAno == null){
+			listProjetoDiaCorridoAno = new ArrayList<ProjetoDiaCorridoAnoAux>();
+		}
+		return listProjetoDiaCorridoAno;
+	}
+
+	public void setListProjetoDiaCorridoAno(List<ProjetoDiaCorridoAnoAux> listProjetoDiaCorridoAno) {
+		this.listProjetoDiaCorridoAno = listProjetoDiaCorridoAno;
+	}
 }
