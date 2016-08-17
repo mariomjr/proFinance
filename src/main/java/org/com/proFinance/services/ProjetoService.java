@@ -51,6 +51,7 @@ public class ProjetoService {
 		diaCorridoProjeto = new DiaCorridoProjeto();
 		diaCorridoProjeto.setProjeto(projeto);
 		diaCorridoProjeto.setData(projeto.getDataInicial());
+		diaCorridoProjeto.setJuroMes(projeto.getJuroMes());
 		trataJuroMesIndexador(projeto, diaCorridoProjeto, wsSerieVo);
 		insereOcorrenciaProjeto(projeto, diaCorridoProjeto);
 		diaCorridoProjeto.setTaxaJuro((diaCorridoProjeto.getSomaJuroMesIndexador() / 100) + 1);
