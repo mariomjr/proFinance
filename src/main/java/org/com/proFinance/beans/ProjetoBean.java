@@ -158,6 +158,7 @@ public class ProjetoBean implements Serializable{
 	private void inserirListProjetoDiaCorridoAno(Projeto projeto) {
 		ProjetoDiaCorridoAnoAux projetoDiaCorridoAno = null;
 		Integer anoAtual = null;
+		setListProjetoDiaCorridoAno(new ArrayList<ProjetoDiaCorridoAnoAux>());
 		
 		for(DiaCorridoProjeto diaCorrido : projeto.getListDiasCorridosProjeto()){
 			if(anoAtual == null || (anoAtual != null && anoAtual!= diaCorrido.getData().get(Calendar.YEAR))){
@@ -303,7 +304,8 @@ public class ProjetoBean implements Serializable{
 				
 				workbook.close();
 				input.close();
-
+				
+				inserirListProjetoDiaCorridoAno(getProjetoSelect());
 				
 			}
 		} catch (Exception e) {

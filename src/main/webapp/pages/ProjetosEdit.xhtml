@@ -120,102 +120,118 @@
 			
 			<p:tabView value="#{projetoBean.listProjetoDiaCorridoAno}" var="projetoDiaCorrido" id="tbViewDiaCorridoProjeto">
 				<p:tab title="#{projetoDiaCorrido.ano}">
-				 <p:dataTable var="diaCorrido" value="#{projetoDiaCorrido.listDiasCorridosProjeto}"
-				 	id="dtDiaCorrido" rowIndexVar="rowIndex" scrollable="true" scrollHeight="350">
+					<p:dataTable var="diaCorrido" value="#{projetoDiaCorrido.listDiasCorridosProjeto}"
+				 		id="dtDiaCorrido" rowIndexVar="rowIndex" scrollable="true" scrollHeight="350">
 				 	
-			        <p:column style="width:16px">
-			            <p:rowToggler rendered="#{diaCorrido.listOcorrenciasProjeto.size() > 0}" />
-			        </p:column>
-			        <p:column headerText="Data" style="text-align:right">
-			            <h:outputText value="#{calendarToString.obterData(diaCorrido.data)}" />
-			        </p:column>
-			        <p:column headerText="Indexador" rendered="#{projetoBean.projetoSelect.indexador.id != null}"
-			                	style="text-align:right;width:6em">
-			            
-			            <p:selectOneMenu  value="#{diaCorrido.indexador}" 
-							style="width:80%" converter="#{indexadorConverter}" rendered="#{projetoBean.isDiaPrimeiroDiaCorrido(diaCorrido)}">
-							<f:selectItem noSelectionOption="true"/>
-				            <f:selectItems value="#{projetoBean.listIndexadorItens}" />
-				            <p:ajax event="change" listener="#{projetoBean.recalcularMudancaIndexadorMes(diaCorrido)}"
-				            	onstart="PF('load').show()" oncomplete="PF('load').hide()" ></p:ajax>
-				        </p:selectOneMenu>
+				        <p:column style="width:16px">
+				            <p:rowToggler rendered="#{diaCorrido.listOcorrenciasProjeto.size() > 0}" />
+				        </p:column>
+				        <p:column headerText="Data" style="text-align:right">
+				            <h:outputText value="#{calendarToString.obterData(diaCorrido.data)}" />
+				        </p:column>
+				        <p:column headerText="Indexador" rendered="#{projetoBean.projetoSelect.indexador.id != null}"
+				                	style="text-align:right;width:6em">
+				            
+				            <p:selectOneMenu  value="#{diaCorrido.indexador}" 
+								style="width:80%" converter="#{indexadorConverter}" rendered="#{projetoBean.isDiaPrimeiroDiaCorrido(diaCorrido)}">
+								<f:selectItem noSelectionOption="true"/>
+					            <f:selectItems value="#{projetoBean.listIndexadorItens}" />
+					            <p:ajax event="change" listener="#{projetoBean.recalcularMudancaIndexadorMes(diaCorrido)}"
+					            	onstart="PF('load').show()" oncomplete="PF('load').hide()" ></p:ajax>
+					        </p:selectOneMenu>
+					        
+				            <h:outputText value="#{diaCorrido.indexador.descricao}" id="indexadorDesc#{rowIndex}" rendered="#{projetoBean.isDiaPrimeiroDiaCorrido(diaCorrido) == false}"/>
+				        </p:column>
+				        <p:column headerText="#{projetoBean.projetoSelect.indexador.descricao}" rendered="#{projetoBean.projetoSelect.indexador.id != null}"
+				                	style="text-align:right;width:4em">
+				            <h:outputText value="#{diaCorrido.valorIndexador}" converter="#{doubleConverter}" id="indexador#{rowIndex}"/>
+				        </p:column>
+				        <p:column headerText="Juro/Mês" style="text-align:right;width:5em" >
+				        	<p:inputText value="#{diaCorrido.juroMes}"  id="juroMesInput"
+				        		style="width:88%" converter="#{doubleConverter}">
+				        		<p:ajax event="change" listener="#{projetoBean.recalcularMudancaJurosMes(diaCorrido)}"
+				        			onstart="PF('load').show()" oncomplete="PF('load').hide()" />
+				        	</p:inputText>
+				        </p:column>
+				        <p:column headerText="Fator mensal" style="text-align:right;width:9em">
+				            <h:outputText value="#{diaCorrido.taxaJuro}" converter="#{doubleConverter}" id="taxaJuro#{rowIndex}" />
+				        </p:column>
+				        <p:column headerText="Fator diário" style="text-align:right">
+				            <h:outputText value="#{diaCorrido.fatorDiario}" converter="#{doubleConverter}" id="fatorDiario#{rowIndex}" />
+				        	<f:facet name="footer">
+				            	<h:outputLabel value="Total:" />
+				            </f:facet>
+				        </p:column>
 				        
-			            <h:outputText value="#{diaCorrido.indexador.descricao}" id="indexadorDesc#{rowIndex}" rendered="#{projetoBean.isDiaPrimeiroDiaCorrido(diaCorrido) == false}"/>
-			        </p:column>
-			        <p:column headerText="#{projetoBean.projetoSelect.indexador.descricao}" rendered="#{projetoBean.projetoSelect.indexador.id != null}"
-			                	style="text-align:right;width:4em">
-			            <h:outputText value="#{diaCorrido.valorIndexador}" converter="#{doubleConverter}" id="indexador#{rowIndex}"/>
-			        </p:column>
-			        <p:column headerText="Juro/Mês" style="text-align:right;width:5em" >
-			        	<p:inputText value="#{diaCorrido.juroMes}" rendered="#{projetoBean.isDiaPrimeiroDiaCorrido(diaCorrido)}" id="juroMesInput"
-			        		style="width:88%" converter="#{doubleConverter}">
-			        		<p:ajax event="change" listener="#{projetoBean.recalcularMudancaJurosMes(diaCorrido)}"
-			        			onstart="PF('load').show()" oncomplete="PF('load').hide()" />
-			        	</p:inputText>
-			            <h:outputText value="#{diaCorrido.juroMes}" converter="#{doubleConverter}" id="juroMes#{rowIndex}"
-			            	rendered="#{projetoBean.isDiaPrimeiroDiaCorrido(diaCorrido) == false}"/>
-			        </p:column>
-			        <p:column headerText="Fator mensal" style="text-align:right;width:9em">
-			            <h:outputText value="#{diaCorrido.taxaJuro}" converter="#{doubleConverter}" id="taxaJuro#{rowIndex}" />
-			        </p:column>
-			        <p:column headerText="Fator diário" style="text-align:right">
-			            <h:outputText value="#{diaCorrido.fatorDiario}" converter="#{doubleConverter}" id="fatorDiario#{rowIndex}" />
-			        	<f:facet name="footer">
-			            	<h:outputLabel value="Total:" />
-			            </f:facet>
-			        </p:column>
-			        
-			        <p:column headerText="Crédito" style="text-align:right">
-			            <h:outputText value="#{diaCorrido.valorCredito}" converter="#{doubleConverterDinheiro}" styleClass="greenTexto"/>
-			       		<f:facet name="footer">
-			            	<h:outputLabel value="#{projetoBean.projetoSelect.valorTotalCredito}" converter="#{doubleConverterDinheiro}"/>
-			            </f:facet>
-			        </p:column>
-			        <p:column headerText="Débito" style="text-align:right">
-			            <h:outputText value="#{diaCorrido.valorDebito}" converter="#{doubleConverterDinheiro}" styleClass="redTexto"/>
-			        	<f:facet name="footer">
-			            	<h:outputLabel value="#{projetoBean.projetoSelect.valorTotalDebito}" converter="#{doubleConverterDinheiro}"/>
-			            </f:facet>
-			        </p:column>
-			        
-			        <p:column headerText="Saldo" >
-			            <h:outputText value="#{diaCorrido.valorSaldo}" converter="#{doubleConverterDinheiro}" styleClass="#{diaCorrido.valorSaldoNegativo ?'redTexto':'greenTexto'}"
-			            	id="valorSaldo#{rowIndex}"/>
-		            	<f:facet name="footer">
-			            	<h:outputLabel value="#{projetoBean.projetoSelect.ultimoSaldo}" converter="#{doubleConverterDinheiro}"/>
-			            </f:facet>
-			        </p:column>
-			        
-			        <p:column style="width:26px">
-			        	<p:commandButton icon="ui-icon-plusthick" id="btnAdicionarOcorrencia" onclick="PF('load').show()" update="mdlOcorrencia"
-			        		oncomplete="PF('ocorrenciaDialog').show();PF('load').hide()" actionListener="#{projetoBean.limparOcorrencia}"
-			        			style="width:26px;height:26px">
-				    	 		<f:setPropertyActionListener value="#{diaCorrido}" target="#{projetoBean.diaCorridoSelect}" />
-		        		</p:commandButton>
-		        		
-		        		<p:tooltip id="toolTipsrServicoFornecedor" for="btnAdicionarOcorrencia" 
-							value="Inserir ocorrência - #{calendarToString.obterData(diaCorrido.data)}" />
-			        </p:column>
-			 
-			        <p:rowExpansion>
-			            <p:panelGrid  columns="2" columnClasses="label,value" style="width:80%">
-			               <p:dataTable var="ocorrenciaProjeto" value="#{diaCorrido.listOcorrenciasProjeto}">
-			               		<p:column headerText="Tipo" style="text-align:center">
-						            <h:outputText value="#{ocorrenciaProjeto.creditoDebito.label}"/>
+				        <p:column headerText="Crédito" style="text-align:right">
+				            <h:outputText value="#{diaCorrido.valorCredito}" converter="#{doubleConverterDinheiro}" styleClass="greenTexto"/>
+				       		<f:facet name="footer">
+				            	<h:outputLabel value="#{projetoDiaCorrido.valorTotalCredito}" converter="#{doubleConverterDinheiro}"/>
+				            </f:facet>
+				        </p:column>
+				        <p:column headerText="Débito" style="text-align:right">
+				            <h:outputText value="#{diaCorrido.valorDebito}" converter="#{doubleConverterDinheiro}" styleClass="redTexto"/>
+				        	<f:facet name="footer">
+				            	<h:outputLabel value="#{projetoDiaCorrido.valorTotalDebito}" converter="#{doubleConverterDinheiro}"/>
+				            </f:facet>
+				        </p:column>
+				        
+				        <p:column headerText="Saldo" >
+				            <h:outputText value="#{diaCorrido.valorSaldo}" converter="#{doubleConverterDinheiro}" styleClass="#{diaCorrido.valorSaldoNegativo ?'redTexto':'greenTexto'}"
+				            	id="valorSaldo#{rowIndex}"/>
+			            	<f:facet name="footer">
+				            	<h:outputLabel value="#{projetoBean.projetoSelect.ultimoSaldo}" converter="#{doubleConverterDinheiro}"/>
+				            </f:facet>
+				        </p:column>
+				        
+				        <p:column style="width:26px">
+				        	<p:commandButton icon="ui-icon-plusthick" id="btnAdicionarOcorrencia" onclick="PF('load').show()" update="mdlOcorrencia"
+				        		oncomplete="PF('ocorrenciaDialog').show();PF('load').hide()" actionListener="#{projetoBean.limparOcorrencia}"
+				        			style="width:26px;height:26px">
+					    	 		<f:setPropertyActionListener value="#{diaCorrido}" target="#{projetoBean.diaCorridoSelect}" />
+			        		</p:commandButton>
+			        		
+			        		<p:tooltip id="toolTipsrServicoFornecedor" for="btnAdicionarOcorrencia" 
+								value="Inserir ocorrência - #{calendarToString.obterData(diaCorrido.data)}" />
+				        </p:column>
+				 
+				        <p:rowExpansion>
+				            <p:panelGrid  columns="2" columnClasses="label,value" style="width:80%">
+				               <p:dataTable var="ocorrenciaProjeto" value="#{diaCorrido.listOcorrenciasProjeto}">
+				               		<p:column headerText="Tipo" style="text-align:center">
+							            <h:outputText value="#{ocorrenciaProjeto.creditoDebito.label}"/>
+							        </p:column>
+							        <p:column headerText="Valor" style="text-align:right">
+							            <h:outputText value="#{ocorrenciaProjeto.valor}" converter="#{doubleConverterDinheiro}"/>
+							        </p:column>
+							        <p:column headerText="Investidor" style="text-align:right">
+							            <h:outputText value="#{ocorrenciaProjeto.socioEmpresa.nome} - #{ocorrenciaProjeto.empresa.nome}"/>
+							        </p:column>
+							        <p:column headerText="Data inclusão" style="text-align:center">
+							            <h:outputText value="#{calendarToString.obterDataEHoraCalendar(ocorrenciaProjeto.dataInclusao)}"/>
+							        </p:column>
+				               </p:dataTable>
+				            </p:panelGrid>
+				        </p:rowExpansion>
+				    </p:dataTable>
+				    <p:accordionPanel rendered="#{projetoDiaCorrido.listEmpresaTotal.size() > 0}">
+        				<p:tab title="Empresas">
+						    <p:dataTable value="#{projetoDiaCorrido.listEmpresaTotal}" var="empresaValor">
+						    	<p:column headerText="Investidor" style="text-align:center">
+						            <h:outputText value="#{empresaValor.socioEmpresa.nome}"/>
 						        </p:column>
-						        <p:column headerText="Valor" style="text-align:right">
-						            <h:outputText value="#{ocorrenciaProjeto.valor}" converter="#{doubleConverterDinheiro}"/>
+						    	<p:column headerText="Empresa" style="text-align:center">
+						            <h:outputText value="#{empresaValor.nome}"/>
 						        </p:column>
-						        <p:column headerText="Investidor" style="text-align:right">
-						            <h:outputText value="#{ocorrenciaProjeto.socioEmpresa.nome} - #{ocorrenciaProjeto.empresa.nome}"/>
+						        <p:column headerText="Crédito" style="text-align:center">
+						            <h:outputText value="#{empresaValor.valorTotalCredito}" converter="#{doubleConverterDinheiro}"/>
 						        </p:column>
-						        <p:column headerText="Data inclusão" style="text-align:center">
-						            <h:outputText value="#{calendarToString.obterDataEHora(ocorrenciaProjeto.dataInclusao)}"/>
+						        <p:column headerText="Débito" style="text-align:center">
+						            <h:outputText value="#{empresaValor.valorTotalDebito}" converter="#{doubleConverterDinheiro}"/>
 						        </p:column>
-			               </p:dataTable>
-			            </p:panelGrid>
-			        </p:rowExpansion>
-			    </p:dataTable>
+						    </p:dataTable>
+					    </p:tab>
+				    </p:accordionPanel>
 			    </p:tab>
 		    </p:tabView>
 		    

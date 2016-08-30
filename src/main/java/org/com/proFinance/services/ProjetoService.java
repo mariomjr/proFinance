@@ -436,9 +436,14 @@ public class ProjetoService {
 		if(stringCell.toUpperCase().contains("DIÁRIO")){
 			colunaFatorDiario = coluna;
 		}
-		if(indexadorDao.findIndexadorByNome(stringCell.toUpperCase())!= null){
-			indexador = indexadorDao.findIndexadorByNome(stringCell.toUpperCase());
-			colunaIndexador = coluna;
+		if(stringCell.toUpperCase().contains("IDX:")){
+			String indexadorStr = stringCell.substring(stringCell.indexOf(":")+1, stringCell.length());
+			if(indexadorStr.contains("/")){
+				
+			}else{
+				indexador = indexadorDao.findIndexadorByNome(indexadorStr.toUpperCase());
+				colunaIndexador = coluna;
+			}
 		}else if(stringCell.toUpperCase().contains("DATA")){
 			colunaData = coluna;
 		}
