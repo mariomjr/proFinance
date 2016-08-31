@@ -8,6 +8,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import org.com.proFinance.enuns.SimNao;
 
@@ -29,6 +30,11 @@ public class Indexador implements Serializable{
 	
 	@Enumerated(EnumType.STRING)
 	private SimNao ativo;
+	
+	@Transient
+	private String mesAux;
+	@Transient
+	private String anoAux;
 
 	public Long getId() {
 		return id;
@@ -60,6 +66,22 @@ public class Indexador implements Serializable{
 
 	public void setAtivo(SimNao ativo) {
 		this.ativo = ativo;
+	}
+
+	public String getMesAux() {
+		return mesAux;
+	}
+
+	public void setMesAux(String mesAux) {
+		this.mesAux = mesAux;
+	}
+
+	public String getAnoAux() {
+		return anoAux;
+	}
+
+	public void setAnoAux(String anoAux) {
+		this.anoAux = anoAux;
 	}
 
 	@Override

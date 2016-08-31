@@ -23,6 +23,7 @@ import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
 import org.com.proFinance.enuns.EnumCreditoDebito;
 import org.com.proFinance.infra.UtilUser;
+import org.com.proFinance.util.Uteis;
 import org.com.proFinance.wsBancoCentral.WSSerieVO;
 import org.com.proFinance.wsBancoCentral.WSValorSerieVO;
 
@@ -273,6 +274,7 @@ public class ProjetoService {
 		});
 	}
 	
+	public Integer colunaJuroAno;
 	public Integer colunaTaxaJuro;
 	public Integer colunaFatorDiario;
 	public Integer colunaDebito;
@@ -282,6 +284,7 @@ public class ProjetoService {
 	public Integer colunaIndexador;
 	public Integer colunaData;
 	public Indexador indexador;
+	public List<Indexador> listIndexador;
 	public Double valorAntigo;
 	public Map<Integer, Empresa> mapEmpresaCnpj;
 	int i;
@@ -291,6 +294,7 @@ public class ProjetoService {
 		if(linhaRow != null){
 			if(linhaRow.getCell(0).getCellType() == Cell.CELL_TYPE_NUMERIC){
 				DiaCorridoProjeto diaCorridoProjeto = new DiaCorridoProjeto();
+				diaCorridoProjeto.setRandomId(Uteis.randomId());
 				
 				if(colunaData!= null){
 					diaCorridoProjeto.setData(CalendarToString.dateToCalendar(linhaRow.getCell(colunaData).getDateCellValue()));
@@ -317,6 +321,10 @@ public class ProjetoService {
 				
 				if(colunaSaldo!= null){
 					diaCorridoProjeto.setValorSaldo(linhaRow.getCell(colunaSaldo).getNumericCellValue());
+				}
+				if(colunaJuroAno!= null){
+					projeto.setContemjurosAnual(Boolean.TRUE);
+					diaCorridoProjeto.setJuroAno(linhaRow.getCell(colunaJuroAno).getNumericCellValue());
 				}
 				if(mapEmpresaCnpj.isEmpty() == false){
 					for (Map.Entry<Integer, Empresa> entry : mapEmpresaCnpj.entrySet()) {
@@ -355,10 +363,29 @@ public class ProjetoService {
 				}
 				
 				if(colunaIndexador!= null){
-					projeto.setIndexador(indexador);
+					if(indexador!= null){
+						diaCorridoProjeto.setIndexador(indexador);
+					}else if(listIndexador.isEmpty() == false){
+						Indexador ind2 = null;
+						for(Indexador ind : listIndexador){
+							if(ind.getAnoAux() != null){
+								ind2 = ind;
+							}
+						}
+						int ano = Integer.parseInt(ind2.getAnoAux());
+						int mes = Integer.parseInt(ind2.getMesAux());
+						
+						if(diaCorridoProjeto.getData().get(Calendar.YEAR)>ano
+								|| (diaCorridoProjeto.getData().get(Calendar.YEAR)==ano && (diaCorridoProjeto.getData().get(Calendar.MONTH)+1)> mes)){
+							diaCorridoProjeto.setIndexador(listIndexador.get(1));
+						}else{
+							diaCorridoProjeto.setIndexador(listIndexador.get(0));
+						}
+						
+					}
+					projeto.setContemIndexador(Boolean.TRUE);
 					diaCorridoProjeto.setValorIndexador(linhaRow.getCell(colunaIndexador).getNumericCellValue());
 				}
-				diaCorridoProjeto.setIndexador(indexador);
 				
 				diaCorridoProjeto.setOrdem(ordem++);
 				diaCorridoProjeto.setProjeto(projeto);
@@ -376,6 +403,7 @@ public class ProjetoService {
 				colunaData = null;
 				indexador = null;
 				mapEmpresaCnpj = new HashMap<Integer, Empresa>();
+				listIndexador = new ArrayList<Indexador>();
 				i = 0;
 				ordem = 0;
 				for(int coluna= 0; coluna< linhaRow.getLastCellNum(); coluna++){
@@ -415,9 +443,12 @@ public class ProjetoService {
 	private void setValoresCampoColuna(String stringCell, Integer coluna) {
 		if(stringCell.toUpperCase().contains("TAXA JURO") || stringCell.toUpperCase().contains("FATOR MENSAL")){
 			colunaTaxaJuro = coluna;
+		}else if(stringCell.toUpperCase().contains("JURO ANO")){
+			colunaJuroAno = coluna;
 		}else if(stringCell.toUpperCase().contains("JURO")){
 			colunaJuroMes = coluna;
 		}
+		
 		if(stringCell.toUpperCase().contains("SALDO")){
 			colunaSaldo = coluna;
 		}
@@ -438,12 +469,19 @@ public class ProjetoService {
 		}
 		if(stringCell.toUpperCase().contains("IDX:")){
 			String indexadorStr = stringCell.substring(stringCell.indexOf(":")+1, stringCell.length());
+			colunaIndexador = coluna;
 			if(indexadorStr.contains("/")){
 				String[] indexadores = indexadorStr.split("/");
-				
+				Indexador indexadorAux;
+				indexadorAux = indexadorDao.findIndexadorByNome(indexadores[0].toUpperCase());
+				listIndexador.add(indexadorAux);
+				String[] indexadorSegundo = indexadores[1].split("-");
+				indexadorAux = indexadorDao.findIndexadorByNome(indexadorSegundo[0].toUpperCase());
+				indexadorAux.setMesAux(indexadorSegundo[1]);
+				indexadorAux.setAnoAux(indexadorSegundo[2]);
+				listIndexador.add(indexadorAux);
 			}else{
 				indexador = indexadorDao.findIndexadorByNome(indexadorStr.toUpperCase());
-				colunaIndexador = coluna;
 			}
 		}else if(stringCell.toUpperCase().contains("DATA")){
 			colunaData = coluna;

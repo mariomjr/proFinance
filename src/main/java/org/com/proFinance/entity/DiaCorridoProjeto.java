@@ -29,6 +29,8 @@ public class DiaCorridoProjeto implements Serializable{
 	@GeneratedValue(strategy=GenerationType.TABLE)
 	private Long id;
 	
+	private String randomId;
+	
 	@Temporal(TemporalType.DATE)
 	private Calendar data;
 	
@@ -76,6 +78,14 @@ public class DiaCorridoProjeto implements Serializable{
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public String getRandomId() {
+		return randomId;
+	}
+
+	public void setRandomId(String randomId) {
+		this.randomId = randomId;
 	}
 
 	public Calendar getData() {
@@ -223,7 +233,36 @@ public class DiaCorridoProjeto implements Serializable{
 	public void setValorSaldoTotal(Double valorSaldoTotal) {
 		this.valorSaldoTotal = valorSaldoTotal;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((randomId == null) ? 0 : randomId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DiaCorridoProjeto other = (DiaCorridoProjeto) obj;
+		if (getRandomId() != null) {
+			if (getRandomId() == null || getRandomId().equals(other.getRandomId()) == false)return false;
+			if (getRandomId().equals(other.getRandomId()))return true;
+		}
+		if (getId() != null) {
+			if (other.getId() == null || getId().equals(other.getId()) == false)return false;
+			if (getId().equals(other.getId()))return true;
+		}
+		return false;
+	}
+
 	
 	
 }

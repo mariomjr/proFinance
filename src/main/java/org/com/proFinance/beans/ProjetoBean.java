@@ -25,6 +25,7 @@ import org.com.proFinance.dao.SocioEmpresaDao;
 import org.com.proFinance.dataModel.LazyProjetoDataModel;
 import org.com.proFinance.entity.Anexo;
 import org.com.proFinance.entity.DiaCorridoProjeto;
+import org.com.proFinance.entity.Empresa;
 import org.com.proFinance.entity.Indexador;
 import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
@@ -35,7 +36,6 @@ import org.com.proFinance.infra.UtilUser;
 import org.com.proFinance.services.ProjetoService;
 import org.com.proFinance.util.Uteis;
 import org.com.proFinance.util.UtilSelectItem;
-import org.com.proFinance.wsBancoCentral.WSSerieVO;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -77,6 +77,8 @@ public class ProjetoBean implements Serializable{
 	private Boolean mudouDataFinal;
 	
 	private List<ProjetoDiaCorridoAnoAux> listProjetoDiaCorridoAno;
+	
+	private List<Empresa> listTotalEmpresas;
 
 	@PostConstruct
 	public void init(){
@@ -108,6 +110,7 @@ public class ProjetoBean implements Serializable{
 		if(validarDados()){
 			getProjetoSelect().setDataFinalPrevistaAtual(getProjetoSelect().getDataFinalPrevistaNova());
 			getProjetoSelect().setAtivo(SimNao.SIM);
+			insereProjetoCorrido();
 			projetoDao.salvarProjeto(getProjetoSelect());
 			
 			FacesContext.getCurrentInstance().addMessage(null,
@@ -115,7 +118,7 @@ public class ProjetoBean implements Serializable{
 		}
 		RequestContext.getCurrentInstance().update("messages");
 	}
-	
+
 	private boolean validarDados() {
 		if(Uteis.validaNullVazio(getProjetoSelect().getNome())){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "O campo Nome é obrigatório!"));
@@ -160,6 +163,7 @@ public class ProjetoBean implements Serializable{
 		ProjetoDiaCorridoAnoAux projetoDiaCorridoAno = null;
 		Integer anoAtual = null;
 		setListProjetoDiaCorridoAno(new ArrayList<ProjetoDiaCorridoAnoAux>());
+		setListTotalEmpresas(new ArrayList<Empresa>());
 		
 		for(DiaCorridoProjeto diaCorrido : projeto.getListDiasCorridosProjeto()){
 			if(anoAtual == null || (anoAtual != null && anoAtual!= diaCorrido.getData().get(Calendar.YEAR))){
@@ -172,8 +176,35 @@ public class ProjetoBean implements Serializable{
 			}else{
 				projetoDiaCorridoAno.getListDiasCorridosProjeto().add(diaCorrido);
 			}
+			insereListaTotalEmpresas(diaCorrido);
 		}
 		
+	}
+
+	private void insereListaTotalEmpresas(DiaCorridoProjeto diaCorridoProjeto) {
+		Empresa empresaAux;
+		int indexEmpresa;
+		for(OcorrenciaProjeto ocorrenciaProjeto : diaCorridoProjeto.getListOcorrenciasProjeto()){
+			if(ocorrenciaProjeto.getEmpresa()!= null && getListTotalEmpresas().contains(ocorrenciaProjeto.getEmpresa())){
+				indexEmpresa = getListTotalEmpresas().indexOf(ocorrenciaProjeto.getEmpresa());
+				empresaAux = getListTotalEmpresas().get(indexEmpresa);
+				if(ocorrenciaProjeto.getCreditoDebito().equals(EnumCreditoDebito.CREDITO)){
+					empresaAux.setValorTotalCredito(empresaAux.getValorTotalCredito()+ocorrenciaProjeto.getValor());
+				}else{
+					empresaAux.setValorTotalDebito(empresaAux.getValorTotalDebito()+ocorrenciaProjeto.getValor());
+				}
+			}else{
+				empresaAux = ocorrenciaProjeto.getEmpresa();
+				if(empresaAux!= null){
+					if(ocorrenciaProjeto.getCreditoDebito().equals(EnumCreditoDebito.CREDITO)){
+						empresaAux.setValorTotalCredito(ocorrenciaProjeto.getValor());
+					}else{
+						empresaAux.setValorTotalDebito(ocorrenciaProjeto.getValor());
+					}
+					getListTotalEmpresas().add(empresaAux);
+				}
+			}
+		}
 	}
 
 	private boolean validaDadosPlanilha() {
@@ -441,6 +472,32 @@ public class ProjetoBean implements Serializable{
 		return valor;
 	}
 	
+	private void insereProjetoCorrido() {
+		int indexOf;
+		DiaCorridoProjeto diaCorridoAux;
+		for(ProjetoDiaCorridoAnoAux projetoAux : getListProjetoDiaCorridoAno()){
+			for(DiaCorridoProjeto diaCorrido : projetoAux.getListDiasCorridosProjeto()){
+				if(getProjetoSelect().getListDiasCorridosProjeto().contains(diaCorrido)){
+					indexOf = getProjetoSelect().getListDiasCorridosProjeto().indexOf(diaCorrido);
+					diaCorridoAux = getProjetoSelect().getListDiasCorridosProjeto().get(indexOf);
+					setarValores(diaCorridoAux, diaCorrido);
+				}else{
+					getProjetoSelect().getListDiasCorridosProjeto().add(diaCorrido);
+				}
+			}
+		}
+	}
+	
+	
+
+	private void setarValores(DiaCorridoProjeto diaCorridoAux, DiaCorridoProjeto diaCorrido) {
+		diaCorridoAux.setValorSaldo(diaCorrido.getValorSaldo());
+		diaCorridoAux.setJuroMes(diaCorrido.getJuroMes());
+		diaCorridoAux.setFatorDiario(diaCorrido.getFatorDiario());
+		diaCorridoAux.setTaxaJuro(diaCorrido.getTaxaJuro());
+		diaCorridoAux.setValorCredito(diaCorrido.getValorCredito());
+		diaCorridoAux.setValorDebito(diaCorrido.getValorDebito());
+	}
 
 	public void limparProjeto(){
 		setProjetoSelect(new Projeto());
@@ -523,5 +580,16 @@ public class ProjetoBean implements Serializable{
 
 	public void setListProjetoDiaCorridoAno(List<ProjetoDiaCorridoAnoAux> listProjetoDiaCorridoAno) {
 		this.listProjetoDiaCorridoAno = listProjetoDiaCorridoAno;
+	}
+
+	public List<Empresa> getListTotalEmpresas() {
+		if(listTotalEmpresas == null){
+			listTotalEmpresas = new ArrayList<Empresa>();
+		}
+		return listTotalEmpresas;
+	}
+
+	public void setListTotalEmpresas(List<Empresa> listTotalEmpresas) {
+		this.listTotalEmpresas = listTotalEmpresas;
 	}
 }

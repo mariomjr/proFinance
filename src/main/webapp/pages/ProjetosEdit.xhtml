@@ -75,29 +75,6 @@
 		        
 	        </div>
 	        
-	        <div class="ui-grid-row">
-				<div class="ui-grid-col-2">
-					<h:outputLabel value="Juro/Mês:" for="juroMes"/>
-				</div>
-		
-				<div class="ui-grid-col-2">
-					<p:inputText value="#{projetoBean.projetoSelect.juroMes}" style="width:87%" id="juroMes" converter="#{doubleConverter}"
-						disabled="#{projetoBean.projetoSelect.id != null}"/>
-		        </div>
-		        
-			 	<div class="ui-grid-col-2">
-			 		<h:outputLabel value="Indexador: " for="srmIndexador" rendered="false"/>
-			 	</div>
-			 	<div class="ui-grid-col-2">
-			 		<p:selectOneMenu id="srmIndexador" value="#{projetoBean.projetoSelect.indexador}" 
-						style="width:80%" converter="#{indexadorConverter}" rendered="false">
-						<f:selectItem noSelectionOption="true"/>
-			            <f:selectItems value="#{projetoBean.listIndexadorItens}" />
-			        </p:selectOneMenu>
-			 	</div>
-		        
-			</div>
-	        
        		<p:commandButton value="Atualizar" actionListener="#{projetoBean.gerarPlanilha}" onclick="PF('load').show()"
         		rendered="false"
        			oncomplete="PF('load').hide()" update="pnDadosInvestimento, formGeral" icon="ui-icon-document-b"/>
@@ -107,6 +84,25 @@
         		
         	<p:commandButton value="Importar projeto excel" icon="ui-icon-arrowreturnthick-1-s" onclick="PF('load').show()"
        			oncomplete="PF('load').hide(); PF('dialogImportacaoExcel').show()" update="mdlImportacaoExcel"/>
+       			
+			<p:accordionPanel rendered="#{projetoBean.listTotalEmpresas.size() > 0}" activeIndex="null" >
+				<p:tab title="Consolidado Empresas">
+				    <p:dataTable value="#{projetoBean.listTotalEmpresas}" var="empresaValor">
+				    	<p:column headerText="Investidor" style="text-align:center">
+				            <h:outputText value="#{empresaValor.socioEmpresa.nome}"/>
+				        </p:column>
+				    	<p:column headerText="Empresa" style="text-align:center">
+				            <h:outputText value="#{empresaValor.nome}"/>
+				        </p:column>
+				        <p:column headerText="Crédito" style="text-align:center">
+				            <h:outputText value="#{empresaValor.valorTotalCredito}" converter="#{doubleConverterDinheiro}"/>
+				        </p:column>
+				        <p:column headerText="Débito" style="text-align:center">
+				            <h:outputText value="#{empresaValor.valorTotalDebito}" converter="#{doubleConverterDinheiro}"/>
+				        </p:column>
+				    </p:dataTable>
+			    </p:tab>
+		    </p:accordionPanel>
 		</p:panel>
 		
 		<p:panel  id="pnDadosInvestimento" rendered="#{projetoBean.projetoSelect.listDiasCorridosProjeto.size()>0}">
@@ -118,8 +114,9 @@
 				<p:confirm header="Confirmação" message="Deseja realmente excluir esse projeto?" icon="ui-icon-alert"/>
 			</p:commandButton>
 			
-			<p:tabView value="#{projetoBean.listProjetoDiaCorridoAno}" var="projetoDiaCorrido" id="tbViewDiaCorridoProjeto">
-				<p:ajax event="tabChange" update="dtDiaCorrido"/>
+			<p:tabView value="#{projetoBean.listProjetoDiaCorridoAno}" var="projetoDiaCorrido" id="tbViewDiaCorridoProjeto"
+				cache="false" dynamic="true">
+				<p:ajax event="tabChange" update="tbViewDiaCorridoProjeto" onstart="PF('load').show()" oncomplete="PF('load').hide()"/>
 				<p:tab title="#{projetoDiaCorrido.ano}">
 					<p:dataTable var="diaCorrido" value="#{projetoDiaCorrido.listDiasCorridosProjeto}"
 				 		id="dtDiaCorrido" rowIndexVar="rowIndex" scrollable="true" scrollHeight="350">
@@ -130,7 +127,7 @@
 				        <p:column headerText="Data" style="text-align:right">
 				            <h:outputText value="#{calendarToString.obterData(diaCorrido.data)}" />
 				        </p:column>
-				        <p:column headerText="Indexador" rendered="#{projetoBean.projetoSelect.indexador.id != null}"
+				        <p:column headerText="Indexador" rendered="#{projetoBean.projetoSelect.contemIndexador}"
 				                	style="text-align:right;width:6em">
 				            
 				            <p:selectOneMenu  value="#{diaCorrido.indexador}" 
@@ -143,9 +140,16 @@
 					        
 				            <h:outputText value="#{diaCorrido.indexador.descricao}" id="indexadorDesc#{rowIndex}" rendered="#{projetoBean.isDiaPrimeiroDiaCorrido(diaCorrido) == false}"/>
 				        </p:column>
-				        <p:column headerText="#{projetoBean.projetoSelect.indexador.descricao}" rendered="#{projetoBean.projetoSelect.indexador.id != null}"
+				        <p:column headerText="#{projetoBean.projetoSelect.indexador.descricao}" rendered="#{projetoBean.projetoSelect.contemIndexador}"
 				                	style="text-align:right;width:4em">
 				            <h:outputText value="#{diaCorrido.valorIndexador}" converter="#{doubleConverter}" id="indexador#{rowIndex}"/>
+				        </p:column>
+				        <p:column headerText="Juro ano" style="text-align:right;width:5em" rendered="#{projetoBean.projetoSelect.contemjurosAnual}">
+				        	<p:inputText value="#{diaCorrido.juroAno}"  id="juroMesInput"
+				        		style="width:88%" converter="#{doubleConverter}">
+				        		<p:ajax event="change" listener="#{projetoBean.recalcularMudancaJurosMes(diaCorrido, projetoDiaCorrido.ano)}"
+				        			onstart="PF('load').show()" oncomplete="PF('load').hide()" update="dtDiaCorrido" />
+				        	</p:inputText>
 				        </p:column>
 				        <p:column headerText="Juro/Mês" style="text-align:right;width:5em" >
 				        	<p:inputText value="#{diaCorrido.juroMes}"  id="juroMesInput"
