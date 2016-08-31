@@ -36,6 +36,8 @@ public class DiaCorridoProjeto implements Serializable{
 	
 	private Double juroMes;
 	
+	private Double juroAno;
+	
 	private Double taxaJuro;
 	
 	private Double fatorDiario;
@@ -98,6 +100,14 @@ public class DiaCorridoProjeto implements Serializable{
 
 	public void setJuroMes(Double juroMes) {
 		this.juroMes = juroMes;
+	}
+
+	public Double getJuroAno() {
+		return juroAno;
+	}
+
+	public void setJuroAno(Double juroAno) {
+		this.juroAno = juroAno;
 	}
 
 	public Double getTaxaJuro() {

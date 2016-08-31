@@ -119,6 +119,7 @@
 			</p:commandButton>
 			
 			<p:tabView value="#{projetoBean.listProjetoDiaCorridoAno}" var="projetoDiaCorrido" id="tbViewDiaCorridoProjeto">
+				<p:ajax event="tabChange" update="dtDiaCorrido"/>
 				<p:tab title="#{projetoDiaCorrido.ano}">
 					<p:dataTable var="diaCorrido" value="#{projetoDiaCorrido.listDiasCorridosProjeto}"
 				 		id="dtDiaCorrido" rowIndexVar="rowIndex" scrollable="true" scrollHeight="350">
@@ -149,8 +150,8 @@
 				        <p:column headerText="Juro/Mês" style="text-align:right;width:5em" >
 				        	<p:inputText value="#{diaCorrido.juroMes}"  id="juroMesInput"
 				        		style="width:88%" converter="#{doubleConverter}">
-				        		<p:ajax event="change" listener="#{projetoBean.recalcularMudancaJurosMes(diaCorrido)}"
-				        			onstart="PF('load').show()" oncomplete="PF('load').hide()" />
+				        		<p:ajax event="change" listener="#{projetoBean.recalcularMudancaJurosMes(diaCorrido, projetoDiaCorrido.ano)}"
+				        			onstart="PF('load').show()" oncomplete="PF('load').hide()" update="dtDiaCorrido" />
 				        	</p:inputText>
 				        </p:column>
 				        <p:column headerText="Fator mensal" style="text-align:right;width:9em">
@@ -214,7 +215,7 @@
 				            </p:panelGrid>
 				        </p:rowExpansion>
 				    </p:dataTable>
-				    <p:accordionPanel rendered="#{projetoDiaCorrido.listEmpresaTotal.size() > 0}">
+				    <p:accordionPanel rendered="#{projetoDiaCorrido.listEmpresaTotal.size() > 0}" activeIndex="null">
         				<p:tab title="Empresas">
 						    <p:dataTable value="#{projetoDiaCorrido.listEmpresaTotal}" var="empresaValor">
 						    	<p:column headerText="Investidor" style="text-align:center">

@@ -54,6 +54,17 @@ public class Projeto implements Serializable{
 	@OneToMany(mappedBy = "projeto", targetEntity= OcorrenciaProjeto.class, cascade=CascadeType.ALL)
 	private List<OcorrenciaProjeto> listOcorrenciasProjeto;
 	
+	@Enumerated(EnumType.STRING)
+	private SimNao ativo;
+	
+	private Boolean contemjurosAnual;
+	
+	private Boolean contemJurosMes;
+	
+	private Boolean contemIndexador;
+	
+	private Boolean contemVariasEmpresa;
+	
 	@Transient
 	private Double valorInicial;
 	
@@ -62,9 +73,6 @@ public class Projeto implements Serializable{
 	
 	@Transient
 	private String tabTitle;
-	
-	@Enumerated(EnumType.STRING)
-	private SimNao ativo;
 	
 	@Transient
 	private Double ultimoSaldo;
@@ -241,6 +249,50 @@ public class Projeto implements Serializable{
 
 	public void setValorTotalDebito(Double valorTotalDebito) {
 		this.valorTotalDebito = valorTotalDebito;
+	}
+
+	public Boolean getContemjurosAnual() {
+		if(contemjurosAnual == null){
+			contemjurosAnual = Boolean.FALSE;
+		}
+		return contemjurosAnual;
+	}
+
+	public void setContemjurosAnual(Boolean contemjurosAnual) {
+		this.contemjurosAnual = contemjurosAnual;
+	}
+
+	public Boolean getContemJurosMes() {
+		if(contemJurosMes == null){
+			contemJurosMes = Boolean.TRUE;
+		}
+		return contemJurosMes;
+	}
+
+	public void setContemJurosMes(Boolean contemJurosMes) {
+		this.contemJurosMes = contemJurosMes;
+	}
+
+	public Boolean getContemIndexador() {
+		if(contemIndexador == null){
+			contemIndexador = Boolean.TRUE;
+		}
+		return contemIndexador;
+	}
+
+	public void setContemIndexador(Boolean contemIndexador) {
+		this.contemIndexador = contemIndexador;
+	}
+
+	public Boolean getContemVariasEmpresa() {
+		if(contemVariasEmpresa == null){
+			contemVariasEmpresa = Boolean.TRUE;
+		}
+		return contemVariasEmpresa;
+	}
+
+	public void setContemVariasEmpresa(Boolean contemVariasEmpresa) {
+		this.contemVariasEmpresa = contemVariasEmpresa;
 	}
 
 	@Override

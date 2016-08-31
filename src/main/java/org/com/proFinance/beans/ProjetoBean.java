@@ -35,6 +35,7 @@ import org.com.proFinance.infra.UtilUser;
 import org.com.proFinance.services.ProjetoService;
 import org.com.proFinance.util.Uteis;
 import org.com.proFinance.util.UtilSelectItem;
+import org.com.proFinance.wsBancoCentral.WSSerieVO;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -362,8 +363,82 @@ public class ProjetoBean implements Serializable{
 		projetoService.recalcularMudancaIndexadorMes(diaCorridoProjeto, getProjetoSelect());
 	}
 	
-	public void recalcularMudancaJurosMes(DiaCorridoProjeto diaCorridoProjeto){
-		projetoService.recalcularMudancaJuroMes(diaCorridoProjeto, getProjetoSelect());
+	public void recalcularMudancaJurosMes(DiaCorridoProjeto diaCorridoProjeto, Integer ano){
+		atualizaValorIndexadorMesDiaCorrido(diaCorridoProjeto, ano);
+	}
+	
+	double valorTotalAux;
+	double valorFatorAux;
+	
+	private void atualizaValorIndexadorMesDiaCorrido(DiaCorridoProjeto diaCorridoProjeto, Integer anoSelect) {
+		
+		trataJuroMes(diaCorridoProjeto);
+		diaCorridoProjeto.setTaxaJuro((diaCorridoProjeto.getSomaJuroMesIndexador() / 100) + 1);
+		diaCorridoProjeto.setFatorDiario(calculaFatorDiario(diaCorridoProjeto.getTaxaJuro(), diaCorridoProjeto.getData()));
+		diaCorridoProjeto.setValorSaldo(diaCorridoProjeto.getValorSaldo() * diaCorridoProjeto.getFatorDiario());
+		
+		ProjetoDiaCorridoAnoAux projetoDiaCorrido = projetoDiaCoridoByAno(anoSelect);
+		
+		valorTotalAux = diaCorridoProjeto.getValorSaldoTotal();
+		valorFatorAux = diaCorridoProjeto.getFatorDiario();
+		
+		atualizarProjeto(projetoDiaCorrido,  diaCorridoProjeto, false);
+		
+		anoSelect++;
+		projetoDiaCorrido = projetoDiaCoridoByAno(anoSelect);
+		while(projetoDiaCorrido!= null){
+			atualizarProjeto(projetoDiaCorrido,  diaCorridoProjeto, true);
+			anoSelect++;
+			projetoDiaCorrido = projetoDiaCoridoByAno(anoSelect);
+		}
+	}
+	
+	private void atualizarProjeto(ProjetoDiaCorridoAnoAux projetoDiaCorrido, DiaCorridoProjeto diaCorridoProjeto, boolean isOrden){
+		for(DiaCorridoProjeto diaCorridoProjetoAux : projetoDiaCorrido.getListDiasCorridosProjeto()){
+			if(diaCorridoProjetoAux.getOrdem()>diaCorridoProjeto.getOrdem() || isOrden){
+				diaCorridoProjetoAux.setJuroMes(diaCorridoProjeto.getJuroMes());
+				trataJuroMes(diaCorridoProjetoAux);
+				diaCorridoProjetoAux.setTaxaJuro((diaCorridoProjetoAux.getSomaJuroMesIndexador() / 100) + 1);
+				diaCorridoProjetoAux.setFatorDiario(calculaFatorDiario(diaCorridoProjetoAux.getTaxaJuro(), diaCorridoProjetoAux.getData()));
+					
+				diaCorridoProjetoAux.setValorSaldo(valorTotalAux*valorFatorAux);
+				valorFatorAux = diaCorridoProjetoAux.getFatorDiario();
+				valorTotalAux = diaCorridoProjetoAux.getValorSaldoTotal();
+					
+			}
+		}
+	}
+	
+	private ProjetoDiaCorridoAnoAux projetoDiaCoridoByAno(Integer ano){
+		for(ProjetoDiaCorridoAnoAux projetoAux : getListProjetoDiaCorridoAno()){
+			if(projetoAux.getAno().intValue() == ano.intValue()){
+				return projetoAux;
+			}
+		}
+		return null;
+	}
+	
+	private void trataJuroMes(DiaCorridoProjeto diaCorridoProjeto) {
+		Double valor = 0.0;
+		
+		if(diaCorridoProjeto.getJuroMes()>0){
+			valor += diaCorridoProjeto.getJuroMes();
+		}
+		if(diaCorridoProjeto.getIndexador()!= null){
+			valor += diaCorridoProjeto.getValorIndexador();
+		}
+		diaCorridoProjeto.setSomaJuroMesIndexador(valor);
+	}
+	
+	private double calculaFatorDiario(Double taxaJuro, Calendar data) {
+		return Math.pow(taxaJuro, valorElevado(data));
+	}
+	
+	private double valorElevado(Calendar dataMes) {
+		int valorMes = dataMes.getActualMaximum(Calendar.DAY_OF_MONTH);
+		double valor = 1 / (double) valorMes;
+
+		return valor;
 	}
 	
 

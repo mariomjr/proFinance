@@ -439,6 +439,7 @@ public class ProjetoService {
 		if(stringCell.toUpperCase().contains("IDX:")){
 			String indexadorStr = stringCell.substring(stringCell.indexOf(":")+1, stringCell.length());
 			if(indexadorStr.contains("/")){
+				String[] indexadores = indexadorStr.split("/");
 				
 			}else{
 				indexador = indexadorDao.findIndexadorByNome(indexadorStr.toUpperCase());
