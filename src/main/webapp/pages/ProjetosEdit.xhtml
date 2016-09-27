@@ -145,7 +145,7 @@
 				            <h:outputText value="#{diaCorrido.valorIndexador}" converter="#{doubleConverter}" id="indexador#{rowIndex}"/>
 				        </p:column>
 				        <p:column headerText="Juro ano" style="text-align:right;width:5em" rendered="#{projetoBean.projetoSelect.contemjurosAnual}">
-				        	<p:inputText value="#{diaCorrido.juroAno}"  id="juroMesInput"
+				        	<p:inputText value="#{diaCorrido.juroAno}"  id="juroAnoInput"
 				        		style="width:88%" converter="#{doubleConverter}">
 				        		<p:ajax event="change" listener="#{projetoBean.recalcularMudancaJurosMes(diaCorrido, projetoDiaCorrido.ano)}"
 				        			onstart="PF('load').show()" oncomplete="PF('load').hide()" update="dtDiaCorrido" />
@@ -301,7 +301,7 @@
 				<div class="ui-grid-row">
       					<div class="ui-grid-col-4" style="text-align:right">
 						<p:commandButton actionListener="#{projetoBean.adicionarOcorrenciaDiaCorrido}" 
-							value="Adicionar" icon="ui-icon-disk" id="btnAdicionarOcorrencia" 
+							value="Adicionar" icon="ui-icon-disk" id="btnAdicionarOcorrencia" update="tbViewDiaCorridoProjeto"
 							onclick="PF('load').show()" oncomplete="PF('ocorrenciaDialog').hide();PF('load').hide()" >
 							<p:confirm header="Confirmação" message="Deseja realmente adicionar essa ocorrência?" icon="ui-icon-alert"/>	
 						</p:commandButton>

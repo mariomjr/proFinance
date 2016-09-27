@@ -355,9 +355,13 @@ public class ProjetoService {
 						}
 					}
 					if(colunaCredito!= null){
-						diaCorridoProjeto.setValorCredito(linhaRow.getCell(colunaCredito).getNumericCellValue());
-						if(diaCorridoProjeto.getValorCredito()>0){
-							adicionaOcorrencia(diaCorridoProjeto, EnumCreditoDebito.CREDITO, null, diaCorridoProjeto.getValorCredito());
+						try{
+							diaCorridoProjeto.setValorCredito(linhaRow.getCell(colunaCredito).getNumericCellValue());
+							if(diaCorridoProjeto.getValorCredito()>0){
+								adicionaOcorrencia(diaCorridoProjeto, EnumCreditoDebito.CREDITO, null, diaCorridoProjeto.getValorCredito());
+							}
+						}catch(Exception e){
+							
 						}
 					}
 				}
@@ -376,7 +380,7 @@ public class ProjetoService {
 						int mes = Integer.parseInt(ind2.getMesAux());
 						
 						if(diaCorridoProjeto.getData().get(Calendar.YEAR)>ano
-								|| (diaCorridoProjeto.getData().get(Calendar.YEAR)==ano && (diaCorridoProjeto.getData().get(Calendar.MONTH)+1)> mes)){
+								|| (diaCorridoProjeto.getData().get(Calendar.YEAR)==ano && (diaCorridoProjeto.getData().get(Calendar.MONTH)+2)> mes)){
 							diaCorridoProjeto.setIndexador(listIndexador.get(1));
 						}else{
 							diaCorridoProjeto.setIndexador(listIndexador.get(0));
