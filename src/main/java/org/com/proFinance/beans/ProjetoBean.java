@@ -30,6 +30,7 @@ import org.com.proFinance.entity.Indexador;
 import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
 import org.com.proFinance.entity.ProjetoDiaCorridoAnoAux;
+import org.com.proFinance.entity.SocioEmpresa;
 import org.com.proFinance.enuns.EnumCreditoDebito;
 import org.com.proFinance.enuns.SimNao;
 import org.com.proFinance.infra.UtilUser;
@@ -78,7 +79,11 @@ public class ProjetoBean implements Serializable{
 	
 	private List<ProjetoDiaCorridoAnoAux> listProjetoDiaCorridoAno;
 	
-	private List<Empresa> listTotalEmpresas;
+	private List<SocioEmpresa> listTotalSocioEmpresa;
+	
+	private Double totalSocioEmpresaCredito;
+	
+	private Double totalSocioEmpresaDebito;
 
 	@PostConstruct
 	public void init(){
@@ -163,7 +168,7 @@ public class ProjetoBean implements Serializable{
 		ProjetoDiaCorridoAnoAux projetoDiaCorridoAno = null;
 		Integer anoAtual = null;
 		setListProjetoDiaCorridoAno(new ArrayList<ProjetoDiaCorridoAnoAux>());
-		setListTotalEmpresas(new ArrayList<Empresa>());
+		setListTotalSocioEmpresa(new ArrayList<SocioEmpresa>());
 		
 		for(DiaCorridoProjeto diaCorrido : projeto.getListDiasCorridosProjeto()){
 			if(anoAtual == null || (anoAtual != null && anoAtual!= diaCorrido.getData().get(Calendar.YEAR))){
@@ -182,26 +187,28 @@ public class ProjetoBean implements Serializable{
 	}
 
 	private void insereListaTotalEmpresas(DiaCorridoProjeto diaCorridoProjeto) {
-		Empresa empresaAux;
+		SocioEmpresa socioEmpresaAux;
 		int indexEmpresa;
 		for(OcorrenciaProjeto ocorrenciaProjeto : diaCorridoProjeto.getListOcorrenciasProjeto()){
-			if(ocorrenciaProjeto.getEmpresa()!= null && getListTotalEmpresas().contains(ocorrenciaProjeto.getEmpresa())){
-				indexEmpresa = getListTotalEmpresas().indexOf(ocorrenciaProjeto.getEmpresa());
-				empresaAux = getListTotalEmpresas().get(indexEmpresa);
-				if(ocorrenciaProjeto.getCreditoDebito().equals(EnumCreditoDebito.CREDITO)){
-					empresaAux.setValorTotalCredito(empresaAux.getValorTotalCredito()+ocorrenciaProjeto.getValor());
-				}else{
-					empresaAux.setValorTotalDebito(empresaAux.getValorTotalDebito()+ocorrenciaProjeto.getValor());
-				}
-			}else{
-				empresaAux = ocorrenciaProjeto.getEmpresa();
-				if(empresaAux!= null){
+			if(ocorrenciaProjeto.getEmpresa() != null && ocorrenciaProjeto.getEmpresa().getSocioEmpresa()!= null){
+				if(getListTotalSocioEmpresa().contains(ocorrenciaProjeto.getEmpresa().getSocioEmpresa())){
+					indexEmpresa = getListTotalSocioEmpresa().indexOf(ocorrenciaProjeto.getEmpresa().getSocioEmpresa());
+					socioEmpresaAux = getListTotalSocioEmpresa().get(indexEmpresa);
 					if(ocorrenciaProjeto.getCreditoDebito().equals(EnumCreditoDebito.CREDITO)){
-						empresaAux.setValorTotalCredito(ocorrenciaProjeto.getValor());
+						socioEmpresaAux.setValorTotalCredito(socioEmpresaAux.getValorTotalCredito()+ocorrenciaProjeto.getValor());
 					}else{
-						empresaAux.setValorTotalDebito(ocorrenciaProjeto.getValor());
+						socioEmpresaAux.setValorTotalDebito(socioEmpresaAux.getValorTotalDebito()+ocorrenciaProjeto.getValor());
 					}
-					getListTotalEmpresas().add(empresaAux);
+				}else{
+					socioEmpresaAux = ocorrenciaProjeto.getEmpresa().getSocioEmpresa();
+					if(socioEmpresaAux!= null){
+						if(ocorrenciaProjeto.getCreditoDebito().equals(EnumCreditoDebito.CREDITO)){
+							socioEmpresaAux.setValorTotalCredito(ocorrenciaProjeto.getValor());
+						}else{
+							socioEmpresaAux.setValorTotalDebito(ocorrenciaProjeto.getValor());
+						}
+						getListTotalSocioEmpresa().add(socioEmpresaAux);
+					}
 				}
 			}
 		}
@@ -611,14 +618,42 @@ public class ProjetoBean implements Serializable{
 		this.listProjetoDiaCorridoAno = listProjetoDiaCorridoAno;
 	}
 
-	public List<Empresa> getListTotalEmpresas() {
-		if(listTotalEmpresas == null){
-			listTotalEmpresas = new ArrayList<Empresa>();
+	public List<SocioEmpresa> getListTotalSocioEmpresa() {
+		if(listTotalSocioEmpresa == null){
+			listTotalSocioEmpresa = new ArrayList<SocioEmpresa>();
 		}
-		return listTotalEmpresas;
+		return listTotalSocioEmpresa;
 	}
 
-	public void setListTotalEmpresas(List<Empresa> listTotalEmpresas) {
-		this.listTotalEmpresas = listTotalEmpresas;
+	public void setListTotalSocioEmpresa(List<SocioEmpresa> listTotalSocioEmpresa) {
+		this.listTotalSocioEmpresa = listTotalSocioEmpresa;
+	}
+
+	public Double getTotalSocioEmpresaCredito() {
+		totalSocioEmpresaCredito = 0.0;
+		for(SocioEmpresa socioEmpresa: getListTotalSocioEmpresa()){
+			if(socioEmpresa.getValorTotalCredito()!= null){
+				totalSocioEmpresaCredito += socioEmpresa.getValorTotalCredito();
+			}
+		}
+		return totalSocioEmpresaCredito;
+	}
+
+	public void setTotalSocioEmpresaCredito(Double totalSocioEmpresaCredito) {
+		this.totalSocioEmpresaCredito = totalSocioEmpresaCredito;
+	}
+
+	public Double getTotalSocioEmpresaDebito() {
+		totalSocioEmpresaDebito = 0.0;
+		for(SocioEmpresa socioEmpresa: getListTotalSocioEmpresa()){
+			if(socioEmpresa.getValorTotalDebito()!= null){
+				totalSocioEmpresaDebito += socioEmpresa.getValorTotalDebito();
+			}
+		}
+		return totalSocioEmpresaDebito;
+	}
+
+	public void setTotalSocioEmpresaDebito(Double totalSocioEmpresaDebito) {
+		this.totalSocioEmpresaDebito = totalSocioEmpresaDebito;
 	}
 }

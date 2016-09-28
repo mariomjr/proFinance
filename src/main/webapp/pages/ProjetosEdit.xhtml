@@ -85,20 +85,23 @@
         	<p:commandButton value="Importar projeto excel" icon="ui-icon-arrowreturnthick-1-s" onclick="PF('load').show()"
        			oncomplete="PF('load').hide(); PF('dialogImportacaoExcel').show()" update="mdlImportacaoExcel"/>
        			
-			<p:accordionPanel rendered="#{projetoBean.listTotalEmpresas.size() > 0}" activeIndex="null" >
+			<p:accordionPanel rendered="#{projetoBean.listTotalSocioEmpresa.size() > 0}" activeIndex="null" >
 				<p:tab title="Consolidado Empresas">
-				    <p:dataTable value="#{projetoBean.listTotalEmpresas}" var="empresaValor">
+				    <p:dataTable value="#{projetoBean.listTotalSocioEmpresa}" var="empresaValor">
 				    	<p:column headerText="Investidor" style="text-align:center">
-				            <h:outputText value="#{empresaValor.socioEmpresa.nome}"/>
-				        </p:column>
-				    	<p:column headerText="Empresa" style="text-align:center">
 				            <h:outputText value="#{empresaValor.nome}"/>
 				        </p:column>
 				        <p:column headerText="Crédito" style="text-align:center">
 				            <h:outputText value="#{empresaValor.valorTotalCredito}" converter="#{doubleConverterDinheiro}"/>
+				            <f:facet name="footer">
+				            	<h:outputLabel value="#{projetoBean.totalSocioEmpresaCredito}" converter="#{doubleConverterDinheiro}"/>
+				            </f:facet>
 				        </p:column>
 				        <p:column headerText="Débito" style="text-align:center">
 				            <h:outputText value="#{empresaValor.valorTotalDebito}" converter="#{doubleConverterDinheiro}"/>
+				        	<f:facet name="footer">
+			            		<h:outputLabel value="#{projetoBean.totalSocioEmpresaDebito}" converter="#{doubleConverterDinheiro}"/>
+			            	</f:facet>
 				        </p:column>
 				    </p:dataTable>
 			    </p:tab>
@@ -146,14 +149,14 @@
 				        </p:column>
 				        <p:column headerText="Juro ano" style="text-align:right;width:5em" rendered="#{projetoBean.projetoSelect.contemjurosAnual}">
 				        	<p:inputText value="#{diaCorrido.juroAno}"  id="juroAnoInput"
-				        		style="width:88%" converter="#{doubleConverter}">
+				        		style="width:88%" converter="#{doubleConverter}" onkeypress="return isNumberFormat(event);">
 				        		<p:ajax event="change" listener="#{projetoBean.recalcularMudancaJurosMes(diaCorrido, projetoDiaCorrido.ano)}"
 				        			onstart="PF('load').show()" oncomplete="PF('load').hide()" update="dtDiaCorrido" />
 				        	</p:inputText>
 				        </p:column>
 				        <p:column headerText="Juro/Mês" style="text-align:right;width:5em" >
 				        	<p:inputText value="#{diaCorrido.juroMes}"  id="juroMesInput"
-				        		style="width:88%" converter="#{doubleConverter}">
+				        		style="width:88%" converter="#{doubleConverter}" onkeypress="return isNumberFormat(event);">
 				        		<p:ajax event="change" listener="#{projetoBean.recalcularMudancaJurosMes(diaCorrido, projetoDiaCorrido.ano)}"
 				        			onstart="PF('load').show()" oncomplete="PF('load').hide()" update="dtDiaCorrido" />
 				        	</p:inputText>
@@ -219,20 +222,23 @@
 				            </p:panelGrid>
 				        </p:rowExpansion>
 				    </p:dataTable>
-				    <p:accordionPanel rendered="#{projetoDiaCorrido.listEmpresaTotal.size() > 0}" activeIndex="null">
-        				<p:tab title="Empresas">
-						    <p:dataTable value="#{projetoDiaCorrido.listEmpresaTotal}" var="empresaValor">
+				    <p:accordionPanel rendered="#{projetoDiaCorrido.listSocioEmpresa.size() > 0}" activeIndex="null">
+        				<p:tab title="Saldo - ANO: #{projetoDiaCorrido.ano}">
+						    <p:dataTable value="#{projetoDiaCorrido.listSocioEmpresa}" var="empresaValor">
 						    	<p:column headerText="Investidor" style="text-align:center">
-						            <h:outputText value="#{empresaValor.socioEmpresa.nome}"/>
-						        </p:column>
-						    	<p:column headerText="Empresa" style="text-align:center">
 						            <h:outputText value="#{empresaValor.nome}"/>
 						        </p:column>
 						        <p:column headerText="Crédito" style="text-align:center">
 						            <h:outputText value="#{empresaValor.valorTotalCredito}" converter="#{doubleConverterDinheiro}"/>
+						            <f:facet name="footer">
+						            	<h:outputLabel value="#{projetoDiaCorrido.valorTotalCreditoEmpresa}" converter="#{doubleConverterDinheiro}"/>
+						            </f:facet>
 						        </p:column>
 						        <p:column headerText="Débito" style="text-align:center">
 						            <h:outputText value="#{empresaValor.valorTotalDebito}" converter="#{doubleConverterDinheiro}"/>
+						        	<f:facet name="footer">
+					            		<h:outputLabel value="#{projetoDiaCorrido.valorTotalDebitoEmpresa}" converter="#{doubleConverterDinheiro}"/>
+					            	</f:facet>
 						        </p:column>
 						    </p:dataTable>
 					    </p:tab>

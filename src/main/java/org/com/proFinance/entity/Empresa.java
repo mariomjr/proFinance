@@ -38,12 +38,6 @@ public class Empresa implements Serializable{
 	
 	@Enumerated(EnumType.STRING)
 	private SimNao ativo;
-
-	@Transient
-	private Double valorTotalCredito;
-	
-	@Transient
-	private Double valorTotalDebito;
 	
 	public Long getId() {
 		return id;
@@ -91,22 +85,6 @@ public class Empresa implements Serializable{
 
 	public void setAtivo(SimNao ativo) {
 		this.ativo = ativo;
-	}
-
-	public Double getValorTotalCredito() {
-		return valorTotalCredito;
-	}
-
-	public void setValorTotalCredito(Double valorTotalCredito) {
-		this.valorTotalCredito = valorTotalCredito;
-	}
-
-	public Double getValorTotalDebito() {
-		return valorTotalDebito;
-	}
-
-	public void setValorTotalDebito(Double valorTotalDebito) {
-		this.valorTotalDebito = valorTotalDebito;
 	}
 
 	@Override

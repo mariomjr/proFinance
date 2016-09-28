@@ -41,6 +41,12 @@ public class SocioEmpresa implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private SimNao ativo;
 
+	@Transient
+	private Double valorTotalCredito;
+	
+	@Transient
+	private Double valorTotalDebito;
+
 	public Long getId() {
 		return id;
 	}
@@ -96,6 +102,22 @@ public class SocioEmpresa implements Serializable{
 
 	public void setListEmpresaAtivas(List<Empresa> listEmpresaAtivas) {
 		this.listEmpresaAtivas = listEmpresaAtivas;
+	}
+
+	public Double getValorTotalCredito() {
+		return valorTotalCredito;
+	}
+
+	public void setValorTotalCredito(Double valorTotalCredito) {
+		this.valorTotalCredito = valorTotalCredito;
+	}
+
+	public Double getValorTotalDebito() {
+		return valorTotalDebito;
+	}
+
+	public void setValorTotalDebito(Double valorTotalDebito) {
+		this.valorTotalDebito = valorTotalDebito;
 	}
 
 	@Override

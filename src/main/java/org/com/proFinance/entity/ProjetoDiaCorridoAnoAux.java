@@ -12,11 +12,15 @@ public class ProjetoDiaCorridoAnoAux {
 	
 	private List<DiaCorridoProjeto> listDiasCorridosProjeto;
 	
-	private List<Empresa> listEmpresaTotal;
+	private List<SocioEmpresa> listSocioEmpresa;
 	
 	private Double valorTotalCredito;
 	
 	private Double valorTotalDebito;
+	
+	private Double valorTotalCreditoEmpresa;
+	
+	private Double valorTotalDebitoEmpresa;
 	
 	public Integer getAno() {
 		return ano;
@@ -59,38 +63,69 @@ public class ProjetoDiaCorridoAnoAux {
 		this.valorTotalDebito = valorTotalDebito;
 	}
 	
-	public List<Empresa> getListEmpresaTotal() {
-		listEmpresaTotal = new ArrayList<Empresa>();
-		Empresa empresaAux;
-		int indexEmpresa;
+	public List<SocioEmpresa> getListSocioEmpresa() {
+		listSocioEmpresa = new ArrayList<SocioEmpresa>();
+		SocioEmpresa socioEmpresaAux;
+		int indexSocioEmpresa;
 		for(DiaCorridoProjeto diaCorridoProjeto : getListDiasCorridosProjeto()){
 			for(OcorrenciaProjeto ocorrenciaProjeto : diaCorridoProjeto.getListOcorrenciasProjeto()){
-				if(ocorrenciaProjeto.getEmpresa()!= null && listEmpresaTotal.contains(ocorrenciaProjeto.getEmpresa())){
-					indexEmpresa = listEmpresaTotal.indexOf(ocorrenciaProjeto.getEmpresa());
-					empresaAux = listEmpresaTotal.get(indexEmpresa);
-					if(ocorrenciaProjeto.getCreditoDebito().equals(EnumCreditoDebito.CREDITO)){
-						empresaAux.setValorTotalCredito(empresaAux.getValorTotalCredito()+ocorrenciaProjeto.getValor());
-					}else{
-						empresaAux.setValorTotalDebito(empresaAux.getValorTotalDebito()+ocorrenciaProjeto.getValor());
-					}
-				}else{
-					empresaAux = ocorrenciaProjeto.getEmpresa();
-					if(empresaAux!= null){
+				if(ocorrenciaProjeto.getEmpresa() != null && ocorrenciaProjeto.getEmpresa().getSocioEmpresa()!= null){
+					if(listSocioEmpresa.contains(ocorrenciaProjeto.getEmpresa().getSocioEmpresa())){
+						indexSocioEmpresa = listSocioEmpresa.indexOf(ocorrenciaProjeto.getEmpresa().getSocioEmpresa());
+						socioEmpresaAux = listSocioEmpresa.get(indexSocioEmpresa);
 						if(ocorrenciaProjeto.getCreditoDebito().equals(EnumCreditoDebito.CREDITO)){
-							empresaAux.setValorTotalCredito(ocorrenciaProjeto.getValor());
+							socioEmpresaAux.setValorTotalCredito(socioEmpresaAux.getValorTotalCredito()+ocorrenciaProjeto.getValor());
 						}else{
-							empresaAux.setValorTotalDebito(ocorrenciaProjeto.getValor());
+							socioEmpresaAux.setValorTotalDebito(socioEmpresaAux.getValorTotalDebito()+ocorrenciaProjeto.getValor());
 						}
-						listEmpresaTotal.add(empresaAux);
+					}else{
+						socioEmpresaAux = ocorrenciaProjeto.getEmpresa().getSocioEmpresa();
+						if(socioEmpresaAux!= null){
+							if(ocorrenciaProjeto.getCreditoDebito().equals(EnumCreditoDebito.CREDITO)){
+								socioEmpresaAux.setValorTotalCredito(ocorrenciaProjeto.getValor());
+							}else{
+								socioEmpresaAux.setValorTotalDebito(ocorrenciaProjeto.getValor());
+							}
+							listSocioEmpresa.add(socioEmpresaAux);
+						}
 					}
 				}
 			}
 		}
 		
-		return listEmpresaTotal;
+		return listSocioEmpresa;
 	}
-	public void setListEmpresaTotal(List<Empresa> listEmpresaTotal) {
-		this.listEmpresaTotal = listEmpresaTotal;
+	
+	public void setListSocioEmpresa(List<SocioEmpresa> listSocioEmpresa) {
+		this.listSocioEmpresa = listSocioEmpresa;
+	}
+	
+	public Double getValorTotalCreditoEmpresa() {
+		valorTotalCreditoEmpresa = 0.0;
+		for(SocioEmpresa socioEmpresa: getListSocioEmpresa()){
+			if(socioEmpresa.getValorTotalCredito()!= null){
+				valorTotalCreditoEmpresa += socioEmpresa.getValorTotalCredito();
+			}
+		}
+		return valorTotalCreditoEmpresa;
+	}
+	
+	public void setValorTotalCreditoEmpresa(Double valorTotalCreditoEmpresa) {
+		this.valorTotalCreditoEmpresa = valorTotalCreditoEmpresa;
+	}
+	
+	public Double getValorTotalDebitoEmpresa() {
+		valorTotalDebitoEmpresa = 0.0;
+		for(SocioEmpresa socioEmpresa: getListSocioEmpresa()){
+			if(socioEmpresa.getValorTotalDebito()!= null){
+				valorTotalDebitoEmpresa += socioEmpresa.getValorTotalDebito();
+			}
+		}
+		return valorTotalDebitoEmpresa;
+	}
+	
+	public void setValorTotalDebitoEmpresa(Double valorTotalDebitoEmpresa) {
+		this.valorTotalDebitoEmpresa = valorTotalDebitoEmpresa;
 	}
 
 }
