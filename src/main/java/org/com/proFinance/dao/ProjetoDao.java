@@ -1,5 +1,6 @@
 package org.com.proFinance.dao;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,16 @@ public class ProjetoDao {
 		return c.list();
 		
 	}
+	
+	public List<Projeto> getListProjetosAtivos(){
+		
+		Session s = (Session) dao.getEntityManager().getDelegate();
+		Criteria c = s.createCriteria(Projeto.class);
+		c.add(Restrictions.eq("ativo", SimNao.SIM));
+		c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		return c.list();
+		
+	}
 
 	public Projeto loadProjetoById(Long id) {
 		
@@ -115,5 +126,18 @@ public class ProjetoDao {
 	
 	public List<Projeto> getListProjetosMobile(){
 		return listar(new HashMap<String, Object>(), null, "ASCENDING", 0, 1000);
+	}
+
+	public List<DiaCorridoProjeto> listDiaCorridoProjeto(Calendar dataInicioFiltro, Calendar dataFimFiltro,
+			Projeto projetoSelect) {
+		Session s = (Session) dao.getEntityManager().getDelegate();
+		Criteria c = s.createCriteria(DiaCorridoProjeto.class);
+		c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		c.add(Restrictions.ge("data", dataInicioFiltro));
+		c.add(Restrictions.le("data", dataFimFiltro));
+		c.add(Restrictions.eq("projeto", projetoSelect));
+		c.addOrder(Order.asc("ordem"));
+		
+		return c.list();
 	}
 }

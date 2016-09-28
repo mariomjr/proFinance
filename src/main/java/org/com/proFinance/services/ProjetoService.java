@@ -64,23 +64,24 @@ public class ProjetoService {
 
 		diaCorridoProjeto.setOrdem(ordem++);
 		
-		double valor = 0.0;
-		if(isSimulacao){
-			valor = projeto.getValorSimulador();
-			diaCorridoProjeto.setValorSaldo(valor);
-		}else{
-			valor = projeto.getValorInicial();
-		}
+//		if(isSimulacao){
+//			valor = projeto.getValorSimulador();
+//			diaCorridoProjeto.setValorSaldoAnterior(0.0);
+//		}else{
+//			valor = projeto.getValorInicial();
+//		}
 		
 		projeto.getListDiasCorridosProjeto().add(diaCorridoProjeto);
 
-		adicionarDiasCorrido(projeto, valor, wsSerieVo, projeto.getDataInicial(), projeto.getDataFinalPrevistaNova(), diaCorridoProjeto);
+		adicionarDiasCorrido(projeto, wsSerieVo, projeto.getDataInicial(), projeto.getDataFinalPrevistaNova(), diaCorridoProjeto);
 
 	}
 	
-	public void adicionarDiasCorrido(Projeto projeto, Double valor, WSSerieVO wsSerieVo, Calendar dataInicial, Calendar dataFinal, DiaCorridoProjeto diaCorrido){
+	public void adicionarDiasCorrido(Projeto projeto, WSSerieVO wsSerieVo, Calendar dataInicial, Calendar dataFinal, DiaCorridoProjeto diaCorrido){
 		DiaCorridoProjeto diaCorridoProjeto = null;
 		Integer orderAtual = diaCorrido.getOrdem();
+		Double valorSaldo = diaCorrido.getValorSaldoTotal();
+		
 		for (Calendar data : listDataDiaCorrido(dataInicial,
 				dataFinal)) {
 			diaCorridoProjeto = new DiaCorridoProjeto();
@@ -97,8 +98,8 @@ public class ProjetoService {
 				diaCorridoProjeto.setIndexador(projeto.getIndexador());
 			}
 
-			valor = valor * diaCorridoProjeto.getFatorDiario();
-			diaCorridoProjeto.setValorSaldo(valor);
+			diaCorridoProjeto.setValorSaldoAnterior(valorSaldo);
+			valorSaldo = diaCorridoProjeto.getValorSaldoTotal();
 
 			projeto.getListDiasCorridosProjeto().add(diaCorridoProjeto);
 		}
@@ -191,13 +192,11 @@ public class ProjetoService {
 		ordenarListaProjeto(projeto.getListDiasCorridosProjeto());
 		
 		double valorTotal = diaCorridoProjeto.getValorSaldoTotal();
-		double valorFator = diaCorridoProjeto.getFatorDiario();
 		
 		for(DiaCorridoProjeto diaCorrido : projeto.getListDiasCorridosProjeto()){
 			if(diaCorrido.getOrdem()>diaCorridoProjeto.getOrdem()){
-				diaCorrido.setValorSaldo(valorTotal*valorFator);
-				valorFator = diaCorrido.getFatorDiario();
-				valorTotal = diaCorrido.getValorSaldo();
+				diaCorrido.setValorSaldoAnterior(valorTotal);
+				valorTotal = diaCorrido.getValorSaldoTotal();
 			}
 			
 		}
@@ -207,17 +206,10 @@ public class ProjetoService {
 	public void recalcularProjeto(Projeto projeto) {
 		
 		ordenarListaProjeto(projeto.getListDiasCorridosProjeto());
-		
 		double valor = 0.0;
-		double valorFator = 0.0;
-		
 		for(DiaCorridoProjeto diaCorrido : projeto.getListDiasCorridosProjeto()){
 			if(diaCorrido.getOrdem()>0){
-				diaCorrido.setValorSaldo(valor*valorFator);
-				valorFator = diaCorrido.getFatorDiario();
-				valor = diaCorrido.getValorSaldoTotal();
-			}else{
-				valorFator = diaCorrido.getFatorDiario();
+				diaCorrido.setValorSaldoAnterior(valor);
 				valor = diaCorrido.getValorSaldoTotal();
 			}
 		}
@@ -247,7 +239,7 @@ public class ProjetoService {
 			wsSerieVo = buscaValoresWebServiceIndicador(projeto.getIndexador(),projeto.getDataFinalPrevistaAtual(),projeto.getDataFinalPrevistaNova());
 		}
 		DiaCorridoProjeto diaCorrido = getDiaCorrido(projeto.getListDiasCorridosProjeto(), projeto.getDataFinalPrevistaAtual());
-		adicionarDiasCorrido(projeto, diaCorrido.getValorSaldo(), wsSerieVo,projeto.getDataFinalPrevistaAtual(),projeto.getDataFinalPrevistaNova(), diaCorrido);
+		adicionarDiasCorrido(projeto, wsSerieVo,projeto.getDataFinalPrevistaAtual(),projeto.getDataFinalPrevistaNova(), diaCorrido);
 		
 		ordenarListaProjeto(projeto.getListDiasCorridosProjeto());
 	}
@@ -290,10 +282,13 @@ public class ProjetoService {
 	int i;
 	int ordem;
 	
+	public Double ultimoValorSaldo = 0.0;
+	
 	public void inserirDiasCorridoProjeto(Projeto projeto, Row linhaRow) {
 		if(linhaRow != null){
 			if(linhaRow.getCell(0).getCellType() == Cell.CELL_TYPE_NUMERIC){
 				DiaCorridoProjeto diaCorridoProjeto = new DiaCorridoProjeto();
+				diaCorridoProjeto.setValorSaldoAnterior(ultimoValorSaldo);
 				diaCorridoProjeto.setRandomId(Uteis.randomId());
 				
 				if(colunaData!= null){
@@ -320,8 +315,9 @@ public class ProjetoService {
 				}
 				
 				if(colunaSaldo!= null){
-					diaCorridoProjeto.setValorSaldo(linhaRow.getCell(colunaSaldo).getNumericCellValue());
+					ultimoValorSaldo = linhaRow.getCell(colunaSaldo).getNumericCellValue();
 				}
+				
 				if(colunaJuroAno!= null){
 					projeto.setContemjurosAnual(Boolean.TRUE);
 					diaCorridoProjeto.setJuroAno(linhaRow.getCell(colunaJuroAno).getNumericCellValue());
@@ -532,41 +528,6 @@ public class ProjetoService {
 			
 		}
 		
-	}
-	
-	
-	public void recalcularMudancaJuroMes(DiaCorridoProjeto diaCorridoProjeto, Projeto projetoSelect) {
-		
-		atualizaValoJuroMesDiaCorrido(diaCorridoProjeto, projetoSelect);
-		
-		recalcularProjeto(projetoSelect, diaCorridoProjeto);
-	}
-
-	private void atualizaValoJuroMesDiaCorrido(DiaCorridoProjeto diaCorridoProjeto, Projeto projeto) {
-		ordenarListaProjeto(projeto.getListDiasCorridosProjeto());
-		WSSerieVO wsSerieVO = null;
-		if(diaCorridoProjeto.getIndexador()!= null){
-			wsSerieVO = buscaValoresWebServiceIndicador(diaCorridoProjeto.getIndexador(), diaCorridoProjeto.getData(), diaCorridoProjeto.getData());
-		}else{
-			diaCorridoProjeto.setValorIndexador(0.0);
-		}
-		
-		trataJuroMesIndexador(projeto, diaCorridoProjeto, wsSerieVO);
-		diaCorridoProjeto.setTaxaJuro((diaCorridoProjeto.getSomaJuroMesIndexador() / 100) + 1);
-		diaCorridoProjeto.setFatorDiario(calculaFatorDiario(diaCorridoProjeto.getTaxaJuro(), diaCorridoProjeto.getData()));
-		
-		for(DiaCorridoProjeto diaCorrido : projeto.getListDiasCorridosProjeto()){
-			if(diaCorrido.getOrdem()>diaCorridoProjeto.getOrdem()){
-				diaCorrido.setJuroMes(diaCorridoProjeto.getJuroMes());
-				if(diaCorrido.getIndexador()!= null && diaCorrido.getData().get(Calendar.DAY_OF_MONTH) == 1
-						&& diaCorrido.getValorIndexador() != null){
-					wsSerieVO = buscaValoresWebServiceIndicador(diaCorridoProjeto.getIndexador(), diaCorrido.getData(), diaCorrido.getData());
-				}
-				trataJuroMesIndexador(projeto, diaCorrido, wsSerieVO);
-				diaCorrido.setTaxaJuro((diaCorrido.getSomaJuroMesIndexador() / 100) + 1);
-				diaCorrido.setFatorDiario(calculaFatorDiario(diaCorrido.getTaxaJuro(), diaCorrido.getData()));
-			}
-		}
 	}
 
 }

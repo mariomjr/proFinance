@@ -1,6 +1,8 @@
 package org.com.proFinance.entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.com.proFinance.enuns.EnumCreditoDebito;
@@ -13,6 +15,8 @@ public class ProjetoDiaCorridoAnoAux {
 	private List<DiaCorridoProjeto> listDiasCorridosProjeto;
 	
 	private List<SocioEmpresa> listSocioEmpresa;
+	
+	private Double ultimoSaldo;
 	
 	private Double valorTotalCredito;
 	
@@ -35,6 +39,24 @@ public class ProjetoDiaCorridoAnoAux {
 		this.listDiasCorridosProjeto = listDiasCorridosProjeto;
 	}
 	
+	public Double getUltimoSaldo() {
+		ultimoSaldo = 0.0;
+		Collections.sort(listDiasCorridosProjeto,new Comparator<DiaCorridoProjeto>(){
+			
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			public int compare(DiaCorridoProjeto  o1, DiaCorridoProjeto  o2) {
+				Comparable c1 = (Comparable) o1.getOrdem();
+				Comparable c2 = (Comparable) o2.getOrdem();
+				return c1.compareTo(c2);
+			}
+			
+		});
+		DiaCorridoProjeto diaCorridoProjeto = listDiasCorridosProjeto.get(listDiasCorridosProjeto.size()-1);
+		return diaCorridoProjeto.getValorSaldoTotal();
+	}
+	public void setUltimoSaldo(Double ultimoSaldo) {
+		this.ultimoSaldo = ultimoSaldo;
+	}
 	public Double getValorTotalCredito() {
 		valorTotalCredito = 0.0;
 		for(DiaCorridoProjeto diaCorrido: getListDiasCorridosProjeto()){
@@ -69,7 +91,8 @@ public class ProjetoDiaCorridoAnoAux {
 		int indexSocioEmpresa;
 		for(DiaCorridoProjeto diaCorridoProjeto : getListDiasCorridosProjeto()){
 			for(OcorrenciaProjeto ocorrenciaProjeto : diaCorridoProjeto.getListOcorrenciasProjeto()){
-				if(ocorrenciaProjeto.getEmpresa() != null && ocorrenciaProjeto.getEmpresa().getSocioEmpresa()!= null){
+				if(ocorrenciaProjeto.getEmpresa() != null && ocorrenciaProjeto.getEmpresa().getSocioEmpresa()!= null && 
+						ocorrenciaProjeto.getMostrarOcorrencia()){
 					if(listSocioEmpresa.contains(ocorrenciaProjeto.getEmpresa().getSocioEmpresa())){
 						indexSocioEmpresa = listSocioEmpresa.indexOf(ocorrenciaProjeto.getEmpresa().getSocioEmpresa());
 						socioEmpresaAux = listSocioEmpresa.get(indexSocioEmpresa);
@@ -81,6 +104,8 @@ public class ProjetoDiaCorridoAnoAux {
 					}else{
 						socioEmpresaAux = ocorrenciaProjeto.getEmpresa().getSocioEmpresa();
 						if(socioEmpresaAux!= null){
+							socioEmpresaAux.setValorTotalCredito(0.0);
+							socioEmpresaAux.setValorTotalDebito(0.0);
 							if(ocorrenciaProjeto.getCreditoDebito().equals(EnumCreditoDebito.CREDITO)){
 								socioEmpresaAux.setValorTotalCredito(ocorrenciaProjeto.getValor());
 							}else{
@@ -92,7 +117,6 @@ public class ProjetoDiaCorridoAnoAux {
 				}
 			}
 		}
-		
 		return listSocioEmpresa;
 	}
 	
@@ -104,7 +128,7 @@ public class ProjetoDiaCorridoAnoAux {
 		valorTotalCreditoEmpresa = 0.0;
 		for(SocioEmpresa socioEmpresa: getListSocioEmpresa()){
 			if(socioEmpresa.getValorTotalCredito()!= null){
-				valorTotalCreditoEmpresa += socioEmpresa.getValorTotalCredito();
+				valorTotalCreditoEmpresa = valorTotalCreditoEmpresa +  socioEmpresa.getValorTotalCredito();
 			}
 		}
 		return valorTotalCreditoEmpresa;

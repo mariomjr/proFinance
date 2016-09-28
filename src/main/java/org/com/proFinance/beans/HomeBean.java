@@ -75,6 +75,14 @@ public class HomeBean implements Serializable{
 		}
 	}
 	
+	public void redirectRelatorios() throws IOException{
+		if(UtilUser.isMobile()){
+//			exContext.redirect(exContext.getApplicationContextPath()+"/mobile/Relatorios.jsf");
+		}else{			
+			exContext.redirect(exContext.getApplicationContextPath()+"/pages/Relatorios.jsf");
+		}
+	}
+	
 	public void redirectSimulacao() throws IOException{
 		if(UtilUser.isMobile()){
 			exContext.redirect(exContext.getApplicationContextPath()+"/mobile/Simulador.jsf");

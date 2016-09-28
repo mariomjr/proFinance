@@ -73,8 +73,19 @@ public class SocioEmpresaDao {
 		Session s = (Session) dao.getEntityManager().getDelegate();
 		SocioEmpresa socioEmpresa = (SocioEmpresa)s.load(SocioEmpresa.class, id);
 		Hibernate.initialize(socioEmpresa);
+		Hibernate.initialize(socioEmpresa.getListEmpresa());
 		s.evict(socioEmpresa);
 		return socioEmpresa;
+		
+	}
+	
+	public Empresa loadEmpresaById(Long id) {
+		
+		Session s = (Session) dao.getEntityManager().getDelegate();
+		Empresa empresa = (Empresa)s.load(Empresa.class, id);
+		Hibernate.initialize(empresa);
+		s.evict(empresa);
+		return empresa;
 		
 	}
 

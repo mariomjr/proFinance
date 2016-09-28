@@ -59,6 +59,8 @@ public class DiaCorridoProjeto implements Serializable{
 	
 	private Double valorCredito;
 	
+	private Double valorSaldoAnterior;
+	
 	@ManyToOne
 	@JoinColumn(name = "indexador_id") 
 	private Indexador indexador;
@@ -196,6 +198,17 @@ public class DiaCorridoProjeto implements Serializable{
 		this.valorCredito = valorCredito;
 	}
 
+	public Double getValorSaldoAnterior() {
+		if(valorSaldoAnterior == null){
+			valorSaldoAnterior = 0.0;
+		}
+		return valorSaldoAnterior;
+	}
+
+	public void setValorSaldoAnterior(Double valorSaldoAnterior) {
+		this.valorSaldoAnterior = valorSaldoAnterior;
+	}
+
 	public Indexador getIndexador() {
 		return indexador;
 	}
@@ -224,8 +237,8 @@ public class DiaCorridoProjeto implements Serializable{
 		if(getValorDebito()!= null){
 			valorSaldoTotal = valorSaldoTotal + getValorDebito();
 		}
-		if(getValorSaldo()!= null){
-			valorSaldoTotal = valorSaldoTotal + getValorSaldo();
+		if(getFatorDiario()!= null){
+			valorSaldoTotal = valorSaldoTotal + (getFatorDiario()*getValorSaldoAnterior());
 		}
 		return valorSaldoTotal;
 	}

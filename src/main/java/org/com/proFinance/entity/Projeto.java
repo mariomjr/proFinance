@@ -216,7 +216,7 @@ public class Projeto implements Serializable{
 			
 		});
 		DiaCorridoProjeto diaCorridoProjeto = listDiasCorridosProjeto.get(listDiasCorridosProjeto.size()-1);
-		return diaCorridoProjeto.getValorSaldo();
+		return diaCorridoProjeto.getValorSaldoTotal();
 	}
 
 	public void setUltimoSaldo(Double ultimoSaldo) {

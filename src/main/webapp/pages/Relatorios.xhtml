@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+<ui:composition template="/templates/template.xhtml">
+
+	<ui:define name="content">
+		
+		<p:toolbar>
+			<f:facet name="left">
+				<h:panelGrid columns="4">
+					<p:spacer width="10px"/>
+					<p:graphicImage value="/img/projetos64.png"/>
+					<p:spacer width="10px"/>
+					<p:outputLabel value="Relatórios" />
+				</h:panelGrid>
+			</f:facet>
+		</p:toolbar>
+		
+		<p:tabView>
+			<p:tab title="Relatório de Projetos">
+				<ui:include src="RelatorioProjetos.xhtml"/>
+			</p:tab>
+		</p:tabView>
+	</ui:define>
+</ui:composition>
+</html>

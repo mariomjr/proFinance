@@ -25,7 +25,6 @@ import org.com.proFinance.dao.SocioEmpresaDao;
 import org.com.proFinance.dataModel.LazyProjetoDataModel;
 import org.com.proFinance.entity.Anexo;
 import org.com.proFinance.entity.DiaCorridoProjeto;
-import org.com.proFinance.entity.Empresa;
 import org.com.proFinance.entity.Indexador;
 import org.com.proFinance.entity.OcorrenciaProjeto;
 import org.com.proFinance.entity.Projeto;
@@ -169,7 +168,6 @@ public class ProjetoBean implements Serializable{
 		Integer anoAtual = null;
 		setListProjetoDiaCorridoAno(new ArrayList<ProjetoDiaCorridoAnoAux>());
 		setListTotalSocioEmpresa(new ArrayList<SocioEmpresa>());
-		
 		for(DiaCorridoProjeto diaCorrido : projeto.getListDiasCorridosProjeto()){
 			if(anoAtual == null || (anoAtual != null && anoAtual!= diaCorrido.getData().get(Calendar.YEAR))){
 				anoAtual = diaCorrido.getData().get(Calendar.YEAR);
@@ -184,6 +182,16 @@ public class ProjetoBean implements Serializable{
 			insereListaTotalEmpresas(diaCorrido);
 		}
 		
+	}
+	
+	private void atulizarListaConsolidado(){
+		setListTotalSocioEmpresa(new ArrayList<SocioEmpresa>());
+	
+		for(ProjetoDiaCorridoAnoAux projetoAux : getListProjetoDiaCorridoAno()){
+			for(DiaCorridoProjeto diaCorridoProjeto : projetoAux.getListDiasCorridosProjeto()){
+				insereListaTotalEmpresas(diaCorridoProjeto);
+			}
+		}
 	}
 
 	private void insereListaTotalEmpresas(DiaCorridoProjeto diaCorridoProjeto) {
@@ -202,6 +210,8 @@ public class ProjetoBean implements Serializable{
 				}else{
 					socioEmpresaAux = ocorrenciaProjeto.getEmpresa().getSocioEmpresa();
 					if(socioEmpresaAux!= null){
+						socioEmpresaAux.setValorTotalCredito(0.0);
+						socioEmpresaAux.setValorTotalDebito(0.0);
 						if(ocorrenciaProjeto.getCreditoDebito().equals(EnumCreditoDebito.CREDITO)){
 							socioEmpresaAux.setValorTotalCredito(ocorrenciaProjeto.getValor());
 						}else{
@@ -259,24 +269,21 @@ public class ProjetoBean implements Serializable{
 		recalcularProjeto(getDiaCorridoSelect());
 		
 		getDiaCorridoSelect().getListOcorrenciasProjeto().add(getOcorrenciaSelect());
+		
+		atulizarListaConsolidado();
 	}
 	
 	public void recalcularProjeto(DiaCorridoProjeto diaCorridoProjeto) {
-			
-			double valorTotal = diaCorridoProjeto.getValorSaldoTotal();
-			double valorFator = diaCorridoProjeto.getFatorDiario();
-			for(ProjetoDiaCorridoAnoAux projetoDiaCorridoAnoAux : getListProjetoDiaCorridoAno()){
-				for(DiaCorridoProjeto diaCorrido : projetoDiaCorridoAnoAux.getListDiasCorridosProjeto()){
-					if(diaCorrido.getOrdem()>diaCorridoProjeto.getOrdem()){
-						diaCorrido.setValorSaldo(valorTotal*valorFator);
-						valorFator = diaCorrido.getFatorDiario();
-						valorTotal = diaCorrido.getValorSaldo();
-					}
+		double valorTotal = diaCorridoProjeto.getValorSaldoTotal();
+		for(ProjetoDiaCorridoAnoAux projetoDiaCorridoAnoAux : getListProjetoDiaCorridoAno()){
+			for(DiaCorridoProjeto diaCorrido : projetoDiaCorridoAnoAux.getListDiasCorridosProjeto()){
+				if(diaCorrido.getOrdem()>diaCorridoProjeto.getOrdem()){
+					diaCorrido.setValorSaldoAnterior(valorTotal);
+					valorTotal = diaCorrido.getValorSaldoTotal();
 				}
-				
 			}
-			
 		}
+	}
 	
 	public void adicionarOcorrenciaProjeto(){
 		
@@ -397,7 +404,9 @@ public class ProjetoBean implements Serializable{
 	
 	public void atualizarProjeto(){
 		if(validaMudancaData()){
+			insereProjetoCorrido();
 			projetoService.recalcularMudancaData(getProjetoSelect());
+			inserirListProjetoDiaCorridoAno(getProjetoSelect());
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Projeto atualizado!"));
 		}
@@ -415,7 +424,9 @@ public class ProjetoBean implements Serializable{
 	}
 	
 	public void recalcularMudancaIndexadorMes(DiaCorridoProjeto diaCorridoProjeto){
+		insereProjetoCorrido();
 		projetoService.recalcularMudancaIndexadorMes(diaCorridoProjeto, getProjetoSelect());
+		inserirListProjetoDiaCorridoAno(getProjetoSelect());
 	}
 	
 	public void recalcularMudancaJurosMes(DiaCorridoProjeto diaCorridoProjeto, Integer ano){
@@ -423,23 +434,18 @@ public class ProjetoBean implements Serializable{
 	}
 	
 	public void recalcularMudancaJurosAno(DiaCorridoProjeto diaCorridoProjeto, Integer ano){
-		atualizaValorIndexadorMesDiaCorridoAno(diaCorridoProjeto, ano);
+		diaCorridoProjeto.setJuroMes(diaCorridoProjeto.getJuroAno()/12);
+		atualizaValorIndexadorMesDiaCorrido(diaCorridoProjeto, ano,true);
 	}
 	
 	double valorTotalAux;
 	double valorFatorAux;
-	
-	private void atualizaValorIndexadorMesDiaCorridoAno(DiaCorridoProjeto diaCorridoProjeto, Integer anoSelect) {
-		diaCorridoProjeto.setJuroMes(diaCorridoProjeto.getJuroAno()/12);
-		atualizaValorIndexadorMesDiaCorrido(diaCorridoProjeto, anoSelect,true);
-	}
 	
 	private void atualizaValorIndexadorMesDiaCorrido(DiaCorridoProjeto diaCorridoProjeto, Integer anoSelect, boolean isAtualizaAno) {
 		
 		trataJuroMes(diaCorridoProjeto);
 		diaCorridoProjeto.setTaxaJuro((diaCorridoProjeto.getSomaJuroMesIndexador() / 100) + 1);
 		diaCorridoProjeto.setFatorDiario(calculaFatorDiario(diaCorridoProjeto.getTaxaJuro(), diaCorridoProjeto.getData()));
-		diaCorridoProjeto.setValorSaldo(diaCorridoProjeto.getValorSaldo() * diaCorridoProjeto.getFatorDiario());
 		
 		ProjetoDiaCorridoAnoAux projetoDiaCorrido = projetoDiaCoridoByAno(anoSelect);
 		
@@ -468,7 +474,7 @@ public class ProjetoBean implements Serializable{
 				diaCorridoProjetoAux.setTaxaJuro((diaCorridoProjetoAux.getSomaJuroMesIndexador() / 100) + 1);
 				diaCorridoProjetoAux.setFatorDiario(calculaFatorDiario(diaCorridoProjetoAux.getTaxaJuro(), diaCorridoProjetoAux.getData()));
 					
-				diaCorridoProjetoAux.setValorSaldo(valorTotalAux*valorFatorAux);
+				diaCorridoProjetoAux.setValorSaldoAnterior(valorTotalAux);
 				valorFatorAux = diaCorridoProjetoAux.getFatorDiario();
 				valorTotalAux = diaCorridoProjetoAux.getValorSaldoTotal();
 					
@@ -527,12 +533,32 @@ public class ProjetoBean implements Serializable{
 	
 
 	private void setarValores(DiaCorridoProjeto diaCorridoAux, DiaCorridoProjeto diaCorrido) {
-		diaCorridoAux.setValorSaldo(diaCorrido.getValorSaldo());
 		diaCorridoAux.setJuroMes(diaCorrido.getJuroMes());
 		diaCorridoAux.setFatorDiario(diaCorrido.getFatorDiario());
 		diaCorridoAux.setTaxaJuro(diaCorrido.getTaxaJuro());
 		diaCorridoAux.setValorCredito(diaCorrido.getValorCredito());
 		diaCorridoAux.setValorDebito(diaCorrido.getValorDebito());
+		diaCorridoAux.setValorSaldoAnterior(diaCorrido.getValorSaldoAnterior());
+	}
+	
+	public Double getAcumuladoCredito(Integer ano){
+		Double acumuladoCredito = 0.0;
+		for(ProjetoDiaCorridoAnoAux projetoDiaCorrido : getListProjetoDiaCorridoAno()){
+			if(ano>= projetoDiaCorrido.getAno()){
+				acumuladoCredito += projetoDiaCorrido.getValorTotalCredito();
+			}
+		}
+		return acumuladoCredito;
+	}
+	
+	public Double getAcumuladoDebito(Integer ano){
+		Double acumuladoDebito = 0.0;
+		for(ProjetoDiaCorridoAnoAux projetoDiaCorrido : getListProjetoDiaCorridoAno()){
+			if(ano>= projetoDiaCorrido.getAno()){
+				acumuladoDebito += projetoDiaCorrido.getValorTotalDebito();
+			}
+		}
+		return acumuladoDebito;
 	}
 
 	public void limparProjeto(){
@@ -656,4 +682,6 @@ public class ProjetoBean implements Serializable{
 	public void setTotalSocioEmpresaDebito(Double totalSocioEmpresaDebito) {
 		this.totalSocioEmpresaDebito = totalSocioEmpresaDebito;
 	}
+	
+	
 }

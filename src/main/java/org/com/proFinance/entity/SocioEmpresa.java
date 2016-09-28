@@ -105,6 +105,9 @@ public class SocioEmpresa implements Serializable{
 	}
 
 	public Double getValorTotalCredito() {
+		if(valorTotalCredito == null){
+			valorTotalCredito = 0.0;
+		}
 		return valorTotalCredito;
 	}
 

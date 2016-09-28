@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/tags"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+      
+	<p:panel id="pnRelatorioProjeto">
+		<div class="ui-grid-row">
+		 	<div class="ui-grid-col-2">
+		 		<h:outputLabel value="Projeto: " for="srmProjeto"/>
+		 	</div>
+		 	<div class="ui-grid-col-6">
+				<p:selectOneMenu id="srmProjeto" value="#{relatorioProjetosBean.projetoSelect}" 
+					style="width:80%" converter="#{projetoConverter}">
+		            <f:selectItems value="#{relatorioProjetosBean.listProjetoAtivo}" var="projeto" itemLabel="#{projeto.nome}" itemValue="#{projeto}"/>
+		        </p:selectOneMenu>
+	        </div>
+        </div>
+        <div class="ui-grid-row">
+		 	<div class="ui-grid-col-2">
+		 		<h:outputLabel value="Data Inicial: " for="dataIncioFiltro"/>
+		 	</div>
+		 	<div class="ui-grid-col-6">
+		 		<p:calendar id="dataIncioFiltro"  value="#{relatorioProjetosBean.dataInicioFiltro}"
+         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"/>
+		 	</div>
+	 	</div>
+	 	<div class="ui-grid-row">
+		 	<div class="ui-grid-col-2">
+		 		<h:outputLabel value="Data Final: " for="dataFinalFiltro"/>
+		 	</div>
+		 	<div class="ui-grid-col-6">
+		 		<p:calendar id="dataFinalFiltro"  value="#{relatorioProjetosBean.dataFimFiltro}"
+         			showOn="button" locale="pt" pattern="dd/MM/yyyy" mask="true" converter="#{primefacesCalendarConverter}" size="10"/>
+		 	</div>
+	 	</div>
+	 	
+	 	<p:commandButton value="Gerar Relatório" ajax="false" 
+			icon="ui-icon-circle-arrow-s" id="btnDownload" >
+			<p:fileDownload value="#{relatorioProjetosBean.relatorioExcel}"/>
+		</p:commandButton>
+
+
+	</p:panel>
+</html>
